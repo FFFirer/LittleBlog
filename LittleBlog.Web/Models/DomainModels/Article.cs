@@ -10,6 +10,11 @@ namespace LittleBlog.Web.Models
     /// </summary>
     public class Article
     {
+        public Article()
+        {
+            Author = GlobalConfig.AuthorName;
+        }
+
         /// <summary>
         /// 文章Id
         /// </summary>
@@ -35,6 +40,9 @@ namespace LittleBlog.Web.Models
         [MaxLength(255)]
         [Display(Name="作者")]
         public string Author{ get; set; }
+
+        [Display(Name ="摘要")]
+        public string Abstract { get; set; }
 
         [Required]
         [Display(Name="文章正文")]
@@ -64,5 +72,11 @@ namespace LittleBlog.Web.Models
         [Required]
         [Display(Name="最后一次编辑的时间")]
         public DateTime LastEditTime{ get; set; }
+
+        /// <summary>
+        /// 是否发布
+        /// </summary>
+        [Display(Name ="状态")]
+        public bool IsPublished { get; set; }
     }
 }

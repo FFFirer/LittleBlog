@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LittleBlog.Web.Data;
 using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.ViewModels.Manage;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,9 +33,18 @@ namespace LittleBlog.Web.Services
         /// <param name="page">页数</param>
         /// <param name="perPage">每页的数量</param>
         /// <returns></returns>
-        public List<Article> GetArticles(int page = 1, int perPage = 20)
+        public List<Article> GetArticles(out int total, int page = 1, int perPage = 20, bool isPublish = false)
         {
-            return db.Articles.Skip(page * perPage).Take(perPage).ToList();
+            if (isPublish)
+            {
+                total = db.Articles.Where(a=>a.IsPublished == true).Count();
+                return db.Articles.Where(a => a.IsPublished == true).Skip((page - 1) * perPage).Take(perPage).ToList();
+            }
+            else
+            {
+                total = db.Articles.Count();
+                return db.Articles.Skip((page - 1) * perPage).Take(perPage).ToList();
+            }
         }
 
         /// <summary>
@@ -66,6 +76,36 @@ namespace LittleBlog.Web.Services
         public Article GetArticle(int Id)
         {
             return db.Articles.Where(a => a.Id.Equals(Id)).FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// 保存文章
+        /// </summary>
+        /// <param name="article"></param>
+        /// <returns></returns>
+        public bool SaveArticle(ArticleEditViewModel articleEdited)
+        {
+            if(articleEdited.Id == 0)
+            {
+                //create
+                Article article = new Article();
+                articleEdited.UpdateArticle(ref article);
+                db.Articles.Add(article);
+            }
+            else
+            {
+                // update
+                Article article = db.Articles.Where(a => a.Id.Equals(articleEdited.Id)).FirstOrDefault();
+                if(article == null)
+                {
+                    throw new Exception("更新的文章不存在");
+                }
+                articleEdited.UpdateArticle(ref article);
+                db.Articles.Update(article);
+            }
+            db.SaveChanges();
+            return true;
         }
     }
 }

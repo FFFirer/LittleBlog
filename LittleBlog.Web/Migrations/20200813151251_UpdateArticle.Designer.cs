@@ -3,14 +3,16 @@ using System;
 using LittleBlog.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LittleBlog.Web.Migrations
 {
     [DbContext(typeof(LittleBlogContext))]
-    partial class LittleBlogContextModelSnapshot : ModelSnapshot
+    [Migration("20200813151251_UpdateArticle")]
+    partial class UpdateArticle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,9 +89,6 @@ namespace LittleBlog.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    b.Property<string>("Abstract")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Author")
                         .IsRequired()

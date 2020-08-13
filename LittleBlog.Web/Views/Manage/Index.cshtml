@@ -1,43 +1,38 @@
-﻿@model IEnumerable<LittleBlog.Web.Models.Article>
+﻿@model LittleBlog.Web.Models.ViewModels.Manage.ManageIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
 <p>
-    <a asp-action="Create">写新的文章</a>
+    <a asp-action="Create" class="btn btn-primary">
+        写新的文章
+    </a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Author)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Content)
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().LastEditTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SavePath)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastEditTime)
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().IsPublished)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Articles) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
@@ -49,20 +44,19 @@
                 @Html.DisplayFor(modelItem => item.Author)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SavePath)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateTime)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.LastEditTime)
             </td>
+            @if (item.IsPublished)
+            {
+                <td>已发布</td>
+            }
+            else
+            {
+                <td>草稿</td>
+            }
             <td>
                 @Html.ActionLink("编辑", "edit", "Manage", new { id = item.Id }) |
-                @Html.ActionLink("查看", "Index", "Article", new { id =  item.Id }) |
+                @Html.ActionLink("查看", "Index", "Article", new { id = item.Id }) |
                 @Html.ActionLink("删除", "Delete", "Manage", new { id = item.Id })
             </td>
         </tr>
@@ -70,4 +64,4 @@
     </tbody>
 </table>
 
-@await Component.InvokeAsync("PageList", new { pageInfo = new LittleBlog.Web.Models.ViewModels.PageInfo() { PageCount = 10, CurrentPage = 4, PerPageCount = 20 }, actionName = "Index" })
+@await Component.InvokeAsync("PageList", new { pageInfo = Model.PageInfo, actionName = "Index" })

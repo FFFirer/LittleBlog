@@ -1,6 +1,18 @@
-﻿
+﻿@model LittleBlog.Web.Models.Article
+
 @{
-    ViewData["Title"] = "Detail";
+    ViewData["Title"] = Model.Title;
 }
 
-<h1>@ViewBag.Detail</h1>
+<div class="row">
+    <div class="col-sm-8">
+        <h1>@Model.Title</h1>
+        <hr />
+        <p>@Model.Author - @Model.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</p>
+
+        @Html.Raw(Model.Content)
+    </div>
+    <div class="col-sm-4">
+        @await Component.InvokeAsync("Sidebar")
+    </div>
+</div>

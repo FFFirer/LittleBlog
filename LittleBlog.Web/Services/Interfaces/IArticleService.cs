@@ -1,4 +1,5 @@
 ﻿using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.ViewModels.Manage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace LittleBlog.Web.Services.Interfaces
         /// <param name="page">页数</param>
         /// <param name="perPage">每页的数量</param>
         /// <returns></returns>
-        List<Article> GetArticles(int page = 1, int perPage = 20);
+        List<Article> GetArticles(out int total, int page = 1, int perPage = 20, bool isPublish = false);
 
         /// <summary>
         /// 根据文章的作者获取文章
@@ -41,5 +42,12 @@ namespace LittleBlog.Web.Services.Interfaces
         /// <param name="Id"></param>
         /// <returns></returns>
         Article GetArticle(int Id);
+
+        /// <summary>
+        /// 保存文章
+        /// </summary>
+        /// <param name="article"></param>
+        /// <returns></returns>
+        bool SaveArticle(ArticleEditViewModel articleEdited);
     }
 }
