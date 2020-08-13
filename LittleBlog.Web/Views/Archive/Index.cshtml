@@ -1,0 +1,16 @@
+﻿@model LittleBlog.Web.Models.Article
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Model.Title</h1>
+
+<div class="row">
+    <div class="col-sm-8">
+        @Model.Content
+    </div>
+    <div class="col-sm-4">
+        @await Component.InvokeAsync("Sidebar")
+    </div>
+</div>

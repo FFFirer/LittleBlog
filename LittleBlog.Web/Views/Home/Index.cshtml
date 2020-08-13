@@ -1,0 +1,38 @@
+﻿@model LittleBlog.Web.Models.ViewModels.HomeIndexViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron">
+            <h1>FFFirer's LittleBlog</h1>
+            <p>分享技术与快乐</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-8">
+        @foreach (var article in Model.ArticleInfos)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        @article.Title
+                    </h4>
+                    <p class="card-text">
+                        @article.Content
+                    </p>
+                </div>
+            </div>
+            <br />
+        }
+
+        @await Component.InvokeAsync("PageList", new { pageInfo=Model.PageInfo, actionName = "index" })
+    </div>
+    <div class="col-sm-4">
+        @await Component.InvokeAsync("Sidebar")
+    </div>
+</div>

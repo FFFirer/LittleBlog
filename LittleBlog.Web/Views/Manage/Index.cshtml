@@ -1,0 +1,73 @@
+﻿@model IEnumerable<LittleBlog.Web.Models.Article>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">写新的文章</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SavePath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastEditTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SavePath)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastEditTime)
+            </td>
+            <td>
+                @Html.ActionLink("编辑", "edit", "Manage", new { id = item.Id }) |
+                @Html.ActionLink("查看", "Index", "Article", new { id =  item.Id }) |
+                @Html.ActionLink("删除", "Delete", "Manage", new { id = item.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@await Component.InvokeAsync("PageList", new { pageInfo = new LittleBlog.Web.Models.ViewModels.PageInfo() { PageCount = 10, CurrentPage = 4, PerPageCount = 20 }, actionName = "Index" })
