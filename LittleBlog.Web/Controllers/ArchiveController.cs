@@ -37,5 +37,12 @@ namespace LittleBlog.Web.Controllers
             viewModel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, total);
             return View(viewModel);
         }
+
+        public IActionResult List(string archiveDate, int page = 1)
+        {
+            ArchiveListViewModel viewModel = new ArchiveListViewModel();
+
+            return View(viewModel);
+        }
     }
 }

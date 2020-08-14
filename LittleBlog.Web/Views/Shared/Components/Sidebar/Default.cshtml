@@ -1,12 +1,14 @@
 ﻿@model LittleBlog.Web.Models.ViewModels.SidebarViewModel
 
 
-<div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="请输入要搜索的关键词..." />
-    <div class="input-group-append">
-        <button class="btn btn-primary" type="button">搜索</button>
+<form asp-action="Search" asp-controller="Home" method="get">
+    <div class="input-group mb-3">
+        <input type="text" name="keyword" value="" class="form-control" placeholder="请输入要搜索的关键词..." />
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">搜索</button>
+        </div>
     </div>
-</div>
+</form>
 <div class="card">
     <div class="card-header">
         个人信息
@@ -18,7 +20,7 @@
 <br />
 <div class="card">
     <div class="card-header">
-        日历
+        Calendar / 日历
     </div>
     <div class="card-body">
 
@@ -27,7 +29,7 @@
 <br />
 <div class="card">
     <div class="card-header">
-        搜索
+        Category / 分类
     </div>
     <div class="card-body">
     </div>
@@ -35,7 +37,7 @@
 <br />
 <div class="card">
     <div class="card-header">
-        常用链接
+        Archive / 归档
     </div>
     <div class="card-body">
 
@@ -44,18 +46,18 @@
 <br />
 <div class="card">
     <div class="card-header">
-        归档 / Archive
+        Tags / 标签
+    </div>
+    <div class="card-body">
+
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        常用链接 / 友情链接
     </div>
     <div class="card-body">
 
     </div>
 </div>
 <br />
-<div class="card">
-    <div class="card-header">
-        标签 / Tags
-    </div>
-    <div class="card-body">
-
-    </div>
-</div>

@@ -10,16 +10,19 @@ using LittleBlog.Web.Data;
 using LittleBlog.Web.Services.Interfaces;
 using LittleBlog.Web.Mock;
 using LittleBlog.Web.Models.ViewModels.Home;
+using Microsoft.Extensions.Logging;
 
 namespace LittleBlog.Web.Controllers
 {
     public class HomeController : Controller
     {
         private IArticleService _articleService;
+        private ILogger _logger;
 
-        public HomeController(IArticleService articleService)
+        public HomeController(IArticleService articleService, ILogger<HomeController> logger)
         {
             _articleService = articleService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -61,8 +64,9 @@ namespace LittleBlog.Web.Controllers
                 _articleService.SaveContentChange(model.Info.Id, model.Info.Content);
                 return Index();
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
+                _logger.LogError(ex, "编辑文章");
                 // 返回错误页
                 return Error();
             }
@@ -78,6 +82,10 @@ namespace LittleBlog.Web.Controllers
         {
             try
             {
+                if (keyword == null)
+                {
+                    keyword = "";
+                }
                 SearchViewModel viewModel = new SearchViewModel()
                 {
                     keyword = keyword,
@@ -88,6 +96,7 @@ namespace LittleBlog.Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"查询：{keyword}");
                 return RedirectToAction("Index", "Error", new { statusCode = "500" });
             }
         }

@@ -32,7 +32,7 @@
             <br />
         }
 
-        @await Component.InvokeAsync("PageList", new { pageInfo=Model.PageInfo, actionName = "index" })
+        @await Component.InvokeAsync("PageList", new { pageInfo=Model.PageInfo, actionName = "index", routeParams = new Dictionary<string, string>() })
     </div>
     <div class="col-sm-4">
         @await Component.InvokeAsync("Sidebar")

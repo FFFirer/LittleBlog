@@ -18,6 +18,6 @@ namespace LittleBlog.Web.Models.ViewModels
         public string ClassName { get; set; }
         public int TargetPage { get; set; }
         public string InnerHtml { get; set; }
-        public object routerParams { get; set; }
+        public Dictionary<string, string> routerParams { get; set; }
     }
 }

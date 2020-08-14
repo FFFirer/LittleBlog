@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using LittleBlog.Web.Services;
 using LittleBlog.Web.Services.Interfaces;
+using NLog.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace LittleBlog.Web
 {
@@ -32,7 +34,10 @@ namespace LittleBlog.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            services.AddLogging(configLogger =>
+            {
+                configLogger.AddNLog("NLog.config");
+            });
             services.AddControllersWithViews();
             services.AddRazorPages();
 
