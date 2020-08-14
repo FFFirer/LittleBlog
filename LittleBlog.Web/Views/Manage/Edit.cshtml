@@ -1,6 +1,6 @@
 ﻿@model LittleBlog.Web.Models.ViewModels.Manage.ArticleEditViewModel
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Manage Edit";
 }
 
 <div class="row">
@@ -47,9 +47,10 @@
 
     var E = window.wangEditor;
     var editor = new E('#editor');
-
+    editor.customConfig.uploadImgShowBase64 = true;
     editor.create();
 
+    //提交保存
     function Save() {
         let formdata = {};
         formdata.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();

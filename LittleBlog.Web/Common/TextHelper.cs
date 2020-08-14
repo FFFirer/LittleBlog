@@ -16,9 +16,9 @@ namespace LittleBlog.Web.Common
         public static string GetAbstract(string htmlCode)
         {
             string plainPattern = @"<\/?.+?\/?>";
-            string outText = Regex.Replace(htmlCode, plainPattern, "");
 
-            
+            // 替换掉所有Html标签
+            string outText = Regex.Replace(htmlCode, plainPattern, "");
 
             return outText.Substring(0, outText.Length > 255 ? 255 : outText.Length);
         }

@@ -107,5 +107,37 @@ namespace LittleBlog.Web.Services
             db.SaveChanges();
             return true;
         }
+
+        /// <summary>
+        /// 获取归档的文章列表
+        /// </summary>
+        /// <param name="total"></param>
+        /// <param name="page"></param>
+        /// <param name="perpage"></param>
+        /// <param name="isPublish"></param>
+        /// <param name="isOrder"></param>
+        /// <returns></returns>
+        public List<Article> GetArchiveArticles(out int total, int page = 1, int perpage = 20, bool isPublish = true, bool isOrder = false)
+        {
+            if(page < 1)
+            {
+                throw new ArgumentOutOfRangeException("paeg must greater than 0");
+            }
+
+            if(perpage < 1)
+            {
+                throw new ArgumentOutOfRangeException("perpage must greater than 0");
+            }
+            if (isPublish)
+            {
+                total = db.Articles.Where(a => a.IsPublished == true).Count();
+                return db.Articles.FromSqlRaw<Article>(@"select *, DATE_FORMAT(CreateTime, '%Y-%m-%d') as ArchiveDate from Articles where IsPublished=1 order by ArchiveDate").Skip((page - 1) * perpage).Take(perpage).ToList();
+            }
+            else
+            {
+                total = db.Articles.Where(a => a.IsPublished == true).Count();
+                return db.Articles.FromSqlRaw<Article>(@"select *, DATE_FORMAT(CreateTime, '%Y-%m-%d') as ArchiveDate from Articles order by ArchiveDate").Skip((page - 1) * perpage).Take(perpage).ToList();
+            }
+        }
     }
 }

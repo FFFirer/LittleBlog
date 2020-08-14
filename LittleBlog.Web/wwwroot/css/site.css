@@ -59,10 +59,67 @@ body {
 .navbar-nav>.nav-item>a:hover{
     background-color: #e0e0e0;
     border-radius: 5px;
+    color: #000000;
 }
 
 /* BootStrap custom 
  ------------------------------------------------- */
 .navbar-collapse.collapse>.navbar-nav {
     margin: 7.5px 0px;
+}
+
+/* 文章样式
+-------------------------------------------------- */
+.article {
+    padding: 0px;
+    width: 100%
+}
+
+/* table 样式 */
+.article table {
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
+
+.article>table td,
+.article table th {
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    padding: 3px 5px;
+}
+
+.article table th {
+    border-bottom: 2px solid #ccc;
+    text-align: center;
+}
+
+/* blockquote 样式 */
+.article blockquote {
+    display: block;
+    border-left: 8px solid #d0e5f2;
+    padding: 5px 10px;
+    margin: 10px 0;
+    line-height: 1.4;
+    font-size: 100%;
+    background-color: #f1f1f1;
+}
+
+/* code 样式 */
+.article code {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    background-color: #f1f1f1;
+    border-radius: 3px;
+    padding: 3px 5px;
+    margin: 0 3px;
+}
+
+.article pre code {
+    display: block;
+}
+
+/* ul ol 样式 */
+.article ul, ol {
+    margin: 10px 0 10px 20px;
 }

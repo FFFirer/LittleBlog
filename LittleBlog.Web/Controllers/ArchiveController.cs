@@ -2,15 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.ViewModels.Archive;
+using LittleBlog.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LittleBlog.Web.Controllers
 {
     public class ArchiveController : Controller
     {
-        public IActionResult Index()
+        private IArticleService _articleService;
+
+        public ArchiveController(IArticleService articleService)
         {
-            return View();
+            _articleService = articleService;
+        }
+
+        public IActionResult Index(int page = 1)
+        {
+            ArchiveIndexViewModel viewModel = new ArchiveIndexViewModel()
+            {
+                ArchivedArticleList = new List<ArchiveIndexListItemViewModel>()
+            };
+
+            List<Article> archiveArticles = _articleService.GetArchiveArticles(out int total, page, GlobalConfig.PageSize, true, true);
+            archiveArticles.GroupBy(a => a.CreateTime.ToString("yyyy-MM-dd")).ToList().ForEach(grouped =>
+            {
+                viewModel.ArchivedArticleList.Add(new ArchiveIndexListItemViewModel()
+                {
+                    ArchiveDate = grouped.Key,
+                    Articles = grouped.ToList()
+                });
+            });
+            viewModel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, total);
+            return View(viewModel);
         }
     }
 }

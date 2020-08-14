@@ -49,5 +49,16 @@ namespace LittleBlog.Web.Services.Interfaces
         /// <param name="article"></param>
         /// <returns></returns>
         bool SaveArticle(ArticleEditViewModel articleEdited);
+
+        /// <summary>
+        /// 获取归档的文章列表
+        /// </summary>
+        /// <param name="total"></param>
+        /// <param name="page"></param>
+        /// <param name="perpage"></param>
+        /// <param name="isPublish"></param>
+        /// <param name="isOrder"></param>
+        /// <returns></returns>
+        List<Article> GetArchiveArticles(out int total, int page = 1, int perpage = 20, bool isPublish = true, bool isOrder = false);
     }
 }
