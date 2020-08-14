@@ -9,6 +9,7 @@ using LittleBlog.Web.Services;
 using LittleBlog.Web.Data;
 using LittleBlog.Web.Services.Interfaces;
 using LittleBlog.Web.Mock;
+using LittleBlog.Web.Models.ViewModels.Home;
 
 namespace LittleBlog.Web.Controllers
 {
@@ -70,6 +71,25 @@ namespace LittleBlog.Web.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult Search(string keyword, int page = 1)
+        {
+            try
+            {
+                SearchViewModel viewModel = new SearchViewModel()
+                {
+                    keyword = keyword,
+                    SearchedArticles = _articleService.GetArticles(keyword, out int total, page, GlobalConfig.PageSize, true),
+                    PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, total)
+                };
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index", "Error", new { statusCode = "500" });
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

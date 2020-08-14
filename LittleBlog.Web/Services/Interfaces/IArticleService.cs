@@ -28,7 +28,7 @@ namespace LittleBlog.Web.Services.Interfaces
         /// </summary>
         /// <param name="author"></param>
         /// <returns></returns>
-        List<Article> GetArticles(string author);
+        List<Article> GetArticles(string keyword, out int total, int page = 1, int perPage = 20, bool isPublish = false);
 
         /// <summary>
         /// 保存文章内容变化

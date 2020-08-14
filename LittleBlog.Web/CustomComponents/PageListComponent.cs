@@ -16,7 +16,7 @@ namespace LittleBlog.Web.CustomComponents
     [ViewComponent(Name = "PageList")]
     public class PageListComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(PageInfo pageInfo, string actionName)
+        public IViewComponentResult Invoke(PageInfo pageInfo, string actionName, Func<int, object> GetRouteParams)
         {
             PageListViewModel model = new PageListViewModel();
 
@@ -28,7 +28,8 @@ namespace LittleBlog.Web.CustomComponents
             {
                 ClassName = pageInfo.CurrentPage == 1 ? "disabled" : "",
                 TargetPage = 1,
-                InnerHtml = "首页"
+                InnerHtml = "首页",
+                routerParams = GetRouteParams(1)
             });
 
             // 上一页
@@ -36,7 +37,8 @@ namespace LittleBlog.Web.CustomComponents
             {
                 ClassName = pageInfo.CurrentPage == 1 ? "disabled" : "",
                 TargetPage = pageInfo.CurrentPage > 1 ? pageInfo.CurrentPage - 1 : 1,
-                InnerHtml = "上一页"
+                InnerHtml = "上一页",
+                routerParams = GetRouteParams(pageInfo.CurrentPage > 1 ? pageInfo.CurrentPage - 1 : 1)
             });
 
             // 下一页
@@ -45,13 +47,15 @@ namespace LittleBlog.Web.CustomComponents
                 ClassName = pageInfo.CurrentPage >= pageInfo.PageCount ? "disabled" : "",
                 TargetPage = pageInfo.CurrentPage >= pageInfo.PageCount ? pageInfo.PageCount : pageInfo.CurrentPage + 1,
                 InnerHtml = "下一页",
+                routerParams = GetRouteParams(pageInfo.CurrentPage >= pageInfo.PageCount ? pageInfo.PageCount : pageInfo.CurrentPage + 1)
             });
             // 末页
             model.Items.Add(new PageListItem()
             {
                 ClassName = pageInfo.CurrentPage >= pageInfo.PageCount ? "disabled" : "",
                 TargetPage = pageInfo.PageCount,
-                InnerHtml = "末页"
+                InnerHtml = "末页",
+                routerParams = GetRouteParams(pageInfo.CurrentPage >= pageInfo.PageCount ? pageInfo.PageCount : pageInfo.CurrentPage + 1)
             });
 
             return View(model);

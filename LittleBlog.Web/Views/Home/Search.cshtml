@@ -1,0 +1,38 @@
+﻿@model LittleBlog.Web.Models.ViewModels.Home.SearchViewModel
+
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="请输入要搜索的关键词..." />
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button">搜索</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        @foreach (var article in Model.SearchedArticles)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <a asp-area="" asp-controller="Article" asp-action="Index" asp-route-id="@article.Id">
+                        <h4 class="card-title">
+                            @article.Title
+                        </h4>
+                    </a>
+                    <p class="card-text">
+                        @article?.Abstract
+                    </p>
+                </div>
+            </div>
+            <br />
+        }
+    </div>
+    <div class="col-12">
+        @await Component.InvokeAsync("PageList", new { pageInfo = Model.PageInfo, actionName = "Search"});
+    </div>
+</div>

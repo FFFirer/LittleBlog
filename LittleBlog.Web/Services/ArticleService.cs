@@ -38,23 +38,32 @@ namespace LittleBlog.Web.Services
             if (isPublish)
             {
                 total = db.Articles.Where(a=>a.IsPublished == true).Count();
-                return db.Articles.Where(a => a.IsPublished == true).Skip((page - 1) * perPage).Take(perPage).ToList();
+                return db.Articles.Where(a => a.IsPublished == true).OrderByDescending(b=>b.CreateTime).Skip((page - 1) * perPage).Take(perPage).ToList();
             }
             else
             {
                 total = db.Articles.Count();
-                return db.Articles.Skip((page - 1) * perPage).Take(perPage).ToList();
+                return db.Articles.OrderByDescending(b => b.CreateTime).Skip((page - 1) * perPage).Take(perPage).ToList();
             }
         }
 
         /// <summary>
-        /// 根据文章的作者获取文章
+        /// 根据文章的作者获取文章，搜索
         /// </summary>
         /// <param name="author"></param>
         /// <returns></returns>
-        public List<Article> GetArticles(string author)
+        public List<Article> GetArticles(string keyword, out int total, int page = 1, int perPage = 20, bool isPublish = false)
         {
-            return db.Articles.Where(p => p.Author.Equals(author)).ToList();
+            if (isPublish)
+            {
+                total = db.Articles.Where(a => a.IsPublished == true && (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Count();
+                return db.Articles.Where(a => a.IsPublished == true && (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Skip((page - 1) * perPage).Take(perPage).ToList();
+            }
+            else
+            {
+                total = db.Articles.Where(a => (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Count();
+                return db.Articles.Where(a => (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Skip((page - 1) * perPage).Take(perPage).ToList();
+            }
         }
 
         /// <summary>
