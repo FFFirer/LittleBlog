@@ -7,7 +7,7 @@ namespace LittleBlog.Web.Models
 {
     public class ErrorIndexViewModel
     {
-        public string StatusCode { get; set; }
+        public int StatusCode { get; set; }
         public string ErrorMessage { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using LittleBlog.Web.Models;
+﻿using LittleBlog.Web.Constants;
+using LittleBlog.Web.Models;
 using LittleBlog.Web.Models.ViewModels.Manage;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LittleBlog.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public class ManageController : Controller
     {
         private IArticleService _articleService;

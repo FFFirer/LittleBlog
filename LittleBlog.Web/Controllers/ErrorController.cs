@@ -12,15 +12,28 @@ namespace LittleBlog.Web.Controllers
     {
 
         [Route("Error/{statusCode}")]
-        public IActionResult Index(string statusCode)
+        public IActionResult Index(int statusCode)
         {
-            string Message = "服务器开小差了请稍后再试~";
-
             ErrorIndexViewModel viewModel = new ErrorIndexViewModel()
             {
-                StatusCode = statusCode,
-                ErrorMessage = Message
+                StatusCode = statusCode
             };
+
+            switch (statusCode)
+            {
+                case 401:
+                    viewModel.ErrorMessage = "您没有权限访问此资源";
+                    break;
+                case 404:
+                    viewModel.ErrorMessage = "您访问的资源不存在或者已删除~";
+                    break;
+                case 500:
+                    viewModel.ErrorMessage = "服务器内部出现了一点小问题~";
+                    break;
+                default:
+                    viewModel.ErrorMessage = "服务器开小差了~请稍后再试~";
+                    break;
+            }
 
             return View(viewModel);
         }

@@ -4,6 +4,7 @@ using LittleBlog.Web.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,15 @@ namespace LittleBlog.Web.Areas.Identity
                         context.Configuration.GetConnectionString("MysqlConnection")));
 
                 services.AddDefaultIdentity<LittleBlogIdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                    .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<LittleBlogContext>();
+
+                services.AddAuthorization(options =>
+                {
+                    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+                });
             });
         }
     }

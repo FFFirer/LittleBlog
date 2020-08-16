@@ -1,0 +1,15 @@
+﻿@model LittleBlog.Web.Models.ErrorIndexViewModel
+
+@{
+    ViewData["Title"] = Model.StatusCode;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Oops~~~@Model.StatusCode</h1>
+
+<div>
+    <h4>@Model.ErrorMessage</h4>
+</div>
+<div>
+    <a asp-action="Index" asp-controller="Home">Back to Home</a>
+</div>
