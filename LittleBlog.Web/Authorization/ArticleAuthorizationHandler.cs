@@ -24,10 +24,18 @@ namespace LittleBlog.Web.Authorization
                 return Task.CompletedTask;
             }
 
+            // 已发布的所有角色都可以查看
+            if (resource.IsPublished)
+            {
+                context.Succeed(requirement);
+            }
+
+            // 未发布的只有[Administrator]可以查看
             if (context.User.IsInRole(RoleNames.AdministratorRoleName) && !resource.IsPublished)
             {
                 context.Succeed(requirement);
             }
+
 
             return Task.CompletedTask;
         }
