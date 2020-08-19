@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using LittleBlog.Web.Models;
 using LittleBlog.Web.Models.ViewModels.Archive;
 using LittleBlog.Web.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LittleBlog.Web.Controllers
 {
+    [AllowAnonymous]
     public class ArchiveController : Controller
     {
         private IArticleService _articleService;

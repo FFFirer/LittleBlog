@@ -5,9 +5,11 @@ using System.Net;
 using System.Threading.Tasks;
 using LittleBlog.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LittleBlog.Web.Controllers
 {
+    [AllowAnonymous]
     public class ErrorController : Controller
     {
 

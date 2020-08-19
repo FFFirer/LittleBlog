@@ -27,6 +27,7 @@ namespace LittleBlog.Web.Areas.Identity
 
                 services.AddAuthorization(options =>
                 {
+                    // 后备身份验证策略，所有未显示认证的操作都需要登录操作。
                     options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
                         .RequireAuthenticatedUser()
                         .Build();

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Controllers
 {
+    [AllowAnonymous]
     public class ArticleController : Controller
     {
         private IArticleService _articleService;

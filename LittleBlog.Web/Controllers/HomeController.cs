@@ -11,9 +11,11 @@ using LittleBlog.Web.Services.Interfaces;
 using LittleBlog.Web.Mock;
 using LittleBlog.Web.Models.ViewModels.Home;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LittleBlog.Web.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private IArticleService _articleService;
@@ -41,36 +43,36 @@ namespace LittleBlog.Web.Controllers
             return View(viewmodel);
         }
 
-        /// <summary>
-        /// GET,展示修改界面
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public IActionResult Edit()
-        {
-            return View(new Article());
-        }
+        ///// <summary>
+        ///// GET,展示修改界面
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //public IActionResult Edit()
+        //{
+        //    return View(new Article());
+        //}
 
-        /// <summary>
-        /// POST,提交修改
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public IActionResult Edit([FromBody]EditViewModel model)
-        {
-            try
-            {
-                _articleService.SaveContentChange(model.Info.Id, model.Info.Content);
-                return Index();
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "编辑文章");
-                // 返回错误页
-                return Error();
-            }
-        }
+        ///// <summary>
+        ///// POST,提交修改
+        ///// </summary>
+        ///// <param name="model"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public IActionResult Edit([FromBody]EditViewModel model)
+        //{
+        //    try
+        //    {
+        //        _articleService.SaveContentChange(model.Info.Id, model.Info.Content);
+        //        return Index();
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        _logger.LogError(ex, "编辑文章");
+        //        // 返回错误页
+        //        return Error();
+        //    }
+        //}
 
         public IActionResult Privacy()
         {
