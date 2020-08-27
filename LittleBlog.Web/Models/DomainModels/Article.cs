@@ -1,4 +1,6 @@
+using LittleBlog.Web.Models.DomainModels;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -78,5 +80,11 @@ namespace LittleBlog.Web.Models
         /// </summary>
         [Display(Name ="状态")]
         public bool IsPublished { get; set; }
+
+        [NotMapped]
+        public Category ArticleCategory { get; set; }
+
+        [NotMapped]
+        public List<Tag> ArticleTags { get; set; }
     }
 }

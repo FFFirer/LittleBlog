@@ -46,6 +46,8 @@ namespace LittleBlog.Web
             services.AddRazorPages();
 
             services.AddTransient<IArticleService, ArticleService>();
+            services.AddTransient<ITagService, TagService>();
+            services.AddTransient<ICategoryService, CategoryService>();
             services.AddSingleton<IAuthorizationHandler, ArticleAuthorizationHandler>();
         }
 

@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Models.DomainModels
 {
-    public class ArticleCategory
+    public class PersonalInfo
     {
         [Key]
-        [Required]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
-        [Required]
-        public int ArticleId { get; set; }
+        [MaxLength(255)]
+        public string BlogOwner { get; set; }
 
-        [Required]
-        public int CategoryId { get; set; }
+        [DataType(DataType.Text)]
+        public string Description { get; set; }
     }
 }

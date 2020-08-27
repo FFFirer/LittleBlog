@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LittleBlog.Web.Controllers
 {
     [AllowAnonymous]
+    [Route("Archive")]
     public class ArchiveController : Controller
     {
         private IArticleService _articleService;
@@ -40,11 +41,45 @@ namespace LittleBlog.Web.Controllers
             return View(viewModel);
         }
 
-        public IActionResult List(string archiveDate, int page = 1)
+        [HttpGet]
+        [Route("Date/{archiveDate}")]
+        public IActionResult List(string archiveDate)
         {
+            if (string.IsNullOrEmpty(archiveDate))
+            {
+                return NotFound();
+            }
             ArchiveListViewModel viewModel = new ArchiveListViewModel();
-
+            viewModel.Articles = _articleService.GetAllArticlesByArchiveDate(archiveDate);
             return View(viewModel);
+        }
+
+        [HttpGet]
+        [Route("Category/{categoryId}")]
+        public IActionResult Category(int? categoryId)
+        {
+            if(categoryId == null)
+            {
+                return NotFound();
+            }
+
+            ArchiveListViewModel viewModel = new ArchiveListViewModel();
+            viewModel.Articles = _articleService.GetAllArticlesByCategory((int)categoryId);
+            return View("List", viewModel);
+        }
+
+        [HttpGet]
+        [Route("Tag/{tagId}")]
+        public IActionResult Tag(int? tagId)
+        {
+            if(tagId == null)
+            {
+                return NotFound();
+            }
+
+            ArchiveListViewModel viewModel = new ArchiveListViewModel();
+            viewModel.Articles = _articleService.GetAllArticlesByTag((int)tagId);
+            return View("List", viewModel);
         }
     }
 }

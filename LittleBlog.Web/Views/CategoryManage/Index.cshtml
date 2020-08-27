@@ -1,0 +1,73 @@
+﻿@model LittleBlog.Web.Models.ViewModels.CategoryManage.CategoryManageIndexViewModel
+
+@{
+    ViewData["Title"] = "Category 管理";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <p>
+            <a asp-action="Create" class="btn btn-primary">新增一个分类</a>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Categories.FirstOrDefault().DisplayName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Categories.FirstOrDefault().Description)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Categories.FirstOrDefault().CreateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Categories.FirstOrDefault().LastEditTime)
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Categories.Count() > 0)
+                {
+                    foreach (var category in Model.Categories)
+                    {
+                        <tr>
+                            <td>
+                                @category.DisplayName
+                            </td>
+                            <td>
+                                @category.Description
+                            </td>
+                            <td>
+                                @category.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")
+                            </td>
+                            <td>
+                                @category.LastEditTime.ToString("yyyy-MM-dd HH:mm:ss")
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@category.Id">编辑</a>
+                                <a asp-action="Delete" asp-route-id="@category.Id">删除</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td class="text-center" colspan="5">
+                            暂无数据！
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

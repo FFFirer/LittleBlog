@@ -1,5 +1,6 @@
 ﻿using LittleBlog.Web.Areas.Identity.Data;
 using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.DomainModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,9 @@ namespace LittleBlog.Web.Data
         }
 
         public DbSet<Article> Articles { get; set; }
-        public DbSet<ArticleCategory> Categories { get; set; }
-        public DbSet<ArticleTag> Tags { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<ArticleCategory> ArticleCategories { get; set; }
+        public DbSet<ArticleTag> ArticleTags { get; set; }
     }
 }

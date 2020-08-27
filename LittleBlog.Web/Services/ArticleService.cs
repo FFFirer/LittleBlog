@@ -7,6 +7,7 @@ using LittleBlog.Web.Models;
 using LittleBlog.Web.Models.ViewModels.Manage;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 namespace LittleBlog.Web.Services
 {
@@ -120,7 +121,8 @@ namespace LittleBlog.Web.Services
         /// <summary>
         /// 获取归档的文章列表
         /// </summary>
-        /// <param name="total"></param>
+        /// <param name="archiveDate">yyyy-MM</param>
+        /// <param name="total">总数</param>
         /// <param name="page"></param>
         /// <param name="perpage"></param>
         /// <param name="isPublish"></param>
@@ -140,13 +142,66 @@ namespace LittleBlog.Web.Services
             if (isPublish)
             {
                 total = db.Articles.Where(a => a.IsPublished == true).Count();
-                return db.Articles.FromSqlRaw<Article>(@"select *, DATE_FORMAT(CreateTime, '%Y-%m-%d') as ArchiveDate from Articles where IsPublished=1 order by ArchiveDate").Skip((page - 1) * perpage).Take(perpage).ToList();
+                return db.Articles.FromSqlRaw<Article>("select *, DATE_FORMAT(CreateTime, '%Y-%m') as ArchiveDate from Articles where  IsPublished=1 order by ArchiveDate")
+                    .Skip((page - 1) * perpage)
+                    .Take(perpage)
+                    .ToList();
             }
             else
             {
                 total = db.Articles.Where(a => a.IsPublished == true).Count();
-                return db.Articles.FromSqlRaw<Article>(@"select *, DATE_FORMAT(CreateTime, '%Y-%m-%d') as ArchiveDate from Articles order by ArchiveDate").Skip((page - 1) * perpage).Take(perpage).ToList();
+                return db.Articles.FromSqlRaw<Article>("select *, DATE_FORMAT(CreateTime, '%Y-%m') as ArchiveDate from Articles order by ArchiveDate")
+                    .Skip((page - 1) * perpage)
+                    .Take(perpage)
+                    .ToList();
             }
+        }
+
+        public List<Article> GetAllArticlesByCategory(int categoryId)
+        {
+            var CategoryId = new MySqlParameter("categoryId", categoryId);
+            return db.Articles.FromSqlRaw("select distinct a.* from Articles a left join ArticleCategories b on a.Id=b.ArticleId where b.CategoryId=@categoryId and IsPublished=1;", CategoryId).ToList();
+        }
+
+        public List<Article> GetAllArticlesByTag(int tagId)
+        {
+            var TagId = new MySqlParameter("tagId", tagId);
+            return db.Articles.FromSqlRaw("select distinct a.* from Articles a left join ArticleTags b on a.Id=b.ArticleId where b.TagId=@tagId and IsPublished=1;", TagId).ToList();
+        }
+
+
+        /// <summary>
+        /// 获取文章归档情况
+        /// </summary>
+        /// <returns></returns> 
+        public List<ArchivedArticlesSummary> GetArchivedArticlesSummaries()
+        {
+            List<ArchivedArticlesSummary> summaries = new List<ArchivedArticlesSummary>();
+            var articles = db.Articles.Where(a=>a.IsPublished.Equals(true)).ToList();
+            var data = articles.GroupBy(p => p.CreateTime.ToString("yyyy-MM"));
+            foreach (var d in data)
+            {
+                summaries.Add(new ArchivedArticlesSummary()
+                {
+                    ArchiveDate = d.Key,
+                    CreateTime = d.FirstOrDefault().CreateTime,
+                    ArticlesCounts = d.Count()
+                });
+            }
+
+            return summaries;
+        }
+
+
+        /// <summary>
+        /// 根据归档日期获取文章
+        /// </summary>
+        /// <param name="archiveDate"></param>
+        /// <returns></returns>
+        public List<Article> GetAllArticlesByArchiveDate(string archiveDate)
+        {
+            var ArchiveDate = new MySqlParameter("archiveDate", archiveDate);
+            return db.Articles.FromSqlRaw("select * from Articles where DATE_FORMAT(CreateTime, '%Y-%m')=@archiveDate and IsPublished=1", ArchiveDate).ToList();
         }
     }
 }

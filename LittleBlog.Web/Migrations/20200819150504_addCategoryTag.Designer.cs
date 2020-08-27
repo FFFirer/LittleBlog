@@ -3,14 +3,16 @@ using System;
 using LittleBlog.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LittleBlog.Web.Migrations
 {
     [DbContext(typeof(LittleBlogContext))]
-    partial class LittleBlogContextModelSnapshot : ModelSnapshot
+    [Migration("20200819150504_addCategoryTag")]
+    partial class addCategoryTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

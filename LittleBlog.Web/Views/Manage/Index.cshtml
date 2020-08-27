@@ -2,60 +2,70 @@
 
 @{
     ViewData["Title"] = "Manage Articles";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">
-        写新的文章
-    </a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Author)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().LastEditTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().IsPublished)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Articles) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastEditTime)
-            </td>
-            @if (item.IsPublished)
-            {
-                <td>已发布</td>
-            }
-            else
-            {
-                <td>草稿</td>
-            }
-            <td>
-                @Html.ActionLink("编辑", "edit", "Manage", new { id = item.Id }) |
-                @Html.ActionLink("查看", "Index", "Article", new { id = item.Id }) |
-                @Html.ActionLink("删除", "Delete", "Manage", new { id = item.Id })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-12">
+        <p>
+            <a asp-action="Create" class="btn btn-primary">
+                写新的文章
+            </a>
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Author)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().LastEditTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().IsPublished)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Articles)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Author)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastEditTime)
+                        </td>
+                        @if (item.IsPublished)
+                        {
+                            <td>已发布</td>
+                        }
+                        else
+                        {
+                            <td>草稿</td>
+                        }
+                        <td>
+                            @Html.ActionLink("编辑", "edit", "Manage", new { id = item.Id }) |
+                            @Html.ActionLink("查看", "Index", "Article", new { id = item.Id }) |
+                            @Html.ActionLink("删除", "Delete", "Manage", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-@await Component.InvokeAsync("PageList", new { pageInfo = Model.PageInfo, actionName = "Index", routeParams = new Dictionary<string, string>() })
+        @await Component.InvokeAsync("PageList", new { pageInfo = Model.PageInfo, actionName = "Index", routeParams = new Dictionary<string, string>() })
+    </div>
+</div>
