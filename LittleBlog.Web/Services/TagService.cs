@@ -2,7 +2,9 @@
 using LittleBlog.Web.Models;
 using LittleBlog.Web.Models.DomainModels;
 using LittleBlog.Web.Services.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,8 +63,19 @@ namespace LittleBlog.Web.Services
 
         public List<Tag> GetSummary()
         {
-            var tagSummaries = _db.Tags.FromSqlRaw("select * from Tags ").ToList();
+            var tagSummaries = _db.Tags.FromSqlRaw("select * from Tags").ToList();
+            tagSummaries.ForEach(t =>
+            {
+                MySqlParameter TagId = new MySqlParameter("tagId", t.Id);
+                t.ArticlesCount = _db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleTags where a.Id=ArticleId and TagId=@tagId) and a.IsPublished=1", TagId).Count();
+            });
             return tagSummaries;
+        }
+
+        public List<Tag> GetTagsByArticle(int articleId)
+        {
+            MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
+            return _db.Tags.FromSqlRaw("select * from Tags a where exists(select 1 from ArticleTags where TagId=a.Id and ArticleId=@articleId)", ArticleId).ToList();
         }
 
         public void Save(Tag tag)

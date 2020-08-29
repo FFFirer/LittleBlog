@@ -1,5 +1,6 @@
 ﻿using LittleBlog.Web.Constants;
 using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.ViewModels;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,15 @@ namespace LittleBlog.Web.Controllers
     {
         private IArticleService _articleService;
         private IAuthorizationService _authorizationService;
+        private ICategoryService _categoryService;
+        private ITagService _tagService;
 
-        public ArticleController(IArticleService articleService, IAuthorizationService authorizationService)
+        public ArticleController(IArticleService articleService, IAuthorizationService authorizationService, ICategoryService categoryService, ITagService tagService)
         {
             _articleService = articleService;
             _authorizationService = authorizationService;
+            _categoryService = categoryService;
+            _tagService = tagService;
         }
 
         [HttpGet]
@@ -37,7 +42,11 @@ namespace LittleBlog.Web.Controllers
                 return NotFound();
             }
 
-            return View(article);
+            ArticleIndexViewModel viewModel = new ArticleIndexViewModel();
+            viewModel.Article = article;
+            viewModel.Category = _categoryService.GetCategoryByArticle(article.Id);
+            viewModel.Tags = _tagService.GetTagsByArticle(article.Id);
+            return View(viewModel);
         }
     }
 }

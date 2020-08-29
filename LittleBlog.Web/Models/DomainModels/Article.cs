@@ -15,6 +15,7 @@ namespace LittleBlog.Web.Models
         public Article()
         {
             Author = GlobalConfig.AuthorName;
+            ArticleTags = new List<Tag>();
         }
 
         /// <summary>
@@ -54,7 +55,6 @@ namespace LittleBlog.Web.Models
         /// 保存路径
         /// </summary>
         /// <value></value>
-        [Required]
         [MaxLength(255)]
         [Display(Name="保存路径")]
         public string SavePath{ get; set; }
@@ -63,7 +63,6 @@ namespace LittleBlog.Web.Models
         /// 编写时间
         /// </summary>
         /// <value></value>
-        [Required]
         [Display(Name="创建时间")]
         public DateTime CreateTime{ get; set; }
 
@@ -71,7 +70,6 @@ namespace LittleBlog.Web.Models
         /// 最后一次修改的时间
         /// </summary>
         /// <value></value>
-        [Required]
         [Display(Name="最后一次编辑的时间")]
         public DateTime LastEditTime{ get; set; }
 

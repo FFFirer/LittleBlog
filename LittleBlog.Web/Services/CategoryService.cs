@@ -2,7 +2,9 @@
 using LittleBlog.Web.Models;
 using LittleBlog.Web.Models.DomainModels;
 using LittleBlog.Web.Services.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,9 +61,20 @@ namespace LittleBlog.Web.Services
             return _db.Categories.FirstOrDefault(c => c.Id.Equals(id));
         }
 
+        public Category GetCategoryByArticle(int articleId)
+        {
+            MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
+            return _db.Categories.FromSqlRaw("select * from Categories a where exists(select 1 from ArticleCategories where CategoryId=a.Id and ArticleId=@articleId)", ArticleId).FirstOrDefault();
+        }
+
         public List<Category> GetSummary()
         {
             var categorySummaries = _db.Categories.FromSqlRaw<Category>("select * from Categories ").ToList();
+            categorySummaries.ForEach(c =>
+            {
+                MySqlParameter CategoryId = new MySqlParameter("categoryId", c.Id);
+                c.ArticlesCount = _db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleCategories where a.Id=ArticleId and CategoryId=@categoryId) and a.IsPublished=1", CategoryId).Count();
+            });
             return categorySummaries;
         }
 
@@ -94,6 +107,7 @@ namespace LittleBlog.Web.Services
                     ArticleId = articleId,
                     CategoryId = categoryId
                 };
+                _db.ArticleCategories.Add(articleCategory);
             }
             else
             {

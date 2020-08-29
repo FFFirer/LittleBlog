@@ -1,17 +1,39 @@
-﻿@model LittleBlog.Web.Models.Article
+﻿@model LittleBlog.Web.Models.ViewModels.ArticleIndexViewModel
 
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.Article.Title;
 }
 
 <div class="row">
     <div class="col-sm-8">
-        <h1>@Model.Title</h1>
-        <p>@Model.Author - @Model.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</p>
+        <h1>@Model.Article.Title</h1>
+        <p>@Model.Article.Author - @Model.Article.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</p>
+        <p>
+            <label>分类：</label>
+            <span class="badge badge-light">@Model.Category.DisplayName</span>
+            <label>标签：</label>
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="badge badge-light">@tag.DisplayName</span>
+            }
+        </p>
 
         <hr />
         <div class="article">
-            @Html.Raw(Model.Content)
+            @Html.Raw(Model.Article.Content)
+        </div>
+
+        <hr />
+        <div>
+            <label>分类：</label>
+            <span class="badge badge-light">@Model.Category.DisplayName</span>
+        </div>
+        <div>
+            <label>标签：</label>
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="badge badge-light">@tag.DisplayName</span>
+            }
         </div>
     </div>
     <div class="col-sm-4">

@@ -47,7 +47,14 @@
     <div class="container-fluid">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
-            @RenderBody()
+            <div class="row">
+                <div class="col-xl-2 col-lg-2 col-md-2">
+                    <partial name="_AdminNav"/>
+                </div>
+                <div class="col-xl-10 col-lg-10 col-md-10">
+                    @RenderBody()
+                </div>
+            </div>
         </main>
     </div>
 

@@ -70,7 +70,7 @@ namespace LittleBlog.Web.Services.Interfaces
         /// </summary>
         /// <param name="article"></param>
         /// <returns></returns>
-        bool SaveArticle(ArticleEditViewModel articleEdited);
+        void SaveArticle(Article articleEdited);
 
         /// <summary>
         /// 获取归档的文章列表

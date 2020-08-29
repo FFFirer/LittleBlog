@@ -33,10 +33,7 @@ namespace LittleBlog.Web.Controllers
         /// <returns></returns>
         public IActionResult Index(int page = 1)
         {
-            // TODO: modify
             var results = _articleService.GetArticles(out int total, page, GlobalConfig.PageSize, true);
-            //var results = MockData.Instance.articles;
-
             Models.ViewModels.HomeIndexViewModel viewmodel = new Models.ViewModels.HomeIndexViewModel();
             viewmodel.ArticleInfos = results;
             viewmodel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, total);

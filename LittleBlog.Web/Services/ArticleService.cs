@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LittleBlog.Web.Common;
 using LittleBlog.Web.Data;
 using LittleBlog.Web.Models;
 using LittleBlog.Web.Models.ViewModels.Manage;
@@ -94,28 +95,25 @@ namespace LittleBlog.Web.Services
         /// </summary>
         /// <param name="article"></param>
         /// <returns></returns>
-        public bool SaveArticle(ArticleEditViewModel articleEdited)
+        public void SaveArticle(Article articleEdited)
         {
+            UpdateArticle(articleEdited);
             if(articleEdited.Id == 0)
             {
-                //create
-                Article article = new Article();
-                articleEdited.UpdateArticle(ref article);
-                db.Articles.Add(article);
+                db.Articles.Add(articleEdited);
             }
             else
             {
                 // update
-                Article article = db.Articles.Where(a => a.Id.Equals(articleEdited.Id)).FirstOrDefault();
+                Article article = db.Articles.AsNoTracking().Where(a => a.Id.Equals(articleEdited.Id)).FirstOrDefault();
                 if(article == null)
                 {
                     throw new Exception("更新的文章不存在");
                 }
-                articleEdited.UpdateArticle(ref article);
-                db.Articles.Update(article);
+                articleEdited.CreateTime = article.CreateTime;
+                db.Articles.Attach(articleEdited).State = EntityState.Modified;
             }
             db.SaveChanges();
-            return true;
         }
 
         /// <summary>
@@ -160,13 +158,13 @@ namespace LittleBlog.Web.Services
         public List<Article> GetAllArticlesByCategory(int categoryId)
         {
             var CategoryId = new MySqlParameter("categoryId", categoryId);
-            return db.Articles.FromSqlRaw("select distinct a.* from Articles a left join ArticleCategories b on a.Id=b.ArticleId where b.CategoryId=@categoryId and IsPublished=1;", CategoryId).ToList();
+            return db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleCategories where a.Id=ArticleId and CategoryId=@categoryId) and a.IsPublished=1", CategoryId).ToList();
         }
 
         public List<Article> GetAllArticlesByTag(int tagId)
         {
             var TagId = new MySqlParameter("tagId", tagId);
-            return db.Articles.FromSqlRaw("select distinct a.* from Articles a left join ArticleTags b on a.Id=b.ArticleId where b.TagId=@tagId and IsPublished=1;", TagId).ToList();
+            return db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleTags where a.Id=ArticleId and TagId=@tagId) and a.IsPublished=1", TagId).ToList();
         }
 
 
@@ -203,5 +201,25 @@ namespace LittleBlog.Web.Services
             var ArchiveDate = new MySqlParameter("archiveDate", archiveDate);
             return db.Articles.FromSqlRaw("select * from Articles where DATE_FORMAT(CreateTime, '%Y-%m')=@archiveDate and IsPublished=1", ArchiveDate).ToList();
         }
+
+        #region 私有方法
+
+        /// <summary>
+        /// 更新文章
+        /// </summary>
+        /// <param name="oldArticle"></param>
+        /// <param name="newArticle"></param>
+        private void UpdateArticle(Article article)
+        {
+            if (article.Id == 0)
+            {
+                article.CreateTime = DateTime.Now;
+            }
+
+            article.Abstract = TextHelper.GetAbstract(article.Content).ToString();
+            article.LastEditTime = DateTime.Now;
+            article.SavePath = string.Empty;
+        }
+        #endregion
     }
 }

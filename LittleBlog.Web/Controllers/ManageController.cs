@@ -4,6 +4,10 @@ using LittleBlog.Web.Models.ViewModels.Manage;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LittleBlog.Web.Controllers
 {
@@ -11,14 +15,18 @@ namespace LittleBlog.Web.Controllers
     public class ManageController : Controller
     {
         private IArticleService _articleService;
-        public ManageController(IArticleService articleService)
+        private ICategoryService _categoryService;
+        private ITagService _tagService;
+
+        public ManageController(IArticleService articleService, ICategoryService categoryService, ITagService tagService)
         {
             _articleService = articleService;
+            _categoryService = categoryService;
+            _tagService = tagService;
         }
 
         public IActionResult Index(int page = 1)
         {
-            // TODO: delete mock artocles
             ManageIndexViewModel viewModel = new ManageIndexViewModel()
             {
                 Articles = _articleService.GetArticles(out int total, page, GlobalConfig.PageSize),
@@ -36,6 +44,10 @@ namespace LittleBlog.Web.Controllers
                 article = new Article();
             }
             ArticleEditViewModel viewModel = new ArticleEditViewModel(article);
+            viewModel.Article.ArticleCategory = _categoryService.GetCategoryByArticle(article.Id);
+            viewModel.Article.ArticleTags = _tagService.GetTagsByArticle(article.Id);
+            ViewData["Categories"] = GetAllCategories();
+            ViewData["Tags"] = _tagService.Get();
             return View(viewModel);
         }
 
@@ -46,14 +58,19 @@ namespace LittleBlog.Web.Controllers
             {
                 try
                 {
-                    if (_articleService.SaveArticle(articleEdited))
+                    _articleService.SaveArticle(articleEdited.Article);
+                    
+                    if(articleEdited.CategoryId > 0)
                     {
-                        return Json(ResultModel.Success());
+                        _categoryService.SaveArticles(articleEdited.Article.Id, articleEdited.CategoryId);
                     }
-                    else
+
+                    if(articleEdited.TagIds?.Count() > 0)
                     {
-                        return Json(ResultModel.Fail());
+                        _tagService.SaveArticleTags(articleEdited.Article.Id, articleEdited.TagIds);
                     }
+
+                    return Json(ResultModel.Success());
                 }
                 catch (System.Exception ex)
                 {
@@ -71,6 +88,28 @@ namespace LittleBlog.Web.Controllers
         public IActionResult Create()
         {
             return View("Edit", new ArticleEditViewModel(new Article()));
+        }
+
+        /// <summary>
+        /// 获取所有的类别组成的下拉列表
+        /// </summary>
+        /// <param name="selectId"></param>
+        /// <returns></returns>
+        private List<SelectListItem> GetAllCategories(int selectId = 0)
+        {
+            var categories = _categoryService.Get();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            categories.ForEach(c =>
+            {
+                listItems.Add(new SelectListItem()
+                {
+                    Text = c.DisplayName,
+                    Value = c.Id.ToString(),
+                    Selected = c.Id == selectId
+                });
+            });
+
+            return listItems;
         }
     }
 }

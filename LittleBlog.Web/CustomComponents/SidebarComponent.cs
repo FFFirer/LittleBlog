@@ -30,10 +30,10 @@ namespace LittleBlog.Web.CustomComponents
             var categorySummaries = _categoryService.GetSummary();
 
             model.tagSummaries = tagSummaries
-                .Select(t => new TagSummary() { TagId=t.Id, TagName = t.DisplayName, Count = t.ArticlesCount }).ToList();
+                .Select(t => new TagSummary() { TagId=t.Id, TagName = t.DisplayName, Count = t.ArticlesCount }).Where(ts => ts.Count > 0).ToList();
             model.categorySummaries = categorySummaries
-                .Select(c => new CategorySummary() { CategoryId = c.Id, CategoryName = c.DisplayName, Count = c.ArticlesCount }).ToList();
-            model.archivedArticlesSummaries = _articleService.GetArchivedArticlesSummaries();
+                .Select(c => new CategorySummary() { CategoryId = c.Id, CategoryName = c.DisplayName, Count = c.ArticlesCount }).Where(cs => cs.Count > 0).ToList();
+            model.archivedArticlesSummaries = _articleService.GetArchivedArticlesSummaries().Where(aas => aas.ArticlesCounts > 0).ToList();
 
             return View(model);
         }

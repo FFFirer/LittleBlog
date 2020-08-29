@@ -8,28 +8,51 @@
     <div class="col-md-12">
         <form asp-action="Edit" id="articleEdit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" class="form-control" />
+            <input type="hidden" asp-for="Article.Id" class="form-control" />
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                <label asp-for="Article.Title" class="control-label"></label>
+                <input asp-for="Article.Title" class="form-control" />
+                <span asp-validation-for="Article.Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Author" class="control-label"></label>
-                <input asp-for="Author" class="form-control" readonly="readonly" />
-                <span asp-validation-for="Author" class="text-danger"></span>
+                <label asp-for="Article.Author" class="control-label"></label>
+                <input asp-for="Article.Author" class="form-control" readonly="readonly" />
+                <span asp-validation-for="Article.Author" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
+                <label asp-for="Article.Content" class="control-label"></label>
                 <div id="editor">
-                    @Html.Raw(Model.Content)
+                    @Html.Raw(Model.Article.Content)
                 </div>
-                <span asp-validation-for="Content" class="text-danger"></span>
+                <span asp-validation-for="Article.Content" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                @Html.DropDownList("CategoryId", ViewData["Categories"] as IEnumerable<SelectListItem>, "请选择文章分类", new { @class = "form-control"})
+            </div>
+            <div class="form-group">
+                <label asp-for="TagIds" class="control-label"></label>
+                <div>
+                    @foreach (var tag in ViewData["Tags"] as IList<Tag>)
+                    {
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label">
+                                @if (Model.Article.ArticleTags.Exists(at => at.Id.Equals(tag.Id)))
+                                {
+                                    <input type="checkbox" class="form-check-input" name="TagIds" value="@tag.Id" checked="checked" /> @tag.DisplayName
+                                }
+                                else
+                                {
+                                    <input type="checkbox" class="form-check-input" name="TagIds" value="@tag.Id" /> @tag.DisplayName
+                                }
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" name="IsPublish" type="checkbox" asp-for="IsPublished"> 发布
+                    <input class="form-check-input" name="IsPublish" type="checkbox" asp-for="Article.IsPublished"> 发布
                 </label>
             </div>
             <input type="button" value="Save / 保存" onclick="Save()" class="btn btn-primary" />
@@ -54,13 +77,19 @@
     //提交保存
     function Save() {
         let formdata = {};
+        formdata.Article = {};
         formdata.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();
-        formdata.Id = $('#Id').val();
-        formdata.Title = $('#Title').val();
-        formdata.Author = $('#Author').val();
-        formdata.Content = editor.txt.html();
-        formdata.IsPublished = $('#IsPublished')[0].checked;
-        console.log(formdata);
+        formdata.Article.Id = $('#Article_Id').val();
+        formdata.Article.Title = $('#Article_Title').val();
+        formdata.Article.Author = $('#Article_Author').val();
+        formdata.Article.Content = editor.txt.html();
+        formdata.Article.IsPublished = $('#Article_IsPublished')[0].checked;
+        formdata.CategoryId = $('#CategoryId').val();
+        formdata.TagIds = [];
+        $("input[name=TagIds]:checked").each(function (index, item) {
+            formdata.TagIds.push($(this).val());
+        });
+        //console.log(formdata);
         Submit(formdata);
     }
 
