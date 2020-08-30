@@ -7,19 +7,19 @@ namespace LittleBlog.Web.Models
 {
     public class ResultModel
     {
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; }
-        public object Data { get; set; }
-        public string ExceptionMessage { get; set; }
+        public bool isSuccess { get; set; }
+        public string message { get; set; }
+        public object data { get; set; }
+        public string exceptionMessage { get; set; }
 
         public static ResultModel Success(object data = null, string message = "Successed")
         {
             return new ResultModel()
             {
-                IsSuccess = true,
-                Message = message,
-                Data = data,
-                ExceptionMessage = "",
+                isSuccess = true,
+                message = message,
+                data = data,
+                exceptionMessage = "",
             };
         }
 
@@ -27,10 +27,10 @@ namespace LittleBlog.Web.Models
         {
             return new ResultModel()
             {
-                IsSuccess = false,
-                Message = message,
-                Data = "",
-                ExceptionMessage = ""
+                isSuccess = false,
+                message = message,
+                data = "",
+                exceptionMessage = ""
             };
         }
 
@@ -38,10 +38,10 @@ namespace LittleBlog.Web.Models
         {
             return new ResultModel()
             {
-                IsSuccess = false,
-                Message = message,
-                Data = "",
-                ExceptionMessage = ex?.Message ?? ""
+                isSuccess = false,
+                message = message,
+                data = "",
+                exceptionMessage = ex?.Message ?? ""
             };
         }
     }

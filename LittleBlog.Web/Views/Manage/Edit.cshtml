@@ -27,17 +27,17 @@
                 <span asp-validation-for="Article.Content" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                @Html.DropDownList("CategoryId", ViewData["Categories"] as IEnumerable<SelectListItem>, "请选择文章分类", new { @class = "form-control"})
+                <label asp-for="CategoryId" class="control-label"></label>&nbsp;<span id="spNewCategory" style="cursor: pointer" class="badge badge-primary"><i class="fa fa-plus"></i></span>
+                @Html.DropDownListFor(model => model.CategoryId, ViewData["Categories"] as IEnumerable<SelectListItem>, "请选择文章分类", new { @class = "form-control" })
             </div>
             <div class="form-group">
-                <label asp-for="TagIds" class="control-label"></label>
-                <div>
+                <label asp-for="TagIds" class="control-label"></label>&nbsp;<span id="spNewTag" style="cursor: pointer" class="badge badge-primary"><i class="fa fa-plus"></i></span>
+                <div id="tagContainer">
                     @foreach (var tag in ViewData["Tags"] as IList<Tag>)
                     {
                         <div class="form-check form-check-inline">
                             <label class="form-check-label">
-                                @if (Model.Article.ArticleTags.Exists(at => at.Id.Equals(tag.Id)))
+                                @if (Model.TagIds.Exists(t => t.Equals(tag.Id)))
                                 {
                                     <input type="checkbox" class="form-check-input" name="TagIds" value="@tag.Id" checked="checked" /> @tag.DisplayName
                                 }
@@ -58,6 +58,58 @@
             <input type="button" value="Save / 保存" onclick="Save()" class="btn btn-primary" />
         </form>
     </div>
+    <div class="modal fade" id="addNewCategroyModal" style="z-index: 10002">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>新增 - 分类</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="newCategoryForm">
+                        <div class="form-group ">
+                            <label class="control-label">分类名称</label>
+                            <input id="categoryDisplayName" name="DisplayName" type="text" class="form-control" />
+                        </div>
+                        <div class="form-group ">
+                            <label class="control-label">分类描述</label>
+                            <input id="categoryDescription" name="Description" type="text" class="form-control" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveCategory" onclick="submitNewCategory()">确定</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addNewTagModal" style="z-index: 10002">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>新增 - 标签</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTagForm">
+                        <div class="form-group ">
+                            <label class="control-label">标签名称</label>
+                            <input id="tagDisplayName" name="DisplayName" type="text" class="form-control" />
+                        </div>
+                        <div class="form-group ">
+                            <label class="control-label">标签描述</label>
+                            <input id="tagDescription" name="Description" type="text" class="form-control" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveTag" onclick="submitNewTag()">确定</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div>
@@ -67,6 +119,8 @@
 @section Scripts {
 <script type="text/javascript" src="~/lib/wangEditor/wangEditor.min.js"></script>
 <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
 <script type="text/javascript">
 
     var E = window.wangEditor;
@@ -93,6 +147,12 @@
         Submit(formdata);
     }
 
+    // 文章提交表单验证
+    function validateSubmit() {
+
+    }
+
+    // 提交文章内容
     function Submit(data) {
         $.ajax({
             url: '@Url.Action("Edit", "Manage")',
@@ -112,5 +172,158 @@
         })
     }
 
+    // 提交新分类
+    function submitNewCategory() {
+        let isValid = $('#newCategoryForm').valid();
+        if (!isValid) {
+            return
+        }
+        else {
+            let formData = $('#newCategoryForm').serialize();
+            $.ajax({
+                url: '@Url.Action("CreateCategory", "CategoryManage")',
+                type: 'post',
+                dataType: 'json',
+                data: formData,
+                success: function (data) {
+                    if (data.isSuccess) {
+                        renderCategoryList(data.data);
+                        $('#addNewCategroyModal').modal('hide');
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
+        }
+    }
+
+    // 提交新标签
+    function submitNewTag() {
+        let isValid = $('#newTagForm').valid();
+        if (!isValid) {
+            return
+        }
+        else {
+            let formData = $('#newTagForm').serialize();
+            $.ajax({
+                url: '@Url.Action("CreateTag", "TagManage")',
+                type: 'post',
+                dataType: 'json',
+                data: formData,
+                success: function (data) {
+                    if (data.isSuccess) {
+                        renderTagList(data.data);
+                        $('#addNewTagModal').modal('hide');
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
+        }
+    }
+
+    // 重新渲染分类下拉列表
+    function renderCategoryList(data) {
+        let optionChild = document.createElement('option');
+        optionChild.value = data.id;
+        optionChild.text = data.displayName;
+        let categorySelect = document.getElementById('CategoryId');
+        categorySelect.appendChild(optionChild);
+    }
+
+    // 重新渲染复选框
+    function renderTagList(data) {
+        let checkboxChild = document.createElement('input');
+        checkboxChild.type = 'checkbox';
+        checkboxChild.className = 'form-check-input';
+        checkboxChild.name = 'TagIds';
+        checkboxChild.value = data.id;
+        checkboxChild.checked = true;
+
+        let labelChild = document.createElement('label');
+        labelChild.className = 'form-check-label';
+        labelChild.appendChild(checkboxChild);
+        labelChild.append(' ' + data.displayName);
+
+        let divChild = document.createElement('div');
+        divChild.className = 'form-check form-check-inline';
+        divChild.appendChild(labelChild);
+
+        let tagContainer = document.getElementById('tagContainer');
+        tagContainer.appendChild(divChild);
+    }
+
+    $(document).ready(function () {
+
+        // 表单校验
+        $('#newCategoryForm').validate({
+            rules: {
+                DisplayName: {
+                    required: true,
+                    maxlength: 255
+                },
+                Description: {
+                    required: true,
+                    maxlength: 255
+                }
+            },
+            messages: {
+                DisplayName: {
+                    required: '必填',
+                    maxlength: '最大不超过255字符'
+                },
+                Description: {
+                    required: '必填',
+                    maxlength: '最大不超过255字符'
+                }
+            }
+        })
+
+        $('#newTagForm').validate({
+            rules: {
+                DisplayName: {
+                    required: true,
+                    maxlength: 255
+                },
+                Description: {
+                    required: true,
+                    maxlength: 255
+                }
+            },
+            messages: {
+                DisplayName: {
+                    required: '必填',
+                    maxlength: '最大不超过255字符'
+                },
+                Description: {
+                    required: '必填',
+                    maxlength: '最大不超过255字符'
+                }
+            }
+        })
+
+        // 模态框关闭后清数据
+        $('#addNewCategroyModal').on('hide.bs.modal', function (e) {
+            $('#addNewCategroyModal input').val('');
+        });
+
+        $("#addNewTagModal").on('hide.bs.modal', function (e) {
+            $('#addNewTagModal input').val('');
+        })
+
+        $("#spNewCategory").click(function () {
+            $("#addNewCategroyModal").modal('show');
+        });
+
+        $("#spNewTag").click(function () {
+            $("#addNewTagModal").modal('show');
+        });
+    });
 </script>
 }

@@ -107,5 +107,34 @@ namespace LittleBlog.Web.Controllers
         {
             return View("Edit", new Category());
         }
+
+        /// <summary>
+        /// 创建分类，webapi
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult CreateCategory(Category category)
+        {
+            try
+            {
+                if(category.Id > 0)
+                {
+                    return Json(ResultModel.Fail("此分类已创建"));
+                }
+                else
+                {
+                    category.CreateTime = DateTime.Now;
+                    category.LastEditTime = DateTime.Now;
+                    _categoryService.Save(category);
+                    return Json(ResultModel.Success(category, "创建成功"));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "新建分类失败");
+                return Json(ResultModel.Error(ex, "新建分类失败"));
+            }
+        }
     }
 }

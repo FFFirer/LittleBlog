@@ -132,3 +132,10 @@ body {
 .article ul, ol {
     margin: 10px 0 10px 20px;
 }
+
+
+/*错误信息*/
+label.error {
+    color: red;
+    font-size: 10px;
+}

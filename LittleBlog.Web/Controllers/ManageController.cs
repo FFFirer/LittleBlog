@@ -46,6 +46,15 @@ namespace LittleBlog.Web.Controllers
             ArticleEditViewModel viewModel = new ArticleEditViewModel(article);
             viewModel.Article.ArticleCategory = _categoryService.GetCategoryByArticle(article.Id);
             viewModel.Article.ArticleTags = _tagService.GetTagsByArticle(article.Id);
+            if(viewModel.Article.ArticleCategory != null && viewModel.Article.ArticleCategory.Id > 0)
+            {
+                viewModel.CategoryId = viewModel.Article.ArticleCategory.Id;
+            }
+
+            if(viewModel.Article.ArticleTags != null && viewModel.Article.ArticleTags.Count() > 0)
+            {
+                viewModel.TagIds = viewModel.Article.ArticleTags.Select(t => t.Id).ToList();
+            }
             ViewData["Categories"] = GetAllCategories();
             ViewData["Tags"] = _tagService.Get();
             return View(viewModel);
@@ -87,6 +96,8 @@ namespace LittleBlog.Web.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewData["Categories"] = GetAllCategories();
+            ViewData["Tags"] = _tagService.Get();
             return View("Edit", new ArticleEditViewModel(new Article()));
         }
 

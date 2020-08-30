@@ -107,5 +107,34 @@ namespace LittleBlog.Web.Controllers
         {
             return View("Edit", new Tag());
         }
+
+        /// <summary>
+        /// 创建标签，webapi
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult CreateTag(Tag tag)
+        {
+            try
+            {
+                if(tag.Id > 0)
+                {
+                    return Json(ResultModel.Fail("此标签已创建"));
+                }
+                else
+                {
+                    tag.CreateTime = DateTime.Now;
+                    tag.LastEditTime = DateTime.Now;
+                    _tagService.Save(tag);
+                    return Json(ResultModel.Success(tag, "创建成功"));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "新建标签失败");
+                return Json(ResultModel.Error(ex, "新建标签失败"));
+            }
+        }
     }
 }
