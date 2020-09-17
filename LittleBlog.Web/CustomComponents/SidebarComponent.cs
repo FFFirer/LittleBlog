@@ -33,7 +33,7 @@ namespace LittleBlog.Web.CustomComponents
                 .Select(t => new TagSummary() { TagId=t.Id, TagName = t.DisplayName, Count = t.ArticlesCount }).Where(ts => ts.Count > 0).ToList();
             model.categorySummaries = categorySummaries
                 .Select(c => new CategorySummary() { CategoryId = c.Id, CategoryName = c.DisplayName, Count = c.ArticlesCount }).Where(cs => cs.Count > 0).ToList();
-            model.archivedArticlesSummaries = _articleService.GetArchivedArticlesSummaries().Where(aas => aas.ArticlesCounts > 0).ToList();
+            model.archivedArticlesSummaries = _articleService.GetArchivedArticlesSummaries().Where(aas => aas.ArticlesCount > 0).ToList();
 
             return View(model);
         }

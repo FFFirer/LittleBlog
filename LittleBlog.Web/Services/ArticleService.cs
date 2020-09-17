@@ -174,20 +174,26 @@ namespace LittleBlog.Web.Services
         /// <returns></returns> 
         public List<ArchivedArticlesSummary> GetArchivedArticlesSummaries()
         {
-            List<ArchivedArticlesSummary> summaries = new List<ArchivedArticlesSummary>();
-            var articles = db.Articles.Where(a=>a.IsPublished.Equals(true)).ToList();
-            var data = articles.GroupBy(p => p.CreateTime.ToString("yyyy-MM"));
-            foreach (var d in data)
+            //List<ArchivedArticlesSummary> summaries = new List<ArchivedArticlesSummary>();
+            //var articles = db.Articles.Where(a=>a.IsPublished.Equals(true)).ToList();
+            //var data = articles.GroupBy(p => p.CreateTime.ToString("yyyy-MM"));
+            //foreach (var d in data)
+            //{
+            //    summaries.Add(new ArchivedArticlesSummary()
+            //    {
+            //        ArchiveDate = d.Key,
+            //        CreateTime = d.FirstOrDefault().CreateTime,
+            //        ArticlesCounts = d.Count()
+            //    });
+            //}
+            List<ArchivedArticlesSummary> archivedArticlesSummaries = db.ArchivedArticlesSummaries
+                .FromSqlRaw("select date_format(CreateTime, '%Y-%m') as ArchiveDate,count(1) as ArticlesCount from Articles where IsPublished=true group by ArchiveDate;").ToList();
+            archivedArticlesSummaries.ForEach(a =>
             {
-                summaries.Add(new ArchivedArticlesSummary()
-                {
-                    ArchiveDate = d.Key,
-                    CreateTime = d.FirstOrDefault().CreateTime,
-                    ArticlesCounts = d.Count()
-                });
-            }
-
-            return summaries;
+                var temps = a.ArchiveDate.Split('-');
+                a.DisplayArchiveDate = $"{temps[0]}年{temps[1]}月";
+            });
+            return archivedArticlesSummaries;
         }
 
 

@@ -25,6 +25,7 @@ namespace LittleBlog.Web.Data
             builder.Entity<IdentityUserToken<string>>(entity => entity.Property(m => m.UserId).HasMaxLength(127));
             builder.Entity<IdentityUserToken<string>>(entity => entity.Property(m => m.LoginProvider).HasMaxLength(127));
             builder.Entity<IdentityUserToken<string>>(entity => entity.Property(m => m.Name).HasMaxLength(127));
+            builder.Entity<ArchivedArticlesSummary>(aas => aas.HasNoKey());
             base.OnModelCreating(builder);
         }
 
@@ -33,5 +34,13 @@ namespace LittleBlog.Web.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ArticleCategory> ArticleCategories { get; set; }
         public DbSet<ArticleTag> ArticleTags { get; set; }
+        //public DbSet<FriendShipLink> FriendShipLinks { get; set; }
+        //public DbSet<BlogBasicInfo> BlogBasicInfos { get; set; }
+
+        #region 无键实体类
+        public DbSet<ArchivedArticlesSummary> ArchivedArticlesSummaries { get; set; }
+
+        #endregion
+
     }
 }

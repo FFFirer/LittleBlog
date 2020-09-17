@@ -33,7 +33,7 @@
     {
         @foreach(var archiveArticleSummary in Model.archivedArticlesSummaries)
         {
-            <a class="list-group-item list-group-item-action" asp-action="List" asp-controller="Archive" asp-route-archiveDate="@archiveArticleSummary.ArchiveDate">@archiveArticleSummary.CreateTime.ToString("yyyy年MM月") ( @archiveArticleSummary.ArticlesCounts ) </a>
+            <a class="list-group-item list-group-item-action" asp-action="List" asp-controller="Archive" asp-route-archiveDate="@archiveArticleSummary.ArchiveDate">@archiveArticleSummary.DisplayArchiveDate ( @archiveArticleSummary.ArticlesCount ) </a>
         }
     }
     else

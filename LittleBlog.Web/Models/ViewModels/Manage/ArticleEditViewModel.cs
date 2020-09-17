@@ -17,7 +17,7 @@ namespace LittleBlog.Web.Models.ViewModels.Manage
         public ArticleEditViewModel(Article article)
         {
             this.Article = article;
-
+            this.TagIds = new List<int>();
         }
 
         public Article Article { get; set; }
