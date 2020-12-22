@@ -22,7 +22,7 @@
             <div class="form-group">
                 <label asp-for="Article.Content" class="control-label"></label>
                 <div id="editor">
-                    @Html.Raw(Model.Article.Content)
+                    
                 </div>
                 <span asp-validation-for="Article.Content" class="text-danger"></span>
             </div>
@@ -110,6 +110,9 @@
             </div>
         </div>
     </div>
+    <div id="raw_content" style="display:none">
+        @Html.Raw(Model.Article.Content)
+    </div>
 </div>
 
 <div>
@@ -117,17 +120,16 @@
 </div>
 
 @section Scripts {
-<script type="text/javascript" src="~/lib/wangEditor/wangEditor.min.js"></script>
+<script type="text/javascript" src="~/lib/tinymce/tinymce.min.js"></script>
 <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
 <script type="text/javascript">
 
-    var E = window.wangEditor;
-    var editor = new E('#editor');
-    editor.customConfig.uploadImgShowBase64 = true;
-    editor.customConfig.zIndex = 100;
-    editor.create();
+    var tinyID = "editor";
+    var plugins = 'link image preview lists code advlist';
+    var toolbars = ['undo redo | stylesheet | alignleft aligncenter alignright alignjustify bold italic fontsizeselect | bullist numlist | link image'
+        , 'blockquote subscript superscript | code advlist | preview'];
 
     //提交保存
     function Save() {
@@ -137,7 +139,7 @@
         formdata.Article.Id = $('#Article_Id').val();
         formdata.Article.Title = $('#Article_Title').val();
         formdata.Article.Author = $('#Article_Author').val();
-        formdata.Article.Content = editor.txt.html();
+        formdata.Article.Content = getContent();
         formdata.Article.IsPublished = $('#Article_IsPublished')[0].checked;
         formdata.CategoryId = $('#CategoryId').val();
         formdata.TagIds = [];
@@ -151,6 +153,14 @@
     // 文章提交表单验证
     function validateSubmit() {
 
+    }
+
+    function getContent() {
+        return tinyMCE.editors[tinyID].getContent();
+    }
+
+    function setContent(content) {
+        return tinyMCE.editors[tinyID].setContent(content);
     }
 
     // 提交文章内容
@@ -261,7 +271,18 @@
     }
 
     $(document).ready(function () {
-
+        tinymce.init({
+            selector: "#" + tinyID,
+            language: 'zh_CN',
+            plugins: plugins,
+            toolbar: toolbars,
+            height: 600,
+            init_instance_callback : function (editor) {
+                console.log('setup');
+                editor.setContent(document.getElementById("raw_content").innerHTML);
+                //document.getElementById("raw_content").remove();
+            }
+        });
         // 表单校验
         $('#newCategoryForm').validate({
             rules: {

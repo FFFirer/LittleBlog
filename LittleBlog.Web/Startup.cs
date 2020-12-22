@@ -43,7 +43,7 @@ namespace LittleBlog.Web
                 configLogger.AddNLog("NLog.config");
             });
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
 
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<ITagService, TagService>();
