@@ -21,14 +21,22 @@ namespace LittleBlog.Web.Controllers
             _articleService = articleService;
         }
 
-        public IActionResult Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1)
         {
             ArchiveIndexViewModel viewModel = new ArchiveIndexViewModel()
             {
                 ArchivedArticleList = new List<ArchiveIndexListItemViewModel>()
             };
 
-            List<Article> archiveArticles = _articleService.GetArchiveArticles(out int total, page, GlobalConfig.PageSize, true, true);
+            var query = new Models.QueryContext.ListArchiveArticlesQueryContext()
+            {
+                Page = page,
+                PageSize = GlobalConfig.PageSize,
+                OnlyPublished = true,
+                IsASC = true,
+            };
+
+            List<Article> archiveArticles = await _articleService.ListArchiveArticlesAsync(query);
             archiveArticles.GroupBy(a => a.CreateTime.ToString("yyyy-MM-dd")).ToList().ForEach(grouped =>
             {
                 viewModel.ArchivedArticleList.Add(new ArchiveIndexListItemViewModel()
@@ -37,26 +45,26 @@ namespace LittleBlog.Web.Controllers
                     Articles = grouped.ToList()
                 });
             });
-            viewModel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, total);
+            viewModel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total);
             return View(viewModel);
         }
 
         [HttpGet]
         [Route("Date/{archiveDate}")]
-        public IActionResult List(string archiveDate)
+        public async Task<IActionResult> List(string archiveDate)
         {
             if (string.IsNullOrEmpty(archiveDate))
             {
                 return NotFound();
             }
             ArchiveListViewModel viewModel = new ArchiveListViewModel();
-            viewModel.Articles = _articleService.GetAllArticlesByArchiveDate(archiveDate);
+            viewModel.Articles = await _articleService.ListAllArticlesByArchiveDateAsync(archiveDate);
             return View(viewModel);
         }
 
         [HttpGet]
         [Route("Category/{categoryId}")]
-        public IActionResult Category(int? categoryId)
+        public async Task<IActionResult> Category(int? categoryId)
         {
             if(categoryId == null)
             {
@@ -64,13 +72,13 @@ namespace LittleBlog.Web.Controllers
             }
 
             ArchiveListViewModel viewModel = new ArchiveListViewModel();
-            viewModel.Articles = _articleService.GetAllArticlesByCategory((int)categoryId);
+            viewModel.Articles = await _articleService.ListAllArticlesByCategoryAsync((int)categoryId);
             return View("List", viewModel);
         }
 
         [HttpGet]
         [Route("Tag/{tagId}")]
-        public IActionResult Tag(int? tagId)
+        public async Task<IActionResult> Tag(int? tagId)
         {
             if(tagId == null)
             {
@@ -78,7 +86,7 @@ namespace LittleBlog.Web.Controllers
             }
 
             ArchiveListViewModel viewModel = new ArchiveListViewModel();
-            viewModel.Articles = _articleService.GetAllArticlesByTag((int)tagId);
+            viewModel.Articles = await _articleService.ListAllArticlesByTagAsync((int)tagId);
             return View("List", viewModel);
         }
     }

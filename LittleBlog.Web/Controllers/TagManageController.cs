@@ -24,10 +24,10 @@ namespace LittleBlog.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             TagManageIndexViewModel viewModel = new TagManageIndexViewModel();
-            viewModel.Tags = _tagService.Get();
+            viewModel.Tags = await _tagService.ListAsync();
             return View(viewModel);
         }
 
@@ -41,7 +41,7 @@ namespace LittleBlog.Web.Controllers
                     return NotFound();
                 }
 
-                var Tag = _tagService.GetById((int)id);
+                var Tag = _tagService.GetByIdAsync((int)id);
 
                 if (Tag == null)
                 {
@@ -67,7 +67,7 @@ namespace LittleBlog.Web.Controllers
                     return NotFound();
                 }
 
-                _tagService.Delete((int)id);
+                _tagService.DeleteAsync((int)id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace LittleBlog.Web.Controllers
                 }
                 else
                 {
-                    _tagService.Save(tag);
+                    _tagService.SaveAsync(tag);
 
                     return RedirectToAction("Index");
                 }
@@ -126,14 +126,14 @@ namespace LittleBlog.Web.Controllers
                 {
                     tag.CreateTime = DateTime.Now;
                     tag.LastEditTime = DateTime.Now;
-                    _tagService.Save(tag);
+                    _tagService.SaveAsync(tag);
                     return Json(ResultModel.Success(tag, "创建成功"));
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "新建标签失败");
-                return Json(ResultModel.Error(ex, "新建标签失败"));
+                return Json(ResultModel.Fail(ex, "新建标签失败"));
             }
         }
     }

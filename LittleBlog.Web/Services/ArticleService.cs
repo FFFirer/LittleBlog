@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using LittleBlog.Web.Common;
 using LittleBlog.Web.Data;
 using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.QueryContext;
 using LittleBlog.Web.Models.ViewModels.Manage;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,151 +21,125 @@ namespace LittleBlog.Web.Services
             db = context;
         }
 
-        /// <summary>
-        /// 获取所有的文章
-        /// </summary>
-        /// <returns></returns>
-        public List<Article> GetAllArticles()
+        public async Task<List<Article>> ListAllArticlesAsync()
         {
-            return db.Articles.ToList();
+            return await db.Articles.AsNoTracking().ToListAsync();
         }
 
-        /// <summary>
-        /// 分页获取文章列表
-        /// </summary>
-        /// <param name="page">页数</param>
-        /// <param name="perPage">每页的数量</param>
-        /// <returns></returns>
-        public List<Article> GetArticles(out int total, int page = 1, int perPage = 20, bool isPublish = false)
+        public async Task<List<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext)
         {
-            if (isPublish)
+            var Query = db.Articles.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(queryContext.Keyword))
             {
-                total = db.Articles.Where(a=>a.IsPublished == true).Count();
-                return db.Articles.Where(a => a.IsPublished == true).OrderByDescending(b=>b.CreateTime).Skip((page - 1) * perPage).Take(perPage).ToList();
+                Query = Query
+                    .Where(a => a.Title.Contains(queryContext.Keyword) || a.Author.Contains(queryContext.Keyword));
             }
-            else
+
+            if (queryContext.OnlyPublished)
             {
-                total = db.Articles.Count();
-                return db.Articles.OrderByDescending(b => b.CreateTime).Skip((page - 1) * perPage).Take(perPage).ToList();
+                Query = Query.Where(a => a.IsPublished == true);
             }
+
+            Query = Query.OrderByDescending(a => a.CreateTime);
+
+            queryContext.Total = await Query.CountAsync();
+
+            Query = Query.Paging(queryContext);
+
+            return await Query.ToListAsync();
         }
 
-        /// <summary>
-        /// 根据文章的作者获取文章，搜索
-        /// </summary>
-        /// <param name="author"></param>
-        /// <returns></returns>
-        public List<Article> GetArticles(string keyword, out int total, int page = 1, int perPage = 20, bool isPublish = false)
+        public async Task SaveContentChangeAsync(int articleId, string articleContent)
         {
-            if (isPublish)
+            var oldarticle = await db.Articles
+                .Where(p => p.Id.Equals(articleId)).FirstOrDefaultAsync();
+            if(oldarticle == null)
             {
-                total = db.Articles.Where(a => a.IsPublished == true && (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Count();
-                return db.Articles.Where(a => a.IsPublished == true && (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Skip((page - 1) * perPage).Take(perPage).ToList();
+                throw new BlogException("未找到文章");
             }
-            else
-            {
-                total = db.Articles.Where(a => (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Count();
-                return db.Articles.Where(a => (a.Author.Contains(keyword) || a.Title.Contains(keyword))).Skip((page - 1) * perPage).Take(perPage).ToList();
-            }
-        }
-
-        /// <summary>
-        /// 保存文章内容变化
-        /// </summary>
-        /// <param name="article"></param>
-        public void SaveContentChange(int articleId, string articleContent)
-        {
-            var oldarticle = db.Articles.Where(p => p.Id.Equals(articleId)).FirstOrDefault();
+            
             oldarticle.LastEditTime = DateTime.Now;
-
+            oldarticle.Content = articleContent;
+            await db.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// 根据文章Id获取文章内容
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        public Article GetArticle(int Id)
+        public async Task<Article> GetArticleAsync(int Id)
         {
-            return db.Articles.Where(a => a.Id.Equals(Id)).FirstOrDefault();
+            return await db.Articles
+                .AsNoTracking()
+                .Where(a => a.Id.Equals(Id))
+                .FirstOrDefaultAsync();
         }
 
-
-        /// <summary>
-        /// 保存文章
-        /// </summary>
-        /// <param name="article"></param>
-        /// <returns></returns>
-        public void SaveArticle(Article articleEdited)
+        public async Task SaveArticleAsync(Article article)
         {
-            UpdateArticle(articleEdited);
-            if(articleEdited.Id == 0)
+            UpdateArticle(article);
+            if(article.Id == 0)
             {
-                db.Articles.Add(articleEdited);
+                db.Articles.Add(article);
             }
             else
             {
                 // update
-                Article article = db.Articles.AsNoTracking().Where(a => a.Id.Equals(articleEdited.Id)).FirstOrDefault();
-                if(article == null)
+                Article oldArticle = await db.Articles
+                    .Where(a => a.Id.Equals(article.Id))
+                    .FirstOrDefaultAsync();
+                if(oldArticle == null)
                 {
-                    throw new Exception("更新的文章不存在");
+                    throw new BlogException("更新的文章不存在");
                 }
-                articleEdited.CreateTime = article.CreateTime;
-                db.Articles.Attach(articleEdited).State = EntityState.Modified;
+                oldArticle.Title = article.Title;
+                oldArticle.Author = article.Author;
+                oldArticle.Abstract = article.Abstract;
+                oldArticle.Content = article.Content;
+                oldArticle.SavePath = article.SavePath;
+                oldArticle.LastEditTime = article.LastEditTime;
+                oldArticle.IsPublished = article.IsPublished;
             }
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// 获取归档的文章列表
-        /// </summary>
-        /// <param name="archiveDate">yyyy-MM</param>
-        /// <param name="total">总数</param>
-        /// <param name="page"></param>
-        /// <param name="perpage"></param>
-        /// <param name="isPublish"></param>
-        /// <param name="isOrder"></param>
-        /// <returns></returns>
-        public List<Article> GetArchiveArticles(out int total, int page = 1, int perpage = 20, bool isPublish = true, bool isOrder = false)
+        public async Task<List<Article>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext)
         {
-            if(page < 1)
-            {
-                throw new ArgumentOutOfRangeException("paeg must greater than 0");
-            }
+            IQueryable<Article> Query;
 
-            if(perpage < 1)
+            if (queryContext.OnlyPublished)
             {
-                throw new ArgumentOutOfRangeException("perpage must greater than 0");
-            }
-            if (isPublish)
-            {
-                total = db.Articles.Where(a => a.IsPublished == true).Count();
-                return db.Articles.FromSqlRaw<Article>("select *, DATE_FORMAT(CreateTime, '%Y-%m') as ArchiveDate from Articles where  IsPublished=1 order by ArchiveDate")
-                    .Skip((page - 1) * perpage)
-                    .Take(perpage)
-                    .ToList();
+                Query = db.Articles
+                    .FromSqlRaw<Article>("select *, DATE_FORMAT(CreateTime, '%Y-%m') as ArchiveDate from Articles where IsPublished=1 order by ArchiveDate")
+                    .AsNoTracking();
             }
             else
             {
-                total = db.Articles.Where(a => a.IsPublished == true).Count();
-                return db.Articles.FromSqlRaw<Article>("select *, DATE_FORMAT(CreateTime, '%Y-%m') as ArchiveDate from Articles order by ArchiveDate")
-                    .Skip((page - 1) * perpage)
-                    .Take(perpage)
-                    .ToList();
+                Query = db.Articles
+                    .FromSqlRaw<Article>("select *, DATE_FORMAT(CreateTime, '%Y-%m') as ArchiveDate from Articles order by ArchiveDate")
+                    .AsNoTracking();
             }
+
+            queryContext.Total = await Query.CountAsync();
+
+            Query = Query.Paging(queryContext);
+
+            return await Query.ToListAsync();
         }
 
-        public List<Article> GetAllArticlesByCategory(int categoryId)
+        public async Task<List<Article>> ListAllArticlesByCategoryAsync(int categoryId)
         {
             var CategoryId = new MySqlParameter("categoryId", categoryId);
-            return db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleCategories where a.Id=ArticleId and CategoryId=@categoryId) and a.IsPublished=1", CategoryId).ToList();
+            return await db.Articles
+                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS( SELECT 1 FROM ArticleCategories WHERE a.Id=ArticleId AND CategoryId=@categoryId) AND a.IsPublished=1", CategoryId)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public List<Article> GetAllArticlesByTag(int tagId)
+        public async Task<List<Article>> ListAllArticlesByTagAsync(int tagId)
         {
             var TagId = new MySqlParameter("tagId", tagId);
-            return db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleTags where a.Id=ArticleId and TagId=@tagId) and a.IsPublished=1", TagId).ToList();
+            return await db.Articles
+                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS(SELECT 1 FROM ArticleTags WHERE a.Id=ArticleId AND TagId=@tagId) AND a.IsPublished=1", TagId)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
 
@@ -172,22 +147,13 @@ namespace LittleBlog.Web.Services
         /// 获取文章归档情况
         /// </summary>
         /// <returns></returns> 
-        public List<ArchivedArticlesSummary> GetArchivedArticlesSummaries()
+        public async Task<List<ArchivedArticlesSummary>> GetArchivedArticlesSummariesAsync()
         {
-            //List<ArchivedArticlesSummary> summaries = new List<ArchivedArticlesSummary>();
-            //var articles = db.Articles.Where(a=>a.IsPublished.Equals(true)).ToList();
-            //var data = articles.GroupBy(p => p.CreateTime.ToString("yyyy-MM"));
-            //foreach (var d in data)
-            //{
-            //    summaries.Add(new ArchivedArticlesSummary()
-            //    {
-            //        ArchiveDate = d.Key,
-            //        CreateTime = d.FirstOrDefault().CreateTime,
-            //        ArticlesCounts = d.Count()
-            //    });
-            //}
-            List<ArchivedArticlesSummary> archivedArticlesSummaries = db.ArchivedArticlesSummaries
-                .FromSqlRaw("select date_format(CreateTime, '%Y-%m') as ArchiveDate,count(1) as ArticlesCount from Articles where IsPublished=true group by ArchiveDate;").ToList();
+            
+            List<ArchivedArticlesSummary> archivedArticlesSummaries = await db.ArchivedArticlesSummaries
+                .FromSqlRaw("SELECT DATE_FORMAT(CreateTime, '%Y-%m') AS ArchiveDate,count(1) AS ArticlesCount FROM Articles WHERE IsPublished=true GROUP BY ArchiveDate;")
+                .AsNoTracking()
+                .ToListAsync();
             archivedArticlesSummaries.ForEach(a =>
             {
                 var temps = a.ArchiveDate.Split('-');
@@ -202,10 +168,27 @@ namespace LittleBlog.Web.Services
         /// </summary>
         /// <param name="archiveDate"></param>
         /// <returns></returns>
-        public List<Article> GetAllArticlesByArchiveDate(string archiveDate)
+        public async Task<List<Article>> ListAllArticlesByArchiveDateAsync(string archiveDate)
         {
             var ArchiveDate = new MySqlParameter("archiveDate", archiveDate);
-            return db.Articles.FromSqlRaw("select * from Articles where DATE_FORMAT(CreateTime, '%Y-%m')=@archiveDate and IsPublished=1", ArchiveDate).ToList();
+            return await db.Articles
+                .FromSqlRaw("SELECT * FROM Articles WHERE DATE_FORMAT(CreateTime, '%Y-%m')=@archiveDate AND IsPublished=1", ArchiveDate)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task DeleteArticleAsync(int id)
+        {
+            var article = await db.Articles.FirstOrDefaultAsync(a => a.Id.Equals(id));
+            if (article != null)
+            {
+                db.Articles.Remove(article);
+                await db.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("文章不存在");
+            }
         }
 
         #region 私有方法
@@ -226,6 +209,7 @@ namespace LittleBlog.Web.Services
             article.LastEditTime = DateTime.Now;
             article.SavePath = string.Empty;
         }
+
         #endregion
     }
 }

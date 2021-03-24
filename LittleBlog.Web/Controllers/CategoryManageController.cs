@@ -24,10 +24,10 @@ namespace LittleBlog.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             CategoryManageIndexViewModel viewModel = new CategoryManageIndexViewModel();
-            viewModel.Categories = _categoryService.Get();
+            viewModel.Categories = await _categoryService.ListAsync();
             return View(viewModel);
         }
 
@@ -41,7 +41,7 @@ namespace LittleBlog.Web.Controllers
                     return NotFound();
                 }
 
-                var Category = _categoryService.GetById((int)id);
+                var Category = _categoryService.GetByIdAsync((int)id);
 
                 if(Category == null)
                 {
@@ -68,7 +68,7 @@ namespace LittleBlog.Web.Controllers
                 }
                 else
                 {
-                    _categoryService.Save(category);
+                    _categoryService.SaveAsync(category);
 
                     return RedirectToAction("Index");
                 }
@@ -91,7 +91,7 @@ namespace LittleBlog.Web.Controllers
                     return NotFound();
                 }
 
-                _categoryService.Delete((int)id);
+                _categoryService.DeleteAsync((int)id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -126,14 +126,14 @@ namespace LittleBlog.Web.Controllers
                 {
                     category.CreateTime = DateTime.Now;
                     category.LastEditTime = DateTime.Now;
-                    _categoryService.Save(category);
+                    _categoryService.SaveAsync(category);
                     return Json(ResultModel.Success(category, "创建成功"));
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "新建分类失败");
-                return Json(ResultModel.Error(ex, "新建分类失败"));
+                return Json(ResultModel.Fail(ex, "新建分类失败"));
             }
         }
     }

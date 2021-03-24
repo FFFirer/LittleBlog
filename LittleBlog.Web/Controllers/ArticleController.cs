@@ -27,7 +27,7 @@ namespace LittleBlog.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
-            Article article = _articleService.GetArticle(id);
+            Article article = await _articleService.GetArticleAsync(id);
 
             if(article == null)
             {
@@ -44,8 +44,8 @@ namespace LittleBlog.Web.Controllers
 
             ArticleIndexViewModel viewModel = new ArticleIndexViewModel();
             viewModel.Article = article;
-            viewModel.Category = _categoryService.GetCategoryByArticle(article.Id);
-            viewModel.Tags = _tagService.GetTagsByArticle(article.Id);
+            viewModel.Category = await _categoryService.GetCategoryByArticleAsync(article.Id);
+            viewModel.Tags = await _tagService.ListTagsByArticleAsync(article.Id);
             return View(viewModel);
         }
     }

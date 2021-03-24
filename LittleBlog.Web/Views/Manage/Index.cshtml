@@ -57,9 +57,9 @@
                             <td>草稿</td>
                         }
                         <td>
-                            @Html.ActionLink("编辑", "edit", "Manage", new { id = item.Id }) |
-                            @Html.ActionLink("查看", "Index", "Article", new { id = item.Id }) |
-                            @Html.ActionLink("删除", "Delete", "Manage", new { id = item.Id })
+                            <a asp-controller="Manage" asp-action="edit" asp-route-id="@item.Id">编辑</a> |
+                            <a asp-controller="Article" asp-action="Index" asp-route-id="@item.Id">查看</a> |
+                            <a href="javascript:void(0);" name="btnDeleteArticle" data-id="@item.Id">删除</a>
                         </td>
                     </tr>
                 }
@@ -69,3 +69,60 @@
         @await Component.InvokeAsync("PageList", new { pageInfo = Model.PageInfo, actionName = "Index", routeParams = new Dictionary<string, string>() })
     </div>
 </div>
+<div id="deleteArticleModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确定要删除吗？</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnConfirmDeleteArticle" class="btn btn-primary">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+
+        $('#deleteArticleModal').on('hidden.bs.modal', function () {
+            document.querySelector('#btnConfirmDeleteArticle').removeEventListener("click", function (e) { });
+            console.log("清除点击事件");
+        })
+        // 关闭窗口
+        document.querySelectorAll('[name=btnDeleteArticle]').forEach(function (el) {
+            el.addEventListener("click", function (event) {
+                let id = event.target.dataset["id"];
+                document.querySelector('#btnConfirmDeleteArticle').addEventListener("click", function () {
+                    deleteArticle("@Url.Action("Delete", "Manage", new { @id="$id$"})", id);
+                    $('#deleteArticleModal').modal('hide');
+                })
+                $('#deleteArticleModal').modal('show');
+            });
+        });
+    </script>
+    <script>
+        function deleteArticle(url, id) {
+            $.ajax({
+                url: url.replace("$id$", id),
+                type: "post",
+                success: function (json) {
+                    console.log(json);
+                    if (json.isSuccess) {
+                        location.reload();
+                    } else {
+                        alert(json.message);
+                    }
+                },
+                error: function (err) {
+                    alert("发生错误，请重新尝试");
+                }
+            });
+        }
+    </script>
+}

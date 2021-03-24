@@ -21,13 +21,13 @@ namespace LittleBlog.Web.Services
             _db = context;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             using (var transaction = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    var tag = _db.Tags.FirstOrDefault(t => t.Id.Equals(id));
+                    var tag = await _db.Tags.FirstOrDefaultAsync(t => t.Id.Equals(id));
 
                     if (tag == null)
                     {
@@ -37,48 +37,59 @@ namespace LittleBlog.Web.Services
                     _db.Tags.Remove(tag);
 
                     // 删除标签和文章的关系
-                    var articleTags = _db.ArticleTags.Where(at => at.TagId.Equals(id)).ToList();
+                    var articleTags = await _db.ArticleTags
+                        .Where(at => at.TagId.Equals(id))
+                        .ToListAsync();
                     _db.ArticleTags.RemoveRange(articleTags);
 
-                    _db.SaveChanges();
-                    transaction.Commit();
+                    await _db.SaveChangesAsync();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
-                    throw ex;
+                    await transaction.RollbackAsync();
+                    throw new Exception("删除标签失败", ex);
                 }
             }
         }
 
-        public List<Tag> Get()
+        public async Task<List<Tag>> ListAsync()
         {
-            return _db.Tags.ToList();
+            return await _db.Tags.AsNoTracking().ToListAsync();
         }
 
-        public Tag GetById(int id)
+        public async Task<Tag> GetByIdAsync(int id)
         {
-            return _db.Tags.FirstOrDefault(t => t.Id.Equals(id));
+            return await _db.Tags.AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id.Equals(id));
         }
 
-        public List<Tag> GetSummary()
+        public async Task<List<Tag>> ListSummaryAsync()
         {
-            var tagSummaries = _db.Tags.FromSqlRaw("select * from Tags").ToList();
-            tagSummaries.ForEach(t =>
+            var tagSummaries = await _db.Tags
+                .FromSqlRaw("select * from Tags")
+                .AsNoTracking()
+                .ToListAsync();
+            tagSummaries.ForEach(async t =>
             {
                 MySqlParameter TagId = new MySqlParameter("tagId", t.Id);
-                t.ArticlesCount = _db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleTags where a.Id=ArticleId and TagId=@tagId) and a.IsPublished=1", TagId).Count();
+                t.ArticlesCount = await _db.Articles
+                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE a.Id=ArticleId AND TagId=@tagId) AND a.IsPublished=1", TagId)
+                .CountAsync();
             });
             return tagSummaries;
         }
 
-        public List<Tag> GetTagsByArticle(int articleId)
+        public async Task<List<Tag>> ListTagsByArticleAsync(int articleId)
         {
             MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
-            return _db.Tags.FromSqlRaw("select * from Tags a where exists(select 1 from ArticleTags where TagId=a.Id and ArticleId=@articleId)", ArticleId).ToList();
+            return await _db.Tags
+                .FromSqlRaw("SELECT * FROM Tags a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE TagId=a.Id AND ArticleId=@articleId)", ArticleId)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public void Save(Tag tag)
+        public async Task SaveAsync(Tag tag)
         {
             if(tag.Id == 0)
             {
@@ -88,23 +99,32 @@ namespace LittleBlog.Web.Services
             }
             else
             {
-                tag.LastEditTime = DateTime.Now;
-                _db.Attach(tag).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                var oldTag = await _db.Tags
+                    .FirstOrDefaultAsync(a => a.Id.Equals(tag.Id));
+                if(oldTag == null)
+                {
+                    throw new Exception("未找到要更新的标签");
+                }
+
+                oldTag.Description = tag.Description;
+                oldTag.DisplayName = tag.DisplayName;
+                oldTag.LastEditTime = DateTime.Now;
             }
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
-        public void SaveArticleTags(int articleId, List<int> tagIds)
+        public async Task SaveArticleTagsAsync(int articleId, List<int> tagIds)
         {
-            var oldArticleTags = _db.ArticleTags.Where(at => at.ArticleId.Equals(articleId)).ToList();
+            var oldArticleTags = await _db.ArticleTags
+                .Where(at => at.ArticleId.Equals(articleId)).ToListAsync();
             var waitForAdd = tagIds.Except(oldArticleTags.Select(oat => oat.TagId).ToList());
             var waitForRemove = oldArticleTags.Select(oat => oat.TagId).Except(tagIds).ToList();
 
             _db.ArticleTags.AddRange(waitForAdd.Select(w => new ArticleTag() { ArticleId = articleId, TagId = w }));
             _db.ArticleTags.RemoveRange(oldArticleTags.Where(oat => waitForRemove.Exists(w=>w.Equals(oat.TagId))));
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
     }
 }

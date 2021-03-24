@@ -12,7 +12,7 @@ namespace LittleBlog.Web.Models
         public object data { get; set; }
         public string exceptionMessage { get; set; }
 
-        public static ResultModel Success(object data = null, string message = "Successed")
+        public static ResultModel Success(object data = null, string message = "Operation Successed")
         {
             return new ResultModel()
             {
@@ -23,7 +23,7 @@ namespace LittleBlog.Web.Models
             };
         }
 
-        public static ResultModel Fail(string message = "Failed")
+        public static ResultModel Fail(string message = "Operation Failed")
         {
             return new ResultModel()
             {
@@ -34,15 +34,28 @@ namespace LittleBlog.Web.Models
             };
         }
 
-        public static ResultModel Error(Exception ex, string message = "Error")
+        public static ResultModel Fail(Exception ex, string message = "Operation Failed")
         {
-            return new ResultModel()
+            if(ex is BlogException)
             {
-                isSuccess = false,
-                message = message,
-                data = "",
-                exceptionMessage = ex?.Message ?? ""
-            };
+                return new ResultModel()
+                {
+                    isSuccess = false,
+                    message = string.IsNullOrEmpty(ex.Message) ? message : ex.Message,
+                    data = "",
+                    exceptionMessage = ex?.Message ?? ""
+                };
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    isSuccess = false,
+                    message = message,
+                    data = "",
+                    exceptionMessage = ex?.Message ?? ""
+                };
+            }
         }
     }
 }

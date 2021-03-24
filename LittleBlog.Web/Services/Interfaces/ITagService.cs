@@ -12,34 +12,34 @@ namespace LittleBlog.Web.Services.Interfaces
         /// 获取所有标签
         /// </summary>
         /// <returns></returns>
-        List<Tag> Get();
+        Task<List<Tag>> ListAsync();
 
         /// <summary>
         /// 根据Id获取标签
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Tag GetById(int id);
+        Task<Tag> GetByIdAsync(int id);
 
         /// <summary>
         /// 获取标签的总体情况
         /// </summary>
         /// <param name="TopCount">默认为0，即所有</param>
         /// <returns></returns>
-        List<Tag> GetSummary();
+        Task<List<Tag>> ListSummaryAsync();
 
         /// <summary>
         /// 保存标签
         /// </summary>
         /// <param name="tag"></param>
         /// <returns></returns>
-        void Save(Tag tag);
+        Task SaveAsync(Tag tag);
 
         /// <summary>
         /// 删除标签
         /// </summary>
         /// <param name="id"></param>
-        void Delete(int id);
+        Task DeleteAsync(int id);
 
         /// <summary>
         /// 保存文章标签关系
@@ -47,13 +47,13 @@ namespace LittleBlog.Web.Services.Interfaces
         /// <param name="articleId"></param>
         /// <param name="tagIds"></param>
         /// <returns></returns>
-        void SaveArticleTags(int articleId, List<int> tagIds);
+        Task SaveArticleTagsAsync(int articleId, List<int> tagIds);
 
         /// <summary>
         /// 获取文章的标签
         /// </summary>
         /// <param name="articleId"></param>
         /// <returns></returns>
-        List<Tag> GetTagsByArticle(int articleId);
+        Task<List<Tag>> ListTagsByArticleAsync(int articleId);
     }
 }

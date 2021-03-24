@@ -21,64 +21,77 @@ namespace LittleBlog.Web.Services
             _db = context;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             using (var transcation = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    var category = _db.Categories.AsNoTracking().FirstOrDefault(c => c.Id.Equals(id));
+                    var category = await _db.Categories
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(c => c.Id.Equals(id));
 
                     if (category == null)
                     {
-                        throw new Exception($"not found category id:{id}");
+                        throw new Exception($"没有找到分类 id:{id}");
                     }
 
                     _db.Categories.Remove(category);
 
                     // 删除视频分类和文章的关系
-                    var articleCategories = _db.ArticleCategories.Where(ac => ac.CategoryId.Equals(id)).ToList();
+                    var articleCategories = await _db.ArticleCategories
+                        .Where(ac => ac.CategoryId.Equals(id)).ToListAsync();
                     _db.ArticleCategories.RemoveRange(articleCategories);
 
-                    _db.SaveChanges();
-                    transcation.Commit();
+                    await _db.SaveChangesAsync();
+                    await transcation.CommitAsync();
                 }
                 catch (Exception ex)
                 {
-                    transcation.Rollback();
-                    throw ex;
+                    await transcation.RollbackAsync();
+                    throw new Exception("删除分类失败，事务回滚", ex);
                 }
             }
         }
 
-        public List<Category> Get()
+        public async Task<List<Category>> ListAsync()
         {
-            return _db.Categories.ToList();
+            return await _db.Categories.AsNoTracking().ToListAsync();
         }
 
-        public Category GetById(int id)
+        public async Task<Category> GetByIdAsync(int id)
         {
-            return _db.Categories.FirstOrDefault(c => c.Id.Equals(id));
+            return await _db.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id.Equals(id));
         }
 
-        public Category GetCategoryByArticle(int articleId)
+        public async Task<Category> GetCategoryByArticleAsync(int articleId)
         {
             MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
-            return _db.Categories.FromSqlRaw("select * from Categories a where exists(select 1 from ArticleCategories where CategoryId=a.Id and ArticleId=@articleId)", ArticleId).FirstOrDefault();
+            return await _db.Categories
+                .FromSqlRaw("SELECT * FROM Categories a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE CategoryId=a.Id AND ArticleId=@articleId)", ArticleId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
         }
 
-        public List<Category> GetSummary()
+        public async Task<List<Category>> ListSummaryAsync()
         {
-            var categorySummaries = _db.Categories.FromSqlRaw<Category>("select * from Categories ").ToList();
-            categorySummaries.ForEach(c =>
+            var categorySummaries = await _db.Categories
+                .FromSqlRaw<Category>("SELECT * FROM Categories ")
+                .AsNoTracking()
+                .ToListAsync();
+            categorySummaries.ForEach(async c =>
             {
                 MySqlParameter CategoryId = new MySqlParameter("categoryId", c.Id);
-                c.ArticlesCount = _db.Articles.FromSqlRaw("select * from Articles a where exists(select 1 from ArticleCategories where a.Id=ArticleId and CategoryId=@categoryId) and a.IsPublished=1", CategoryId).Count();
+                c.ArticlesCount = await _db.Articles
+                    .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE a.Id=ArticleId AND CategoryId=@categoryId) AND a.IsPublished=1", CategoryId)
+                    .CountAsync();
             });
             return categorySummaries;
         }
 
-        public void Save(Category category)
+        public async Task SaveAsync(Category category)
         {
             if(category.Id == 0)
             {
@@ -88,17 +101,27 @@ namespace LittleBlog.Web.Services
             }
             else
             {
-                category.LastEditTime = DateTime.Now;
-                _db.Attach(category).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                var oldCategory = await _db.Categories
+                    .FirstOrDefaultAsync(a => a.Id.Equals(category.Id));
+                
+                if(oldCategory == null)
+                {
+                    throw new Exception($"未找到要修改的分类, id: {category.Id}");
+                }
+
+                oldCategory.DisplayName = category.DisplayName;
+                oldCategory.Description = category.Description;
+                oldCategory.LastEditTime = DateTime.Now;
+
             }
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
-        public void SaveArticles(int articleId, int categoryId)
+        public async Task SaveArticleToCategoryAsync(int articleId, int categoryId)
         {
-            ArticleCategory articleCategory = _db.ArticleCategories
-                .FirstOrDefault(ac => ac.ArticleId.Equals(articleId));
+            ArticleCategory articleCategory = await _db.ArticleCategories
+                .FirstOrDefaultAsync(ac => ac.ArticleId.Equals(articleId));
 
             if(articleCategory == null)
             {
@@ -114,7 +137,7 @@ namespace LittleBlog.Web.Services
                 articleCategory.CategoryId = categoryId;
             }
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
     }
 }

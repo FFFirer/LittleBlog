@@ -31,12 +31,18 @@ namespace LittleBlog.Web.Controllers
         /// 主页
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var results = _articleService.GetArticles(out int total, page, GlobalConfig.PageSize, true);
+            var query = new Models.QueryContext.ListArticlesQueryContext()
+            {
+                Page = page,
+                PageSize = GlobalConfig.PageSize,
+                OnlyPublished = true
+            };
+            var results = await _articleService.ListArticlesAsync(query);
             Models.ViewModels.HomeIndexViewModel viewmodel = new Models.ViewModels.HomeIndexViewModel();
             viewmodel.ArticleInfos = results;
-            viewmodel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, total);
+            viewmodel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total);
             return View(viewmodel);
         }
 
@@ -77,19 +83,22 @@ namespace LittleBlog.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string keyword, int page = 1)
+        public async Task<IActionResult> Search(string keyword, int page = 1)
         {
             try
             {
-                if (keyword == null)
+                var query = new Models.QueryContext.ListArticlesQueryContext()
                 {
-                    keyword = "";
-                }
+                    Keyword = keyword,
+                    Page = page,
+                    PageSize = GlobalConfig.PageSize,
+                    OnlyPublished = true
+                };
                 SearchViewModel viewModel = new SearchViewModel()
                 {
                     keyword = keyword,
-                    SearchedArticles = _articleService.GetArticles(keyword, out int total, page, GlobalConfig.PageSize, true),
-                    PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, total)
+                    SearchedArticles = await _articleService.ListArticlesAsync(query),
+                    PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total)
                 };
                 return View(viewModel);
             }
