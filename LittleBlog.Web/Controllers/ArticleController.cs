@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace LittleBlog.Web.Controllers
 {
     [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ArticleController : Controller
     {
         private IArticleService _articleService;

@@ -9,6 +9,7 @@ namespace LittleBlog.Web.Controllers
     /// <summary>
     /// 博客基础信息设置
     /// </summary>
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class BlogManageController : Controller
     {
         public IActionResult Index()

@@ -28,6 +28,8 @@ namespace LittleBlog.Web.Services
 
         public async Task<List<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext)
         {
+            queryContext.CheckPermissions();
+
             var Query = db.Articles.AsNoTracking();
 
             if (!string.IsNullOrEmpty(queryContext.Keyword))

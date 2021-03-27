@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace LittleBlog.Web.Controllers
 {
     [Authorize(Roles = "Administrator")]
+    [NSwag.Annotations.OpenApiIgnore]
     public class ManageController : Controller
     {
         private IArticleService _articleService;

@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using LittleBlog.Web.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using LittleBlog.Web.Authorization;
+using NSwag;
+using NSwag.Generation;
 
 namespace LittleBlog.Web
 {
@@ -49,6 +51,12 @@ namespace LittleBlog.Web
             services.AddTransient<ITagService, TagService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddSingleton<IAuthorizationHandler, ArticleAuthorizationHandler>();
+
+            services.AddSwaggerDocument((settings)=> 
+            {
+                settings.Version = "v1.0.0";
+                settings.Title = "LittleBlog Web API";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,7 +75,8 @@ namespace LittleBlog.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
             app.UseRouting();
             app.UseStatusCodePagesWithRedirects("/Error/{0}");
             app.UseForwardedHeaders(new ForwardedHeadersOptions

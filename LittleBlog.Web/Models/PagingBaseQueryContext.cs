@@ -8,7 +8,7 @@ namespace LittleBlog.Web.Models
     /// <summary>
     /// 分页基础
     /// </summary>
-    public class PagingBase
+    public class PagingBaseQueryContext : BaseQueryContext
     {
         public int Page { get; set; }
         public int PageSize { get; set; }

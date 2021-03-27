@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace LittleBlog.Web.Controllers
 {
     [Authorize(Roles = "Administrator")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class TagManageController : Controller
     {
         private ITagService _tagService;

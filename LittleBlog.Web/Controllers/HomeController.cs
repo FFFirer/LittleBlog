@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace LittleBlog.Web.Controllers
 {
     [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
         private IArticleService _articleService;
@@ -37,7 +38,8 @@ namespace LittleBlog.Web.Controllers
             {
                 Page = page,
                 PageSize = GlobalConfig.PageSize,
-                OnlyPublished = true
+                Source = QuerySource.Common,
+                OnlyPublished = true,
             };
             var results = await _articleService.ListArticlesAsync(query);
             Models.ViewModels.HomeIndexViewModel viewmodel = new Models.ViewModels.HomeIndexViewModel();
@@ -92,7 +94,8 @@ namespace LittleBlog.Web.Controllers
                     Keyword = keyword,
                     Page = page,
                     PageSize = GlobalConfig.PageSize,
-                    OnlyPublished = true
+                    Source = QuerySource.Common,
+                    OnlyPublished = true,
                 };
                 SearchViewModel viewModel = new SearchViewModel()
                 {

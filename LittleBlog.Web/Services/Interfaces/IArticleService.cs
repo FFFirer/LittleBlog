@@ -41,8 +41,7 @@ namespace LittleBlog.Web.Services.Interfaces
         /// <summary>
         /// 分页获取文章列表
         /// </summary>
-        /// <param name="page">页数</param>
-        /// <param name="perPage">每页的数量</param>
+        /// <param name="queryContext">查询参数</param>
         /// <returns></returns>
         Task<List<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext);
 

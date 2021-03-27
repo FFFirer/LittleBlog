@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace LittleBlog.Web.Controllers
 {
     [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : Controller
     {
 

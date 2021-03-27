@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Models.QueryContext
 {
-    public class ListArchiveArticlesQueryContext : PagingBase
+    public class ListArchiveArticlesQueryContext : PagingBaseQueryContext
     {
         /// <summary>
         /// 是否发布

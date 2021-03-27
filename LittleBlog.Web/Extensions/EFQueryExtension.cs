@@ -15,7 +15,7 @@ namespace LittleBlog.Web
         /// <param name="paging"></param>
         /// <param name="maxSize">当无分页的时候最大可以取的数量，为0时为无限制</param>
         /// <returns></returns>
-        public static IQueryable<T> Paging<T>(this IQueryable<T> query, PagingBase paging, int maxSize = 0)
+        public static IQueryable<T> Paging<T>(this IQueryable<T> query, PagingBaseQueryContext paging, int maxSize = 0)
         {
             if(paging.Page > 0 && paging.PageSize > 0)
             {

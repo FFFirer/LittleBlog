@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LittleBlog.Web.Models;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace LittleBlog.Web.Apis
 {
@@ -52,6 +53,11 @@ namespace LittleBlog.Web.Apis
         protected void Log(string message, Exception exception = null, LogLevel level = LogLevel.Information)
         {
             _logger.Log(level, exception, message);
+        }
+
+        protected string SerializeToJson(object data)
+        {
+            return JsonSerializer.Serialize(data);
         }
     }
 }

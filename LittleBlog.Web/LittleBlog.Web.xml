@@ -1,0 +1,493 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LittleBlog.Web</name>
+    </assembly>
+    <members>
+        <member name="M:LittleBlog.Web.Apis.Admin.ArticlesManageController.Delete(System.Int32)">
+            <summary>
+            删除文章
+            </summary>
+            <param name="id">文章的Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.ArticlesManageController.Save(LittleBlog.Web.Services.Interfaces.ICategoryService,LittleBlog.Web.Services.Interfaces.ITagService,LittleBlog.Web.Models.ViewModels.Manage.ArticleEditViewModel)">
+            <summary>
+            保存文章
+            </summary>
+            <param name="categoryService"></param>
+            <param name="tagService"></param>
+            <param name="model">文章的主要内容</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.ArticlesManageController.Get(LittleBlog.Web.Services.Interfaces.ICategoryService,LittleBlog.Web.Services.Interfaces.ITagService,System.Int32)">
+            <summary>
+            获取单个文章的详情
+            </summary>
+            <param name="categoryService"></param>
+            <param name="tagService"></param>
+            <param name="id">文章的Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.ArticlesManageController.List(LittleBlog.Web.Models.QueryContext.ListArticlesQueryContext)">
+            <summary>
+            获取文章的列表（分页）
+            </summary>
+            <param name="queryContext">查询条件</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.TagsManageController.List">
+            <summary>
+            获取所有标签
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Areas.Identity.Data.SeedData.EnsureUser(System.IServiceProvider,System.String,System.String)">
+            <summary>
+            确认用户
+            </summary>
+            <param name="serviceProvider"></param>
+            <param name="userPwd"></param>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Areas.Identity.Data.SeedData.EnsureRole(System.IServiceProvider,System.String,System.String)">
+            <summary>
+            确认角色
+            </summary>
+            <param name="serviceProvider"></param>
+            <param name="userId"></param>
+            <param name="role"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Common.TextHelper.GetAbstract(System.String)">
+            <summary>
+            去除html标签
+            </summary>
+            <param name="htmlCode"></param>
+            <returns></returns>
+        </member>
+        <member name="T:LittleBlog.Web.Controllers.BlogManageController">
+            <summary>
+            博客基础信息设置
+            </summary>
+        </member>
+        <member name="M:LittleBlog.Web.Controllers.CategoryManageController.CreateCategory(LittleBlog.Web.Models.Category)">
+            <summary>
+            创建分类，webapi
+            </summary>
+            <param name="category"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Controllers.HomeController.Index(System.Int32)">
+            <summary>
+            主页
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Controllers.ManageController.GetAllCategories(System.Int32)">
+            <summary>
+            获取所有的类别组成的下拉列表
+            </summary>
+            <param name="selectId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Controllers.TagManageController.CreateTag(LittleBlog.Web.Models.Tag)">
+            <summary>
+            创建标签，webapi
+            </summary>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="T:LittleBlog.Web.CustomComponents.PageListComponent">
+            <summary>
+            分页组件
+            </summary>
+        </member>
+        <member name="M:LittleBlog.Web.EFQueryExtension.Paging``1(System.Linq.IQueryable{``0},LittleBlog.Web.Models.PagingBaseQueryContext,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="query"></param>
+            <param name="paging"></param>
+            <param name="maxSize">当无分页的时候最大可以取的数量，为0时为无限制</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Models.BaseQueryContext.CheckPermissions">
+            <summary>
+            检查查询条件的权限
+            </summary>
+        </member>
+        <member name="T:LittleBlog.Web.Models.Article">
+            <summary>
+            文章信息
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Article.Id">
+            <summary>
+            文章Id
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Article.Title">
+            <summary>
+            文章标题
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Article.Author">
+            <summary>
+            文章作者
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Article.SavePath">
+            <summary>
+            保存路径
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Article.CreateTime">
+            <summary>
+            编写时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Article.LastEditTime">
+            <summary>
+            最后一次修改的时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Article.IsPublished">
+            <summary>
+            是否发布
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DomainModels.BlogBasicInfo.AdminName">
+            <summary>
+            管理员名称
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DomainModels.BlogBasicInfo.AdminEmail">
+            <summary>
+            管理员邮箱
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DomainModels.BlogBasicInfo.Descripton">
+            <summary>
+            个人描述
+            </summary>
+        </member>
+        <member name="T:LittleBlog.Web.Models.BlogUser">
+            <summary>
+            博客访客
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.BlogUser.Id">
+            <summary>
+            用户ID
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.BlogUser.UserName">
+            <summary>
+            用户名
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.BlogUser.ResigterTime">
+            <summary>
+            注册时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.BlogUser.Password">
+            <summary>
+            密码
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Category.Id">
+            <summary>
+            类别的Id
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Category.DisplayName">
+            <summary>
+            显示名称
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Category.CreateTime">
+            <summary>
+            创建的时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Category.LastEditTime">
+            <summary>
+            最后一次编辑的时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Category.Description">
+            <summary>
+            描述
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:LittleBlog.Web.Models.Tag">
+            <summary>
+            标签信息
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Tag.Id">
+            <summary>
+            标签Id
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Tag.DisplayName">
+            <summary>
+            标签显示名称
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Tag.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Tag.LastEditTime">
+            <summary>
+            最后一次编辑的时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.Tag.Description">
+            <summary>
+            描述
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:LittleBlog.Web.Models.PagingBaseQueryContext">
+            <summary>
+            分页基础
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.QueryContext.ListArchiveArticlesQueryContext.OnlyPublished">
+            <summary>
+            是否发布
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.QueryContext.ListArchiveArticlesQueryContext.IsASC">
+            <summary>
+            是否正序
+            </summary>
+        </member>
+        <member name="T:LittleBlog.Web.Models.ViewModels.BlogManage.BlogManageIndexViewModel">
+            <summary>
+            博客基础信息视图模型
+            </summary>
+        </member>
+        <member name="T:LittleBlog.Web.Models.ViewModels.PageInfo">
+            <summary>
+            分页信息
+            </summary>
+        </member>
+        <member name="M:LittleBlog.Web.Services.ArticleService.GetArchivedArticlesSummariesAsync">
+            <summary>
+            获取文章归档情况
+            </summary>
+            <returns></returns> 
+        </member>
+        <member name="M:LittleBlog.Web.Services.ArticleService.ListAllArticlesByArchiveDateAsync(System.String)">
+            <summary>
+            根据归档日期获取文章
+            </summary>
+            <param name="archiveDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.ArticleService.UpdateArticle(LittleBlog.Web.Models.Article)">
+            <summary>
+            更新文章
+            </summary>
+            <param name="oldArticle"></param>
+            <param name="newArticle"></param>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.ListAllArticlesAsync">
+            <summary>
+            获取所有的文章
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.ListAllArticlesByCategoryAsync(System.Int32)">
+            <summary>
+            根据分类获取文章
+            </summary>
+            <param name="categoryId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.ListAllArticlesByTagAsync(System.Int32)">
+            <summary>
+            根据标签获取文章
+            </summary>
+            <param name="tagId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.ListAllArticlesByArchiveDateAsync(System.String)">
+            <summary>
+            根据归档日期获取文章
+            </summary>
+            <param name="archiveDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.ListArticlesAsync(LittleBlog.Web.Models.QueryContext.ListArticlesQueryContext)">
+            <summary>
+            分页获取文章列表
+            </summary>
+            <param name="queryContext">查询参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.SaveContentChangeAsync(System.Int32,System.String)">
+            <summary>
+            保存文章内容变化
+            </summary>
+            <param name="articleId">文章Id</param>
+            <param name="articleContent">文章内容</param>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.GetArticleAsync(System.Int32)">
+            <summary>
+            根据文章Id获取文章内容
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.SaveArticleAsync(LittleBlog.Web.Models.Article)">
+            <summary>
+            保存文章
+            </summary>
+            <param name="article">要保存的文章</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.ListArchiveArticlesAsync(LittleBlog.Web.Models.QueryContext.ListArchiveArticlesQueryContext)">
+            <summary>
+            获取归档的文章列表
+            </summary>
+            <param name="queryContext">查询上下文</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.GetArchivedArticlesSummariesAsync">
+            <summary>
+            获取文章归档情况
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.DeleteArticleAsync(System.Int32)">
+            <summary>
+            删除文章
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.ListAsync">
+            <summary>
+            获取文章分类
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.GetByIdAsync(System.Int32)">
+            <summary>
+            根据id获取Category
+            </summary>
+            <param name="id">Category Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.ListSummaryAsync">
+            <summary>
+            获取文章总体情况
+            </summary>
+            <param name="TopCount">默认为0，即所有</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.SaveAsync(LittleBlog.Web.Models.Category)">
+            <summary>
+            保存文章分类
+            </summary>
+            <param name="category"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.DeleteAsync(System.Int32)">
+            <summary>
+            删除文章分类
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.SaveArticleToCategoryAsync(System.Int32,System.Int32)">
+            <summary>
+            保存文章与分类关系
+            </summary>
+            <param name="categoryId"></param>
+            <param name="articleIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.GetCategoryByArticleAsync(System.Int32)">
+            <summary>
+            获取文章的分类
+            </summary>
+            <param name="articleId">文章的Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.ListAsync">
+            <summary>
+            获取所有标签
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.GetByIdAsync(System.Int32)">
+            <summary>
+            根据Id获取标签
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.ListSummaryAsync">
+            <summary>
+            获取标签的总体情况
+            </summary>
+            <param name="TopCount">默认为0，即所有</param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.SaveAsync(LittleBlog.Web.Models.Tag)">
+            <summary>
+            保存标签
+            </summary>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.DeleteAsync(System.Int32)">
+            <summary>
+            删除标签
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.SaveArticleTagsAsync(System.Int32,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            保存文章标签关系
+            </summary>
+            <param name="articleId"></param>
+            <param name="tagIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.ListTagsByArticleAsync(System.Int32)">
+            <summary>
+            获取文章的标签
+            </summary>
+            <param name="articleId"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

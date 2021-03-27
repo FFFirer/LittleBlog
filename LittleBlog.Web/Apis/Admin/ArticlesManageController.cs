@@ -10,22 +10,31 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
+using NSwag.Annotations;
 
-namespace LittleBlog.Web.Apis
+namespace LittleBlog.Web.Apis.Admin
 {
-    [Route("api/[controller]")]
+    [Route("api/Admin/Articles")]
     [ApiController]
-    public class ArticlesController : BaseApiController
+    [Description("文章管理相关端口（Admin）")]
+    [ApiExplorerSettings(GroupName = "Admin")]
+    [OpenApiTags("Admin Articles")]
+    public class ArticlesManageController : BaseApiController
     {
         private IArticleService _articleService;
 
-        public ArticlesController(IArticleService articleService, ILogger<ArticlesController> logger)
+        public ArticlesManageController(IArticleService articleService, ILogger<ArticlesManageController> logger)
         {
             _articleService = articleService;
             _logger = logger;
         }
 
-        // 删
+        /// <summary>
+        /// 删除文章
+        /// </summary>
+        /// <param name="id">文章的Id</param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -41,8 +50,13 @@ namespace LittleBlog.Web.Apis
             }
         }
 
-        
-        // 增、改
+        /// <summary>
+        /// 保存文章
+        /// </summary>
+        /// <param name="categoryService"></param>
+        /// <param name="tagService"></param>
+        /// <param name="model">文章的主要内容</param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Save([FromServices]ICategoryService categoryService, [FromServices]ITagService tagService, ArticleEditViewModel model)
         {
@@ -68,7 +82,13 @@ namespace LittleBlog.Web.Apis
             }
         }
         
-        // 查
+        /// <summary>
+        /// 获取单个文章的详情
+        /// </summary>
+        /// <param name="categoryService"></param>
+        /// <param name="tagService"></param>
+        /// <param name="id">文章的Id</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get([FromServices]ICategoryService categoryService,[FromServices]ITagService tagService,int id)
         {
@@ -99,6 +119,11 @@ namespace LittleBlog.Web.Apis
             }
         }
 
+        /// <summary>
+        /// 获取文章的列表（分页）
+        /// </summary>
+        /// <param name="queryContext">查询条件</param>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> List([FromQuery]ListArticlesQueryContext queryContext)
         {

@@ -12,6 +12,7 @@ namespace LittleBlog.Web.Controllers
 {
     [AllowAnonymous]
     [Route("Archive")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ArchiveController : Controller
     {
         private IArticleService _articleService;
