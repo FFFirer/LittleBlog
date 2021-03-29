@@ -32,90 +32,90 @@ namespace LittleBlog.Web.Controllers
         /// 主页
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> Index(int page = 1)
-        {
-            var query = new Models.QueryContext.ListArticlesQueryContext()
-            {
-                Page = page,
-                PageSize = GlobalConfig.PageSize,
-                Source = QuerySource.Common,
-                OnlyPublished = true,
-            };
-            var results = await _articleService.ListArticlesAsync(query);
-            Models.ViewModels.HomeIndexViewModel viewmodel = new Models.ViewModels.HomeIndexViewModel();
-            viewmodel.ArticleInfos = results;
-            viewmodel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total);
-            return View(viewmodel);
-        }
-
-        ///// <summary>
-        ///// GET,展示修改界面
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpGet]
-        //public IActionResult Edit()
+        //public async Task<IActionResult> Index(int page = 1)
         //{
-        //    return View(new Article());
+        //    var query = new Models.QueryContext.ListArticlesQueryContext()
+        //    {
+        //        Page = page,
+        //        PageSize = GlobalConfig.PageSize,
+        //        Source = QuerySource.Common,
+        //        OnlyPublished = true,
+        //    };
+        //    var results = await _articleService.ListArticlesAsync(query);
+        //    Models.ViewModels.HomeIndexViewModel viewmodel = new Models.ViewModels.HomeIndexViewModel();
+        //    viewmodel.ArticleInfos = results;
+        //    viewmodel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total);
+        //    return View(viewmodel);
         //}
 
-        ///// <summary>
-        ///// POST,提交修改
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public IActionResult Edit([FromBody]EditViewModel model)
+        /////// <summary>
+        /////// GET,展示修改界面
+        /////// </summary>
+        /////// <returns></returns>
+        ////[HttpGet]
+        ////public IActionResult Edit()
+        ////{
+        ////    return View(new Article());
+        ////}
+
+        /////// <summary>
+        /////// POST,提交修改
+        /////// </summary>
+        /////// <param name="model"></param>
+        /////// <returns></returns>
+        ////[HttpPost]
+        ////public IActionResult Edit([FromBody]EditViewModel model)
+        ////{
+        ////    try
+        ////    {
+        ////        _articleService.SaveContentChange(model.Info.Id, model.Info.Content);
+        ////        return Index();
+        ////    }
+        ////    catch (System.Exception ex)
+        ////    {
+        ////        _logger.LogError(ex, "编辑文章");
+        ////        // 返回错误页
+        ////        return Error();
+        ////    }
+        ////}
+
+        //public IActionResult Privacy()
+        //{
+        //    return View();
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> Search(string keyword, int page = 1)
         //{
         //    try
         //    {
-        //        _articleService.SaveContentChange(model.Info.Id, model.Info.Content);
-        //        return Index();
+        //        var query = new Models.QueryContext.ListArticlesQueryContext()
+        //        {
+        //            Keyword = keyword,
+        //            Page = page,
+        //            PageSize = GlobalConfig.PageSize,
+        //            Source = QuerySource.Common,
+        //            OnlyPublished = true,
+        //        };
+        //        SearchViewModel viewModel = new SearchViewModel()
+        //        {
+        //            keyword = keyword,
+        //            SearchedArticles = await _articleService.ListArticlesAsync(query),
+        //            PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total)
+        //        };
+        //        return View(viewModel);
         //    }
-        //    catch (System.Exception ex)
+        //    catch (Exception ex)
         //    {
-        //        _logger.LogError(ex, "编辑文章");
-        //        // 返回错误页
-        //        return Error();
+        //        _logger.LogError(ex, $"查询：{keyword}");
+        //        return RedirectToAction("Index", "Error", new { statusCode = "500" });
         //    }
         //}
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Search(string keyword, int page = 1)
-        {
-            try
-            {
-                var query = new Models.QueryContext.ListArticlesQueryContext()
-                {
-                    Keyword = keyword,
-                    Page = page,
-                    PageSize = GlobalConfig.PageSize,
-                    Source = QuerySource.Common,
-                    OnlyPublished = true,
-                };
-                SearchViewModel viewModel = new SearchViewModel()
-                {
-                    keyword = keyword,
-                    SearchedArticles = await _articleService.ListArticlesAsync(query),
-                    PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total)
-                };
-                return View(viewModel);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"查询：{keyword}");
-                return RedirectToAction("Index", "Error", new { statusCode = "500" });
-            }
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
     }
 }

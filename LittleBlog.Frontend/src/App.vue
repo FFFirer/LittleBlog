@@ -1,7 +1,9 @@
 <template>
   <a-layout id="main">
     <a-layout-header id="header">
-      <h1>Welcome to LittleBlog!</h1>
+      <router-link to="/">
+        <h1>Welcome to LittleBlog!</h1>
+      </router-link>
     </a-layout-header>
     <a-layout>
       <a-layout-content id="main-content">
@@ -148,6 +150,10 @@
   #sidebar {
     background-color: white;
     padding: 5px;
+  }
+
+  .list-group {
+    margin: 5px;
   }
 
   .list-group .list-custom {

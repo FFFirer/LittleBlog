@@ -25,6 +25,7 @@ namespace LittleBlog.Web
             Configuration = configuration;
         }
 
+        private static string DefaultCorsPolicyName = "default";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -57,6 +58,14 @@ namespace LittleBlog.Web
                 settings.Version = "v1.0.0";
                 settings.Title = "LittleBlog Web API";
             });
+
+            services.AddCors(setup =>
+            {
+                setup.AddPolicy(DefaultCorsPolicyName, config =>
+                {
+                    config.WithOrigins("http://127.0.0.1:3000", "http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +87,9 @@ namespace LittleBlog.Web
             app.UseOpenApi();
             app.UseSwaggerUi3();
             app.UseRouting();
+
+            app.UseCors(DefaultCorsPolicyName);
+
             app.UseStatusCodePagesWithRedirects("/Error/{0}");
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

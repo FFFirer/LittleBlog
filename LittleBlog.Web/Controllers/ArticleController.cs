@@ -25,29 +25,29 @@ namespace LittleBlog.Web.Controllers
             _tagService = tagService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Index(int id)
-        {
-            Article article = await _articleService.GetArticleAsync(id);
+        //[HttpGet]
+        //public async Task<IActionResult> Index(int id)
+        //{
+        //    Article article = await _articleService.GetArticleAsync(id);
 
-            if(article == null)
-            {
-                return NotFound();
-            }
+        //    if(article == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            // 验证权限，非管理园返回404
-            var isAuthorized = await _authorizationService.AuthorizeAsync(User, article, ArticleOperationRequirements.Details);
+        //    // 验证权限，非管理园返回404
+        //    var isAuthorized = await _authorizationService.AuthorizeAsync(User, article, ArticleOperationRequirements.Details);
 
-            if (!isAuthorized.Succeeded)
-            {
-                return NotFound();
-            }
+        //    if (!isAuthorized.Succeeded)
+        //    {
+        //        return NotFound();
+        //    }
 
-            ArticleIndexViewModel viewModel = new ArticleIndexViewModel();
-            viewModel.Article = article;
-            viewModel.Category = await _categoryService.GetCategoryByArticleAsync(article.Id);
-            viewModel.Tags = await _tagService.ListTagsByArticleAsync(article.Id);
-            return View(viewModel);
-        }
+        //    ArticleIndexViewModel viewModel = new ArticleIndexViewModel();
+        //    viewModel.Article = article;
+        //    viewModel.Category = await _categoryService.GetCategoryByArticleAsync(article.Id);
+        //    viewModel.Tags = await _tagService.ListTagsByArticleAsync(article.Id);
+        //    return View(viewModel);
+        //}
     }
 }

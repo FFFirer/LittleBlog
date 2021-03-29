@@ -19,7 +19,6 @@
             </div>
         </div>
     </router-link>
-
 </template>
 
 <script>
@@ -28,21 +27,19 @@
     } from 'vue-router'
     export default {
         name: 'ArticleSummary',
+        props: ["article", "url"],
         methods: {
 
         },
         computed: {
             articleRouterLink: () => {
                 return {
-                    name: '/article',
+                    name: this.url,
                     params: {
-                        id: 1
+                        id: this.article.id
                     }
                 }
             }
-        },
-        setup() {
-
         }
     }
 </script>

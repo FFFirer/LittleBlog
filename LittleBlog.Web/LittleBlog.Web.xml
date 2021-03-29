@@ -72,33 +72,6 @@
             博客基础信息设置
             </summary>
         </member>
-        <member name="M:LittleBlog.Web.Controllers.CategoryManageController.CreateCategory(LittleBlog.Web.Models.Category)">
-            <summary>
-            创建分类，webapi
-            </summary>
-            <param name="category"></param>
-            <returns></returns>
-        </member>
-        <member name="M:LittleBlog.Web.Controllers.HomeController.Index(System.Int32)">
-            <summary>
-            主页
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:LittleBlog.Web.Controllers.ManageController.GetAllCategories(System.Int32)">
-            <summary>
-            获取所有的类别组成的下拉列表
-            </summary>
-            <param name="selectId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:LittleBlog.Web.Controllers.TagManageController.CreateTag(LittleBlog.Web.Models.Tag)">
-            <summary>
-            创建标签，webapi
-            </summary>
-            <param name="tag"></param>
-            <returns></returns>
-        </member>
         <member name="T:LittleBlog.Web.CustomComponents.PageListComponent">
             <summary>
             分页组件
@@ -268,6 +241,83 @@
             <value></value>
         </member>
         <member name="P:LittleBlog.Web.Models.Tag.Description">
+            <summary>
+            描述
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.ArticleDto.Id">
+            <summary>
+            文章Id
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.ArticleDto.Title">
+            <summary>
+            文章标题
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.ArticleDto.Author">
+            <summary>
+            文章作者
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.ArticleDto.SavePath">
+            <summary>
+            保存路径
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.ArticleDto.IsPublished">
+            <summary>
+            是否发布
+            </summary>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.CategoryDto.Id">
+            <summary>
+            类别的Id
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.CategoryDto.DisplayName">
+            <summary>
+            显示名称
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.CategoryDto.Description">
+            <summary>
+            描述
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.Id">
+            <summary>
+            标签Id
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.DisplayName">
+            <summary>
+            标签显示名称
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.LastEditTime">
+            <summary>
+            最后一次编辑的时间
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.Description">
             <summary>
             描述
             </summary>

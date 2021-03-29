@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = '/api';
+axios.defaults.baseURL = 'https://localhost:5001';
 
-const apiHandler = {
+const baseApi = {
     get: (url, data, responseType) => {
         return new Promise((resolve, reject) => {
             axios({
@@ -40,7 +40,7 @@ const apiHandler = {
             }).then(response => {
                 if (response.status == 200) {
                     //根据实际情况进行更改
-                    resolve(response)
+                    resolve(response.data)
                 } else {
                     reject(response)
                 }
@@ -48,3 +48,5 @@ const apiHandler = {
         })
     }
 }
+
+export default baseApi;

@@ -22,73 +22,73 @@ namespace LittleBlog.Web.Controllers
             _articleService = articleService;
         }
 
-        public async Task<IActionResult> Index(int page = 1)
-        {
-            ArchiveIndexViewModel viewModel = new ArchiveIndexViewModel()
-            {
-                ArchivedArticleList = new List<ArchiveIndexListItemViewModel>()
-            };
+        //public async Task<IActionResult> Index(int page = 1)
+        //{
+        //    ArchiveIndexViewModel viewModel = new ArchiveIndexViewModel()
+        //    {
+        //        ArchivedArticleList = new List<ArchiveIndexListItemViewModel>()
+        //    };
 
-            var query = new Models.QueryContext.ListArchiveArticlesQueryContext()
-            {
-                Page = page,
-                PageSize = GlobalConfig.PageSize,
-                OnlyPublished = true,
-                IsASC = true,
-            };
+        //    var query = new Models.QueryContext.ListArchiveArticlesQueryContext()
+        //    {
+        //        Page = page,
+        //        PageSize = GlobalConfig.PageSize,
+        //        OnlyPublished = true,
+        //        IsASC = true,
+        //    };
 
-            List<Article> archiveArticles = await _articleService.ListArchiveArticlesAsync(query);
-            archiveArticles.GroupBy(a => a.CreateTime.ToString("yyyy-MM-dd")).ToList().ForEach(grouped =>
-            {
-                viewModel.ArchivedArticleList.Add(new ArchiveIndexListItemViewModel()
-                {
-                    ArchiveDate = grouped.Key,
-                    Articles = grouped.ToList()
-                });
-            });
-            viewModel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total);
-            return View(viewModel);
-        }
+        //    List<Article> archiveArticles = await _articleService.ListArchiveArticlesAsync(query);
+        //    archiveArticles.GroupBy(a => a.CreateTime.ToString("yyyy-MM-dd")).ToList().ForEach(grouped =>
+        //    {
+        //        viewModel.ArchivedArticleList.Add(new ArchiveIndexListItemViewModel()
+        //        {
+        //            ArchiveDate = grouped.Key,
+        //            Articles = grouped.ToList()
+        //        });
+        //    });
+        //    viewModel.PageInfo = new Models.ViewModels.PageInfo(page, GlobalConfig.PageSize, query.Total);
+        //    return View(viewModel);
+        //}
 
-        [HttpGet]
-        [Route("Date/{archiveDate}")]
-        public async Task<IActionResult> List(string archiveDate)
-        {
-            if (string.IsNullOrEmpty(archiveDate))
-            {
-                return NotFound();
-            }
-            ArchiveListViewModel viewModel = new ArchiveListViewModel();
-            viewModel.Articles = await _articleService.ListAllArticlesByArchiveDateAsync(archiveDate);
-            return View(viewModel);
-        }
+        //[HttpGet]
+        //[Route("Date/{archiveDate}")]
+        //public async Task<IActionResult> List(string archiveDate)
+        //{
+        //    if (string.IsNullOrEmpty(archiveDate))
+        //    {
+        //        return NotFound();
+        //    }
+        //    ArchiveListViewModel viewModel = new ArchiveListViewModel();
+        //    viewModel.Articles = await _articleService.ListAllArticlesByArchiveDateAsync(archiveDate);
+        //    return View(viewModel);
+        //}
 
-        [HttpGet]
-        [Route("Category/{categoryId}")]
-        public async Task<IActionResult> Category(int? categoryId)
-        {
-            if(categoryId == null)
-            {
-                return NotFound();
-            }
+        //[HttpGet]
+        //[Route("Category/{categoryId}")]
+        //public async Task<IActionResult> Category(int? categoryId)
+        //{
+        //    if(categoryId == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            ArchiveListViewModel viewModel = new ArchiveListViewModel();
-            viewModel.Articles = await _articleService.ListAllArticlesByCategoryAsync((int)categoryId);
-            return View("List", viewModel);
-        }
+        //    ArchiveListViewModel viewModel = new ArchiveListViewModel();
+        //    viewModel.Articles = await _articleService.ListAllArticlesByCategoryAsync((int)categoryId);
+        //    return View("List", viewModel);
+        //}
 
-        [HttpGet]
-        [Route("Tag/{tagId}")]
-        public async Task<IActionResult> Tag(int? tagId)
-        {
-            if(tagId == null)
-            {
-                return NotFound();
-            }
+        //[HttpGet]
+        //[Route("Tag/{tagId}")]
+        //public async Task<IActionResult> Tag(int? tagId)
+        //{
+        //    if(tagId == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            ArchiveListViewModel viewModel = new ArchiveListViewModel();
-            viewModel.Articles = await _articleService.ListAllArticlesByTagAsync((int)tagId);
-            return View("List", viewModel);
-        }
+        //    ArchiveListViewModel viewModel = new ArchiveListViewModel();
+        //    viewModel.Articles = await _articleService.ListAllArticlesByTagAsync((int)tagId);
+        //    return View("List", viewModel);
+        //}
     }
 }

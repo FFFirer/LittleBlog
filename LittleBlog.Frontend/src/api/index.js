@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-import articleApi from './articleApi'
+import articleApi from './common/articleApi'
 
-const api = {
+const apis = {
     articleApi
 }
+
+export default apis
