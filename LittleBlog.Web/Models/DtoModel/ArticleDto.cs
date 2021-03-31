@@ -10,7 +10,6 @@ namespace LittleBlog.Web.Models.DtoModel
         public ArticleDto()
         {
             Author = GlobalConfig.AuthorName;
-            ArticleTags = new List<TagDto>();
         }
 
         /// <summary>
@@ -45,9 +44,5 @@ namespace LittleBlog.Web.Models.DtoModel
         /// 是否发布
         /// </summary>
         public bool IsPublished { get; set; }
-
-        public CategoryDto ArticleCategory { get; set; }
-
-        public List<TagDto> ArticleTags { get; set; }
     }
 }

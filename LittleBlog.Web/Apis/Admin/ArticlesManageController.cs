@@ -12,6 +12,8 @@ using LittleBlog.Web.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using NSwag.Annotations;
+using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.DtoModel;
 
 namespace LittleBlog.Web.Apis.Admin
 {
@@ -33,10 +35,10 @@ namespace LittleBlog.Web.Apis.Admin
         /// <summary>
         /// 删除文章
         /// </summary>
-        /// <param name="id">文章的Id</param>
+        /// <param name = "id"> 文章的Id </param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ResultModel> Delete(int id)
         {
             try
             {
@@ -58,17 +60,17 @@ namespace LittleBlog.Web.Apis.Admin
         /// <param name="model">文章的主要内容</param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Save([FromServices]ICategoryService categoryService, [FromServices]ITagService tagService, ArticleEditViewModel model)
+        public async Task<ResultModel> Save([FromServices]ICategoryService categoryService, [FromServices]ITagService tagService, ArticleEditViewModel model)
         {
             try
             {
                 await _articleService.SaveArticleAsync(model.Article);
-                if(model.CategoryId > 0)
+                if (model.CategoryId > 0)
                 {
                     await categoryService.SaveArticleToCategoryAsync(model.Article.Id, model.CategoryId);
                 }
 
-                if(model.TagIds?.Count() > 0)
+                if (model.TagIds?.Count() > 0)
                 {
                     await tagService.SaveArticleTagsAsync(model.Article.Id, model.TagIds);
                 }
@@ -81,7 +83,7 @@ namespace LittleBlog.Web.Apis.Admin
                 return Fail(ex, "保存出错");
             }
         }
-        
+
         /// <summary>
         /// 获取单个文章的详情
         /// </summary>
@@ -90,14 +92,14 @@ namespace LittleBlog.Web.Apis.Admin
         /// <param name="id">文章的Id</param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get([FromServices]ICategoryService categoryService,[FromServices]ITagService tagService,int id)
+        public async Task<ResultModel<ArticleEditViewModel>> Get([FromServices] ICategoryService categoryService, [FromServices] ITagService tagService, int id)
         {
             try
             {
                 var article = await _articleService.GetArticleAsync(id);
-                if (article == null) return Fail("未找到该文章！");
+                if (article == null) return Fail<ArticleEditViewModel>("未找到该文章！");
 
-                ArticleEditViewModel viewModel = new ArticleEditViewModel(article);
+                ArticleEditViewModel viewModel = new ArticleEditViewModel((ArticleDetailDto)article);
                 viewModel.Article.ArticleCategory = await categoryService.GetCategoryByArticleAsync(article.Id);
                 viewModel.Article.ArticleTags = await tagService.ListTagsByArticleAsync(article.Id);
 
@@ -115,7 +117,7 @@ namespace LittleBlog.Web.Apis.Admin
             catch (Exception ex)
             {
                 LogException(ex, $"获取出错, Id: {id}");
-                return Fail("获取出错");
+                return Fail<ArticleEditViewModel>("获取出错");
             }
         }
 
@@ -125,17 +127,17 @@ namespace LittleBlog.Web.Apis.Admin
         /// <param name="queryContext">查询条件</param>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> List([FromQuery]ListArticlesQueryContext queryContext)
+        public async Task<ResultModel<List<ArticleDto>>> List([FromQuery] ListArticlesQueryContext queryContext)
         {
             try
             {
                 var Articles = await _articleService.ListArticlesAsync(queryContext);
-                return Success(Articles);  
+                return Success<List<ArticleDto>>(Articles);
             }
             catch (Exception ex)
             {
                 LogException(ex, $"查询列表出错, query: {JsonSerializer.Serialize(queryContext)}");
-                return Fail("查询出错");
+                return Fail<List<ArticleDto>>("查询出错");
             }
         }
     }

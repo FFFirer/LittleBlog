@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LittleBlog.Web.Models.DtoModel;
 
 namespace LittleBlog.Web.Services
 {
@@ -54,32 +55,56 @@ namespace LittleBlog.Web.Services
             }
         }
 
-        public async Task<List<Category>> ListAsync()
+        public async Task<List<CategoryDto>> ListAsync()
         {
-            return await _db.Categories.AsNoTracking().ToListAsync();
+            return await _db.Categories.AsNoTracking()
+                .Select(a => new CategoryDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description
+                }).ToListAsync();
         }
 
-        public async Task<Category> GetByIdAsync(int id)
+        public async Task<CategoryDto> GetByIdAsync(int id)
         {
             return await _db.Categories
                 .AsNoTracking()
+                .Select(a => new CategoryDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description
+                })
                 .FirstOrDefaultAsync(c => c.Id.Equals(id));
         }
 
-        public async Task<Category> GetCategoryByArticleAsync(int articleId)
+        public async Task<CategoryDto> GetCategoryByArticleAsync(int articleId)
         {
             MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
             return await _db.Categories
                 .FromSqlRaw("SELECT * FROM Categories a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE CategoryId=a.Id AND ArticleId=@articleId)", ArticleId)
                 .AsNoTracking()
+                .Select(a=>new CategoryDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description
+                })
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Category>> ListSummaryAsync()
+        public async Task<List<CategoryDto>> ListSummaryAsync()
         {
             var categorySummaries = await _db.Categories
                 .FromSqlRaw<Category>("SELECT * FROM Categories ")
                 .AsNoTracking()
+                .Select(a => new CategoryDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description
+                })
                 .ToListAsync();
             categorySummaries.ForEach(async c =>
             {
@@ -91,13 +116,20 @@ namespace LittleBlog.Web.Services
             return categorySummaries;
         }
 
-        public async Task SaveAsync(Category category)
+        public async Task SaveAsync(CategoryDto category)
         {
-            if(category.Id == 0)
+            var categoryEntity = new Category()
             {
-                category.CreateTime = DateTime.Now;
-                category.LastEditTime = DateTime.Now;
-                _db.Categories.Add(category);
+                Id = category.Id,
+                Description = category.Description,
+                DisplayName = category.DisplayName
+            };
+
+            if(categoryEntity.Id == 0)
+            {
+                categoryEntity.CreateTime = DateTime.Now;
+                categoryEntity.LastEditTime = DateTime.Now;
+                _db.Categories.Add(categoryEntity);
             }
             else
             {

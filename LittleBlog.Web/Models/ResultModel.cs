@@ -1,60 +1,72 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Models
 {
-    public class ResultModel
+    public class ResultModel<TData>
     {
-        public bool isSuccess { get; set; }
-        public string message { get; set; }
-        public object data { get; set; }
-        public string exceptionMessage { get; set; }
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public TData Data { get; set; } = default;
+        public string ExceptionMessage { get; set; } = string.Empty;
 
-        public static ResultModel Success(object data = null, string message = "Operation Successed")
+        public ResultModel() { }
+
+        public ResultModel(TData data)
         {
-            return new ResultModel()
-            {
-                isSuccess = true,
-                message = message,
-                data = data,
-                exceptionMessage = "",
-            };
+            Data = data;
         }
-
-        public static ResultModel Fail(string message = "Operation Failed")
+        
+        public void SetException(Exception exception)
         {
-            return new ResultModel()
+            if (exception is BlogException)
             {
-                isSuccess = false,
-                message = message,
-                data = "",
-                exceptionMessage = ""
-            };
-        }
-
-        public static ResultModel Fail(Exception ex, string message = "Operation Failed")
-        {
-            if(ex is BlogException)
-            {
-                return new ResultModel()
+                if (string.IsNullOrEmpty(exception.Message))
                 {
-                    isSuccess = false,
-                    message = string.IsNullOrEmpty(ex.Message) ? message : ex.Message,
-                    data = "",
-                    exceptionMessage = ex?.Message ?? ""
-                };
+                    Message = exception?.Message ?? string.Empty;
+                }
             }
             else
             {
-                return new ResultModel()
+                ExceptionMessage = exception?.Message ?? string.Empty;
+            }
+        }
+    }
+
+    public class ResultModel
+    {
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; }
+        public object Data { get; set; } = new object();
+        public string ExceptionMessage { get; set; } = string.Empty;
+
+        public ResultModel()
+        {
+
+        }
+
+        public ResultModel(object data)
+        {
+            Data = data;
+        }
+
+        public void SetException(Exception exception)
+        {
+            if (exception == null) return;
+
+            if (exception is BlogException)
+            {
+                if (!string.IsNullOrEmpty(exception.Message))
                 {
-                    isSuccess = false,
-                    message = message,
-                    data = "",
-                    exceptionMessage = ex?.Message ?? ""
-                };
+                    Message = exception?.Message ?? string.Empty;
+                }
+            }
+            else
+            {
+                ExceptionMessage = exception?.Message ?? string.Empty;
             }
         }
     }

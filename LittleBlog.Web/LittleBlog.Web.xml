@@ -8,7 +8,7 @@
             <summary>
             删除文章
             </summary>
-            <param name="id">文章的Id</param>
+            <param name = "id"> 文章的Id </param>
             <returns></returns>
         </member>
         <member name="M:LittleBlog.Web.Apis.Admin.ArticlesManageController.Save(LittleBlog.Web.Services.Interfaces.ICategoryService,LittleBlog.Web.Services.Interfaces.ITagService,LittleBlog.Web.Models.ViewModels.Manage.ArticleEditViewModel)">
@@ -40,6 +40,34 @@
             <summary>
             获取所有标签
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.TagsManageController.Get(System.Nullable{System.Int32})">
+            <summary>
+            根据Id获取一个ID
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.TagsManageController.Delete(System.Nullable{System.Int32})">
+            <summary>
+            删除一个标签
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.TagsManageController.Save(LittleBlog.Web.Models.DtoModel.TagDto)">
+            <summary>
+            保存
+            </summary>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LittleBlog.Web.Apis.Admin.TagsManageController.CreateTag(LittleBlog.Web.Models.DtoModel.TagDto)">
+            <summary>
+            创建标签并返回，webapi
+            </summary>
+            <param name="tag"></param>
             <returns></returns>
         </member>
         <member name="M:LittleBlog.Web.Areas.Identity.Data.SeedData.EnsureUser(System.IServiceProvider,System.String,System.String)">
@@ -305,18 +333,6 @@
             </summary>
             <value></value>
         </member>
-        <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.CreateTime">
-            <summary>
-            创建时间
-            </summary>
-            <value></value>
-        </member>
-        <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.LastEditTime">
-            <summary>
-            最后一次编辑的时间
-            </summary>
-            <value></value>
-        </member>
         <member name="P:LittleBlog.Web.Models.DtoModel.TagDto.Description">
             <summary>
             描述
@@ -361,12 +377,10 @@
             <param name="archiveDate"></param>
             <returns></returns>
         </member>
-        <member name="M:LittleBlog.Web.Services.ArticleService.UpdateArticle(LittleBlog.Web.Models.Article)">
+        <member name="M:LittleBlog.Web.Services.ArticleService.UpdateArticle(LittleBlog.Web.Models.DtoModel.ArticleDto)">
             <summary>
             更新文章
             </summary>
-            <param name="oldArticle"></param>
-            <param name="newArticle"></param>
         </member>
         <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.ListAllArticlesAsync">
             <summary>
@@ -416,7 +430,7 @@
             <param name="Id"></param>
             <returns></returns>
         </member>
-        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.SaveArticleAsync(LittleBlog.Web.Models.Article)">
+        <member name="M:LittleBlog.Web.Services.Interfaces.IArticleService.SaveArticleAsync(LittleBlog.Web.Models.DtoModel.ArticleDto)">
             <summary>
             保存文章
             </summary>
@@ -460,10 +474,9 @@
             <summary>
             获取文章总体情况
             </summary>
-            <param name="TopCount">默认为0，即所有</param>
             <returns></returns>
         </member>
-        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.SaveAsync(LittleBlog.Web.Models.Category)">
+        <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.SaveAsync(LittleBlog.Web.Models.DtoModel.CategoryDto)">
             <summary>
             保存文章分类
             </summary>
@@ -481,7 +494,7 @@
             保存文章与分类关系
             </summary>
             <param name="categoryId"></param>
-            <param name="articleIds"></param>
+            <param name="articleId"></param>
             <returns></returns>
         </member>
         <member name="M:LittleBlog.Web.Services.Interfaces.ICategoryService.GetCategoryByArticleAsync(System.Int32)">
@@ -508,10 +521,9 @@
             <summary>
             获取标签的总体情况
             </summary>
-            <param name="TopCount">默认为0，即所有</param>
             <returns></returns>
         </member>
-        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.SaveAsync(LittleBlog.Web.Models.Tag)">
+        <member name="M:LittleBlog.Web.Services.Interfaces.ITagService.SaveAsync(LittleBlog.Web.Models.DtoModel.TagDto)">
             <summary>
             保存标签
             </summary>

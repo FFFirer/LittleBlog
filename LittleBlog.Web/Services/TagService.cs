@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LittleBlog.Web.Models.DtoModel;
 
 namespace LittleBlog.Web.Services
 {
@@ -53,22 +54,40 @@ namespace LittleBlog.Web.Services
             }
         }
 
-        public async Task<List<Tag>> ListAsync()
-        {
-            return await _db.Tags.AsNoTracking().ToListAsync();
-        }
-
-        public async Task<Tag> GetByIdAsync(int id)
+        public async Task<List<TagDto>> ListAsync()
         {
             return await _db.Tags.AsNoTracking()
+                .Select(a => new TagDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description,
+                }).ToListAsync();
+        }
+
+        public async Task<TagDto> GetByIdAsync(int id)
+        {
+            return await _db.Tags.AsNoTracking()
+                .Select(a => new TagDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description,
+                })
                 .FirstOrDefaultAsync(t => t.Id.Equals(id));
         }
 
-        public async Task<List<Tag>> ListSummaryAsync()
+        public async Task<List<TagSummaryDto>> ListSummaryAsync()
         {
             var tagSummaries = await _db.Tags
                 .FromSqlRaw("select * from Tags")
                 .AsNoTracking()
+                .Select(a=>new TagSummaryDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description,
+                })
                 .ToListAsync();
             tagSummaries.ForEach(async t =>
             {
@@ -80,22 +99,35 @@ namespace LittleBlog.Web.Services
             return tagSummaries;
         }
 
-        public async Task<List<Tag>> ListTagsByArticleAsync(int articleId)
+        public async Task<List<TagDto>> ListTagsByArticleAsync(int articleId)
         {
             MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
             return await _db.Tags
                 .FromSqlRaw("SELECT * FROM Tags a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE TagId=a.Id AND ArticleId=@articleId)", ArticleId)
                 .AsNoTracking()
+                .Select(a => new TagDto()
+                {
+                    Id = a.Id,
+                    DisplayName = a.DisplayName,
+                    Description = a.Description,
+                })
                 .ToListAsync();
         }
 
-        public async Task SaveAsync(Tag tag)
+        public async Task SaveAsync(TagDto tag)
         {
             if(tag.Id == 0)
             {
-                tag.CreateTime = DateTime.Now;
-                tag.LastEditTime = DateTime.Now;
-                _db.Tags.Add(tag);
+                var tagEntity = new Tag()
+                {
+                    Id = tag.Id,
+                    DisplayName = tag.DisplayName,
+                    Description = tag.Description,
+                };
+                tagEntity.CreateTime = DateTime.Now;
+                tagEntity.LastEditTime = DateTime.Now;
+
+                _db.Tags.Add(tagEntity);
             }
             else
             {

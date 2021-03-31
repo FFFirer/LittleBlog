@@ -14,37 +14,117 @@ namespace LittleBlog.Web.Apis
     [ApiController]
     public class BaseApiController : ControllerBase
     {
-        protected IActionResult Success()
+
+        #region Success 非泛型
+        protected ResultModel Success()
         {
-            return new JsonResult(ResultModel.Success());
+            return SuccessWithMessage("Successed");
         }
 
-        protected IActionResult Success(object data)
+        protected ResultModel SuccessWithMessage(string message)
         {
-            return new JsonResult(ResultModel.Success(data));
+            return Success(null, message);
         }
 
-        protected IActionResult Success(object data, string message)
+        protected ResultModel Success(object data, string message)
         {
-            return new JsonResult(ResultModel.Success(data, message));
+            return Result(true, data, message);
         }
 
-        protected IActionResult Fail(string message)
+        #endregion
+
+        #region Success 泛型
+        protected ResultModel<TData> Success<TData>()
         {
-            return new JsonResult(ResultModel.Fail(message));
-        }
-        protected IActionResult Fail(Exception ex, string message)
-        {
-            return new JsonResult(ResultModel.Fail(ex, message));
+            return Success<TData>(default);
         }
 
+        protected ResultModel<TData> Success<TData>(TData data)
+        {
+            return Success<TData>(data, "Successed");
+        }
+
+        protected ResultModel<TData> Success<TData>(TData data, string message)
+        {
+            return Result<TData>(true, data, message);
+        }
+
+        #endregion
+
+        #region Fail 非泛型
+        protected ResultModel Fail()
+        {
+            return FailWithMessage("Failed");
+        }
+        protected ResultModel FailWithMessage(string message)
+        {
+            return Fail(null, message);
+        }
+
+        protected ResultModel FailByException(Exception exception)
+        {
+            return Fail(exception, "Failed");
+        }
+
+        protected ResultModel Fail(Exception exception, string message)
+        {
+            return Result(false, null, message, exception);
+        }
+        #endregion
+
+        #region Fail 泛型
+        protected ResultModel<TData> Fail<TData>()
+        {
+            return Fail<TData>("Failed");
+        }
+        protected ResultModel<TData> Fail<TData>(string message)
+        {
+            return Fail<TData>(null, message);
+        }
+
+        protected ResultModel<TData> Fail<TData>(Exception exception)
+        {
+            return Fail<TData>(exception, "Failed");
+        }
+
+        protected ResultModel<TData> Fail<TData>(Exception exception, string message)
+        {
+            return Result<TData>(false, default, message, exception);
+        }
+
+        #endregion
+
+        #region Result 基础
+        protected ResultModel Result(bool isSuccess, object data, string message, Exception exception = null)
+        {
+            var result = new ResultModel(data)
+            {
+                IsSuccess = isSuccess,
+                Message = message,
+            };
+            result.SetException(exception);
+            return result;
+        }
+
+        protected ResultModel<TData> Result<TData>(bool isSuccess, TData data, string message, Exception exception = null)
+        {
+            var result = new ResultModel<TData>(data)
+            {
+                IsSuccess = isSuccess,
+                Message = message,
+            };
+            result.SetException(exception);
+            return result;
+        }
+        #endregion
+
+        #region 日志
         protected ILogger _logger { get; set; }
-
         protected void LogInfo(string message)
         {
             _logger?.LogInformation(message);
         }
-        
+
         protected void LogException(Exception exception, string message = "", LogLevel level = LogLevel.Error)
         {
             _logger?.Log(level, exception, message);
@@ -59,5 +139,6 @@ namespace LittleBlog.Web.Apis
         {
             return JsonSerializer.Serialize(data);
         }
+        #endregion
     }
 }

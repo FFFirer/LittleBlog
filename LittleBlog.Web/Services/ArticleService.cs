@@ -10,6 +10,7 @@ using LittleBlog.Web.Models.ViewModels.Manage;
 using LittleBlog.Web.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using LittleBlog.Web.Models.DtoModel;
 
 namespace LittleBlog.Web.Services
 {
@@ -21,12 +22,22 @@ namespace LittleBlog.Web.Services
             db = context;
         }
 
-        public async Task<List<Article>> ListAllArticlesAsync()
+        public async Task<List<ArticleDto>> ListAllArticlesAsync()
         {
-            return await db.Articles.AsNoTracking().ToListAsync();
+            return await db.Articles.AsNoTracking()
+                .Select(a=>new ArticleDto()
+                {
+                    Id = a.Id,
+                    Abstract = a.Abstract,
+                    Title = a.Title,
+                    Author = a.Author,
+                    Content = a.Content,
+                    SavePath = a.SavePath
+                })
+                .ToListAsync();
         }
 
-        public async Task<List<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext)
+        public async Task<List<ArticleDto>> ListArticlesAsync(ListArticlesQueryContext queryContext)
         {
             queryContext.CheckPermissions();
 
@@ -49,7 +60,15 @@ namespace LittleBlog.Web.Services
 
             Query = Query.Paging(queryContext);
 
-            return await Query.ToListAsync();
+            return await Query.Select(a => new ArticleDto()
+            {
+                Id = a.Id,
+                Abstract = a.Abstract,
+                Title = a.Title,
+                Author = a.Author,
+                Content = a.Content,
+                SavePath = a.SavePath
+            }).ToListAsync();
         }
 
         public async Task SaveContentChangeAsync(int articleId, string articleContent)
@@ -66,20 +85,29 @@ namespace LittleBlog.Web.Services
             await db.SaveChangesAsync();
         }
 
-        public async Task<Article> GetArticleAsync(int Id)
+        public async Task<ArticleDto> GetArticleAsync(int Id)
         {
             return await db.Articles
                 .AsNoTracking()
                 .Where(a => a.Id.Equals(Id))
+                .Select(a => new ArticleDto()
+                {
+                    Id = a.Id,
+                    Abstract = a.Abstract,
+                    Title = a.Title,
+                    Author = a.Author,
+                    Content = a.Content,
+                    SavePath = a.SavePath
+                })
                 .FirstOrDefaultAsync();
         }
 
-        public async Task SaveArticleAsync(Article article)
+        public async Task SaveArticleAsync(ArticleDto article)
         {
-            UpdateArticle(article);
-            if(article.Id == 0)
+            var articleEntity = UpdateArticle(article);
+            if(articleEntity.Id == 0)
             {
-                db.Articles.Add(article);
+                db.Articles.Add(articleEntity);
             }
             else
             {
@@ -96,13 +124,13 @@ namespace LittleBlog.Web.Services
                 oldArticle.Abstract = article.Abstract;
                 oldArticle.Content = article.Content;
                 oldArticle.SavePath = article.SavePath;
-                oldArticle.LastEditTime = article.LastEditTime;
+                oldArticle.LastEditTime = DateTime.Now;
                 oldArticle.IsPublished = article.IsPublished;
             }
             await db.SaveChangesAsync();
         }
 
-        public async Task<List<Article>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext)
+        public async Task<List<ArticleDto>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext)
         {
             IQueryable<Article> Query;
 
@@ -123,24 +151,51 @@ namespace LittleBlog.Web.Services
 
             Query = Query.Paging(queryContext);
 
-            return await Query.ToListAsync();
+            return await Query
+                .Select(a => new ArticleDto()
+                {
+                    Id = a.Id,
+                    Abstract = a.Abstract,
+                    Title = a.Title,
+                    Author = a.Author,
+                    Content = a.Content,
+                    SavePath = a.SavePath
+                }).ToListAsync();
         }
 
-        public async Task<List<Article>> ListAllArticlesByCategoryAsync(int categoryId)
+        public async Task<List<ArticleDto>> ListAllArticlesByCategoryAsync(int categoryId)
         {
             var CategoryId = new MySqlParameter("categoryId", categoryId);
             return await db.Articles
                 .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS( SELECT 1 FROM ArticleCategories WHERE a.Id=ArticleId AND CategoryId=@categoryId) AND a.IsPublished=1", CategoryId)
                 .AsNoTracking()
+                .Select(a => new ArticleDto()
+                {
+                    Id = a.Id,
+                    Abstract = a.Abstract,
+                    Title = a.Title,
+                    Author = a.Author,
+                    Content = a.Content,
+                    SavePath = a.SavePath
+                })
                 .ToListAsync();
         }
 
-        public async Task<List<Article>> ListAllArticlesByTagAsync(int tagId)
+        public async Task<List<ArticleDto>> ListAllArticlesByTagAsync(int tagId)
         {
             var TagId = new MySqlParameter("tagId", tagId);
             return await db.Articles
                 .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS(SELECT 1 FROM ArticleTags WHERE a.Id=ArticleId AND TagId=@tagId) AND a.IsPublished=1", TagId)
                 .AsNoTracking()
+                .Select(a => new ArticleDto()
+                {
+                    Id = a.Id,
+                    Abstract = a.Abstract,
+                    Title = a.Title,
+                    Author = a.Author,
+                    Content = a.Content,
+                    SavePath = a.SavePath
+                })
                 .ToListAsync();
         }
 
@@ -170,12 +225,21 @@ namespace LittleBlog.Web.Services
         /// </summary>
         /// <param name="archiveDate"></param>
         /// <returns></returns>
-        public async Task<List<Article>> ListAllArticlesByArchiveDateAsync(string archiveDate)
+        public async Task<List<ArticleDto>> ListAllArticlesByArchiveDateAsync(string archiveDate)
         {
             var ArchiveDate = new MySqlParameter("archiveDate", archiveDate);
             return await db.Articles
                 .FromSqlRaw("SELECT * FROM Articles WHERE DATE_FORMAT(CreateTime, '%Y-%m')=@archiveDate AND IsPublished=1", ArchiveDate)
                 .AsNoTracking()
+                .Select(a => new ArticleDto()
+                {
+                    Id = a.Id,
+                    Abstract = a.Abstract,
+                    Title = a.Title,
+                    Author = a.Author,
+                    Content = a.Content,
+                    SavePath = a.SavePath
+                })
                 .ToListAsync();
         }
 
@@ -198,10 +262,19 @@ namespace LittleBlog.Web.Services
         /// <summary>
         /// 更新文章
         /// </summary>
-        /// <param name="oldArticle"></param>
-        /// <param name="newArticle"></param>
-        private void UpdateArticle(Article article)
+        private Article UpdateArticle(ArticleDto articleDto)
         {
+            var article = new Article()
+            {
+                Id = articleDto.Id,
+                Title = articleDto.Title,
+                Author = articleDto.Author,
+                Abstract = articleDto.Abstract,
+                Content = articleDto.Content,
+                SavePath = articleDto.SavePath,
+                IsPublished = articleDto.IsPublished
+            };
+
             if (article.Id == 0)
             {
                 article.CreateTime = DateTime.Now;
@@ -210,6 +283,8 @@ namespace LittleBlog.Web.Services
             article.Abstract = TextHelper.GetAbstract(article.Content).ToString();
             article.LastEditTime = DateTime.Now;
             article.SavePath = string.Empty;
+
+            return article;
         }
 
         #endregion

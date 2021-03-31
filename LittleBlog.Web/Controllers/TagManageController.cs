@@ -25,12 +25,12 @@ namespace LittleBlog.Web.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            TagManageIndexViewModel viewModel = new TagManageIndexViewModel();
-            viewModel.Tags = await _tagService.ListAsync();
-            return View(viewModel);
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //    TagManageIndexViewModel viewModel = new TagManageIndexViewModel();
+        //    viewModel.Tags = await _tagService.ListAsync();
+        //    return View(viewModel);
+        //}
 
         //[HttpGet]
         //public IActionResult Edit(int? id)

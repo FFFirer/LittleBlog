@@ -1,4 +1,5 @@
 ﻿using LittleBlog.Web.Common;
+using LittleBlog.Web.Models.DtoModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,13 +15,13 @@ namespace LittleBlog.Web.Models.ViewModels.Manage
 
         }
 
-        public ArticleEditViewModel(Article article)
+        public ArticleEditViewModel(ArticleDetailDto article)
         {
             this.Article = article;
             this.TagIds = new List<int>();
         }
 
-        public Article Article { get; set; }
+        public ArticleDetailDto Article { get; set; }
 
         [Display(Name = "文章分类")]
         public int CategoryId { get; set; }

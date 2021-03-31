@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LittleBlog.Web.Models.DtoModel;
 
 namespace LittleBlog.Web.Services.Interfaces
 {
@@ -12,28 +13,27 @@ namespace LittleBlog.Web.Services.Interfaces
         /// 获取所有标签
         /// </summary>
         /// <returns></returns>
-        Task<List<Tag>> ListAsync();
+        Task<List<TagDto>> ListAsync();
 
         /// <summary>
         /// 根据Id获取标签
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Tag> GetByIdAsync(int id);
+        Task<TagDto> GetByIdAsync(int id);
 
         /// <summary>
         /// 获取标签的总体情况
         /// </summary>
-        /// <param name="TopCount">默认为0，即所有</param>
         /// <returns></returns>
-        Task<List<Tag>> ListSummaryAsync();
+        Task<List<TagSummaryDto>> ListSummaryAsync();
 
         /// <summary>
         /// 保存标签
         /// </summary>
         /// <param name="tag"></param>
         /// <returns></returns>
-        Task SaveAsync(Tag tag);
+        Task SaveAsync(TagDto tag);
 
         /// <summary>
         /// 删除标签
@@ -54,6 +54,6 @@ namespace LittleBlog.Web.Services.Interfaces
         /// </summary>
         /// <param name="articleId"></param>
         /// <returns></returns>
-        Task<List<Tag>> ListTagsByArticleAsync(int articleId);
+        Task<List<TagDto>> ListTagsByArticleAsync(int articleId);
     }
 }

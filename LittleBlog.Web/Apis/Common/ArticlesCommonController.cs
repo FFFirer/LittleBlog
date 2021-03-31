@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using LittleBlog.Web.Models.QueryContext;
 using NSwag.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using LittleBlog.Web.Models.DtoModel;
+using LittleBlog.Web.Models;
 
 namespace LittleBlog.Web.Apis.Common
 {
@@ -30,7 +32,7 @@ namespace LittleBlog.Web.Apis.Common
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> List([FromQuery]ListArticlesQueryContext queryContext)
+        public async Task<ResultModel<List<ArticleDto>>> List([FromQuery]ListArticlesQueryContext queryContext)
         {
             try
             {
@@ -42,26 +44,26 @@ namespace LittleBlog.Web.Apis.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"查询文章列表出错, query: {SerializeToJson(queryContext)}");
-                return Fail(ex, "查询文章列表出错");
+                return Fail<List<ArticleDto>>(ex, "查询文章列表出错");
             }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<ResultModel<ArticleDto>> Get(int id)
         {
             try
             {
                 var article = await _articleService.GetArticleAsync(id);
                 if (!article.IsPublished)
                 {
-                    return Fail("未找到文章");
+                    return Fail<ArticleDto>("未找到文章");
                 }
                 return Success(article);
             }
             catch (Exception ex)
             {
                 _logger.LogError("获取文章出错",ex);
-                return Fail("获取文章出错");
+                return Fail<ArticleDto>("获取文章出错");
             }
         }
     }
