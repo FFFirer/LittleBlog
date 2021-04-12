@@ -1,12 +1,15 @@
 <template>
   <a-row :gutter="[8, 8]">
     <a-col :span="6">
-      <a-input placeholder="请输入查询关键字">
+      <a-input v-model="keyword" placeholder="请输入查询关键字">
 
       </a-input>
     </a-col>
     <a-col :span="6">
-      <a-button type="primary">查询</a-button>
+      <a-space>
+        <a-button @click="list()">查询</a-button>
+        <a-button type="primary" @click="gotoEdit(0)">新增</a-button>
+      </a-space>
     </a-col>
   </a-row>
   <a-row style="margin-top: 5px;" :gutter="8">
@@ -28,6 +31,8 @@
   import {
     useRouter
   } from "vue-router";
+
+  import Apis from '../../api/index.ts'
 
   // 定义表格列名
   const tableColumns = [{
@@ -63,13 +68,32 @@
         columns: tableColumns,
         currentPage: 1,
         totalCount: 50,
-        data: tableData
+        data: [],
+        keyword: '',
+        onlyPublished: false,
       }
     },
     methods: {
       edit(id) {
         // 编辑文章
         this.gotoEdit(id);
+      },
+      list() {
+        let queryData = {
+          keyword: this.keyword,
+          onlyPublished: this.onlyPublished,
+          page: this.currentPage,
+          pageSize: 20,
+        }
+        Apis.ArticlesManageApi.List(queryData).then((resp) => {
+          if (resp.data.isSuccess) {
+            this.data = resp.data.data
+          } else {
+            console.log(resp.data.message)
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
       }
     },
     setup() {

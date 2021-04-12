@@ -91,6 +91,7 @@
     padding: 5px;
     box-shadow: 1px 1px 1px #ccc;
     height: 100%;
+    overflow: auto;
   }
 
 </style>

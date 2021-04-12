@@ -23,6 +23,7 @@ const routes = [
     component: Home,
   },
   {
+    name: 'articleList',
     path: '/articles/manage',
     component: ArticleList,
   },
