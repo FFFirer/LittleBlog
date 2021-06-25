@@ -14,6 +14,7 @@ using System.ComponentModel;
 using NSwag.Annotations;
 using LittleBlog.Web.Models;
 using LittleBlog.Web.Models.DtoModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LittleBlog.Web.Apis.Admin
 {
@@ -22,6 +23,7 @@ namespace LittleBlog.Web.Apis.Admin
     [Description("文章管理相关端口（Admin）")]
     [ApiExplorerSettings(GroupName = "Admin")]
     [OpenApiTags("Admin Articles")]
+    [AllowAnonymous]
     public class ArticlesManageController : BaseApiController
     {
         private IArticleService _articleService;

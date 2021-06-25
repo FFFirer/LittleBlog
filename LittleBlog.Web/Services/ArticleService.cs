@@ -265,7 +265,7 @@ namespace LittleBlog.Web.Services
             }
             else
             {
-                throw new Exception("文章不存在");
+                throw new BlogException("文章不存在");
             }
         }
 

@@ -23,12 +23,12 @@ namespace LittleBlog.Web.Apis
 
         protected ResultModel SuccessWithMessage(string message)
         {
-            return Success(null, message);
+            return Success(message);
         }
 
-        protected ResultModel Success(object data, string message)
+        protected ResultModel Success(string message)
         {
-            return Result(true, data, message);
+            return Result(true, message);
         }
 
         #endregion
@@ -68,7 +68,7 @@ namespace LittleBlog.Web.Apis
 
         protected ResultModel Fail(Exception exception, string message)
         {
-            return Result(false, null, message, exception);
+            return Result(false, message, exception);
         }
         #endregion
 
@@ -95,9 +95,9 @@ namespace LittleBlog.Web.Apis
         #endregion
 
         #region Result 基础
-        protected ResultModel Result(bool isSuccess, object data, string message, Exception exception = null)
+        protected ResultModel Result(bool isSuccess, string message, Exception exception = null)
         {
-            var result = new ResultModel(data)
+            var result = new ResultModel()
             {
                 IsSuccess = isSuccess,
                 Message = message,
