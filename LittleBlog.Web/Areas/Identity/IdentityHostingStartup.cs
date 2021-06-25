@@ -16,10 +16,26 @@ namespace LittleBlog.Web.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
+
+
             builder.ConfigureServices((context, services) => {
-                services.AddDbContext<LittleBlogContext>(options =>
-                    options.UseMySql(
-                        context.Configuration.GetConnectionString("MysqlConnection")));
+
+                var DbType = context.Configuration.GetValue<string>("DbType");
+
+                string connectionString = context.Configuration.GetConnectionString("LittleBlog");
+                switch (DbType)
+                {
+                    case "Mysql":
+                        services.AddDbContext<LittleBlogContext>(options => 
+                            options.UseMySql(connectionString));
+                        break;
+                    case "Pgsql":
+                        services.AddDbContext<LittleBlogContext>(options => 
+                            options.UseNpgsql(connectionString));
+                        break;
+                    default:
+                        throw new BlogException("没有配置数据库连接！");
+                }
 
                 services.AddDefaultIdentity<LittleBlogIdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddRoles<IdentityRole>()

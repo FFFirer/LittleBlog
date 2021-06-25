@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LittleBlog.Web.Models
+namespace LittleBlog.Web
 {
     public class BlogException : Exception
     {

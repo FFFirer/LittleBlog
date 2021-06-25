@@ -165,9 +165,13 @@ namespace LittleBlog.Web.Services
 
         public async Task<List<ArticleDto>> ListAllArticlesByCategoryAsync(int categoryId)
         {
-            var CategoryId = new MySqlParameter("categoryId", categoryId);
+            //var CategoryId = new MySqlParameter("categoryId", categoryId);
+            var sqlParameters = new
+            {
+                categoryId = categoryId
+            };
             return await db.Articles
-                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS( SELECT 1 FROM ArticleCategories WHERE a.Id=ArticleId AND CategoryId=@categoryId) AND a.IsPublished=1", CategoryId)
+                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS( SELECT 1 FROM ArticleCategories WHERE a.Id=ArticleId AND CategoryId=@categoryId) AND a.IsPublished=1", sqlParameters)
                 .AsNoTracking()
                 .Select(a => new ArticleDto()
                 {
@@ -183,9 +187,13 @@ namespace LittleBlog.Web.Services
 
         public async Task<List<ArticleDto>> ListAllArticlesByTagAsync(int tagId)
         {
-            var TagId = new MySqlParameter("tagId", tagId);
+            //var TagId = new MySqlParameter("tagId", tagId);
+            var sqlParameters = new
+            {
+                tagId = tagId
+            };
             return await db.Articles
-                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS(SELECT 1 FROM ArticleTags WHERE a.Id=ArticleId AND TagId=@tagId) AND a.IsPublished=1", TagId)
+                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS(SELECT 1 FROM ArticleTags WHERE a.Id=ArticleId AND TagId=@tagId) AND a.IsPublished=1", sqlParameters)
                 .AsNoTracking()
                 .Select(a => new ArticleDto()
                 {
@@ -227,9 +235,13 @@ namespace LittleBlog.Web.Services
         /// <returns></returns>
         public async Task<List<ArticleDto>> ListAllArticlesByArchiveDateAsync(string archiveDate)
         {
-            var ArchiveDate = new MySqlParameter("archiveDate", archiveDate);
+            //var ArchiveDate = new MySqlParameter("archiveDate", archiveDate);
+            var sqlParameters = new
+            {
+                archiveDate = archiveDate
+            };
             return await db.Articles
-                .FromSqlRaw("SELECT * FROM Articles WHERE DATE_FORMAT(CreateTime, '%Y-%m')=@archiveDate AND IsPublished=1", ArchiveDate)
+                .FromSqlRaw("SELECT * FROM Articles WHERE DATE_FORMAT(CreateTime, '%Y-%m')=@archiveDate AND IsPublished=1", sqlParameters)
                 .AsNoTracking()
                 .Select(a => new ArticleDto()
                 {
