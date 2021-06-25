@@ -6,18 +6,13 @@ import {
 from 'vue-router'
 
 // pages
-import Home from '../pages/Home.vue'
-import Article from '../pages/Article.vue'
+import Articles from '../pages/admin/Articles.vue'
 
 const routerHistory = createWebHistory()
 
 const routes = [{
-    path: '/',
-    component: Home
-}, {
-    path: '/article/:id',
-    component: Article,
-    props: true
+    path: '/admin',
+    component: Articles
 }]
 
 const router = createRouter({

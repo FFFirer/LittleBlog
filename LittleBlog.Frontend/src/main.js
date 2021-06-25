@@ -3,11 +3,12 @@ import {
 } from 'vue'
 import App from './App.vue'
 import './index.css'
-import Antd from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
+import naive from 'naive-ui'
+
+
 import router from './static/router'
 
 createApp(App)
-    .use(Antd)
+    .use(naive)
     .use(router)
     .mount('#app')

@@ -31,9 +31,21 @@ namespace LittleBlog.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = Configuration.GetConnectionString("MysqlConnection");
-            
-            services.AddDbContext<LittleBlogContext>(options => options.UseMySql(connection));
+            var db = Configuration.GetValue<string>("DbType");
+
+            string connectionString = Configuration.GetConnectionString("LittleBlog");
+            switch (db)
+            {
+                case "Mysql":
+                    services.AddDbContext<LittleBlogContext>(options => options.UseMySql(connectionString));
+                    break;
+                case "Pgsql":
+                    services.AddDbContext<LittleBlogContext>(options => options.UseNpgsql(connectionString));
+                    break;
+                default:
+                    throw new BlogException("没有配置数据库连接！");
+            }
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

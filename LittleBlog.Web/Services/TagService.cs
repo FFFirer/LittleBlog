@@ -91,9 +91,13 @@ namespace LittleBlog.Web.Services
                 .ToListAsync();
             tagSummaries.ForEach(async t =>
             {
-                MySqlParameter TagId = new MySqlParameter("tagId", t.Id);
+                //MySqlParameter TagId = new MySqlParameter("tagId", t.Id);
+                var sqlParameters = new
+                {
+                    tagId = t.Id
+                };
                 t.ArticlesCount = await _db.Articles
-                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE a.Id=ArticleId AND TagId=@tagId) AND a.IsPublished=1", TagId)
+                .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE a.Id=ArticleId AND TagId=@tagId) AND a.IsPublished=1", sqlParameters)
                 .CountAsync();
             });
             return tagSummaries;
@@ -101,9 +105,13 @@ namespace LittleBlog.Web.Services
 
         public async Task<List<TagDto>> ListTagsByArticleAsync(int articleId)
         {
-            MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
+            //MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
+            var sqlParameters = new
+            {
+                articleId = articleId
+            };
             return await _db.Tags
-                .FromSqlRaw("SELECT * FROM Tags a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE TagId=a.Id AND ArticleId=@articleId)", ArticleId)
+                .FromSqlRaw("SELECT * FROM Tags a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE TagId=a.Id AND ArticleId=@articleId)", sqlParameters)
                 .AsNoTracking()
                 .Select(a => new TagDto()
                 {
