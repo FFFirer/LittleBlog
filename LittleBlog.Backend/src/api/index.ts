@@ -1,7 +1,7 @@
 import ArticlesManageApi from './ArticlesManageApi'
 
 const Apis = {
-  ArticlesManageApi,
+    ArticlesManageApi,
 }
 
 export default Apis
