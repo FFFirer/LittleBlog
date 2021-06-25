@@ -81,9 +81,13 @@ namespace LittleBlog.Web.Services
 
         public async Task<CategoryDto> GetCategoryByArticleAsync(int articleId)
         {
-            MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
+            //MySqlParameter ArticleId = new MySqlParameter("articleId", articleId);
+            var sqlParameters = new
+            {
+                articleId = articleId
+            };
             return await _db.Categories
-                .FromSqlRaw("SELECT * FROM Categories a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE CategoryId=a.Id AND ArticleId=@articleId)", ArticleId)
+                .FromSqlRaw("SELECT * FROM Categories a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE CategoryId=a.Id AND ArticleId=@articleId)", sqlParameters)
                 .AsNoTracking()
                 .Select(a=>new CategoryDto()
                 {
@@ -108,9 +112,13 @@ namespace LittleBlog.Web.Services
                 .ToListAsync();
             categorySummaries.ForEach(async c =>
             {
-                MySqlParameter CategoryId = new MySqlParameter("categoryId", c.Id);
+                //MySqlParameter CategoryId = new MySqlParameter("categoryId", c.Id);
+                var sqlParameters = new
+                {
+                    categoryId = c.Id
+                };
                 c.ArticlesCount = await _db.Articles
-                    .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE a.Id=ArticleId AND CategoryId=@categoryId) AND a.IsPublished=1", CategoryId)
+                    .FromSqlRaw("SELECT * FROM Articles a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE a.Id=ArticleId AND CategoryId=@categoryId) AND a.IsPublished=1", sqlParameters)
                     .CountAsync();
             });
             return categorySummaries;
