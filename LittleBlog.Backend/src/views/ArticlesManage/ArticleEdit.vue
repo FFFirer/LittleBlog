@@ -11,6 +11,11 @@
 
                 </n-input>
             </n-form-item>
+            <n-form-item label="摘要">
+                <n-input v-model:value="article.abstract" placeholder="请输入摘要">
+
+                </n-input>
+            </n-form-item>
             <n-form-item label="正文">
                 <div class="tinymce-box">
                     <Editor v-model="article.content" :init="init" :disabled="disabled" />
