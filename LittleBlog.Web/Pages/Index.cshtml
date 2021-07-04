@@ -1,0 +1,44 @@
+﻿@page
+@model LittleBlog.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "首页";
+}
+<div style="width: 100%; height: 200px; display: flex; justify-content: flex-start; place-items: center">
+    <p class="h1">
+        LittleBlog
+        <small class="text-muted"> To Share Knowledge</small>
+    </p>
+</div>
+
+@foreach (var article in Model.Articles)
+{
+    <div class="card">
+        <a class="link-default" asp-area="" asp-page="/Article" asp-route-id="@article.Id">
+            <div class="card-body">
+                <p class="h3">
+                    @article.Title
+                </p>
+
+                <p class="text-muted">
+                    @article.Abstract
+                </p>
+            </div>
+        </a>
+        <div class="card-footer">
+            <span class="text-muted">
+                作者
+            </span>
+            <span>
+                @article.Author
+            </span>
+            &nbsp;
+            <span class="text-muted">
+                发布于
+            </span>
+            <span>
+                @article.LastEditTime.ToString("yyyy-MM-dd")
+            </span>
+        </div>
+    </div>
+}
+

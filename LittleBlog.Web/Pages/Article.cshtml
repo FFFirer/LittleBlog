@@ -1,0 +1,25 @@
+﻿@page "{id:int}"
+@model LittleBlog.Web.Pages.ArticleModel
+@{
+    ViewData["Title"] = Model.Article.Title;
+}
+
+<div>
+    <p class="h1">
+        @Model.Article.Title
+    </p>
+    <hr />
+    <p>
+        <span class="text-muted">
+            @Model.Article.Author
+        </span>
+        <span class="text-muted">
+            @Model.Article.LastEditTime.ToString("yyyy-MM-dd")
+        </span>
+    </p>
+</div>
+
+
+<div>
+    @Html.Raw(Model.Article.Content)
+</div>

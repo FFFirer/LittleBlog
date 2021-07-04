@@ -16,6 +16,7 @@ using LittleBlog.Web.Authorization;
 using NSwag;
 using NSwag.Generation;
 using AutoMapper;
+using System.Collections.Generic;
 
 namespace LittleBlog.Web
 {
@@ -34,6 +35,7 @@ namespace LittleBlog.Web
         {
             var db = Configuration.GetValue<string>("DbType");
 
+            // 数据库连接
             string connectionString = Configuration.GetConnectionString("LittleBlog");
             switch (db)
             {
@@ -47,6 +49,7 @@ namespace LittleBlog.Web
                     throw new BlogException("没有配置数据库连接！");
             }
 
+            // Cookie
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -54,32 +57,43 @@ namespace LittleBlog.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            // 日志
             services.AddLogging(configLogger =>
             {
                 configLogger.AddNLog("NLog.config");
             });
-            services.AddControllersWithViews();
-            services.AddRazorPages().AddRazorRuntimeCompilation();
+            //services.AddControllersWithViews();
 
+            // Razor Pages
+            services.AddRazorPages(options => { 
+                options.Conventions.AllowAnonymousToPage("/");
+            }).AddRazorRuntimeCompilation();
+
+            // 依赖注入
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<ITagService, TagService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddSingleton<IAuthorizationHandler, ArticleAuthorizationHandler>();
 
+            // Swagger OpenApi
             services.AddSwaggerDocument((settings)=> 
             {
                 settings.Version = "v1.0.0";
                 settings.Title = "LittleBlog Web API";
             });
 
+            // 跨域配置
+            var allowedOrigins = new List<string>();
+            Configuration.GetSection("AllowedOrigins").Bind(allowedOrigins);
             services.AddCors(setup =>
             {
                 setup.AddPolicy(DefaultCorsPolicyName, config =>
                 {
-                    config.WithOrigins("http://127.0.0.1:3000", "http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+                    config.WithOrigins(allowedOrigins.ToArray()).AllowAnyMethod().AllowAnyHeader();
                 });
             });
 
+            // AutoMapper
             services.AddAutoMapper(typeof(Models.MapProfile.ArticleProfile));
         }
 
@@ -106,21 +120,20 @@ namespace LittleBlog.Web
             app.UseCors(DefaultCorsPolicyName);
 
             app.UseStatusCodePagesWithRedirects("/Error/{0}");
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
             });
+            
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
             });
         }
     }

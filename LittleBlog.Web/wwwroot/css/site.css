@@ -139,3 +139,9 @@ label.error {
     color: red;
     font-size: 10px;
 }
+
+/* 链接 */
+a.link-default {
+    text-decoration: none;
+    color: initial;
+}
