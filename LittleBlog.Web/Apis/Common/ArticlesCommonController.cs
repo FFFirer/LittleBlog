@@ -1,17 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using LittleBlog.Web.Services.Interfaces;
-using Microsoft.Extensions.Logging;
-using LittleBlog.Web.Models.QueryContext;
-using NSwag.Annotations;
-using Microsoft.AspNetCore.Authorization;
-using LittleBlog.Web.Models.DtoModel;
+﻿using AutoMapper;
+using LittleBlog.Web.EXtensions;
 using LittleBlog.Web.Models;
+using LittleBlog.Web.Models.DtoModel;
+using LittleBlog.Web.Models.QueryContext;
+using LittleBlog.Web.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NSwag.Annotations;
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Apis.Common
 {
@@ -24,27 +23,31 @@ namespace LittleBlog.Web.Apis.Common
     public class ArticlesCommonController : BaseApiController
     {
         private IArticleService _articleService { get; set; }
+        private IMapper _mapper { get; set; }
 
-        public ArticlesCommonController(IArticleService articleService, ILogger<ArticlesCommonController> logger)
+        public ArticlesCommonController(IArticleService articleService, 
+            ILogger<ArticlesCommonController> logger, 
+            IMapper mapper)
         {
             _logger = logger;
             _articleService = articleService;
+            _mapper = mapper;
         }
 
         [HttpGet("[action]")]
-        public async Task<ResultModel<List<ArticleDto>>> List([FromQuery]ListArticlesQueryContext queryContext)
+        public async Task<ResultModel<Paging<ArticleDto>>> List([FromQuery]ListArticlesQueryContext queryContext)
         {
             try
             {
                 queryContext.Source = QuerySource.Common;
-                var list = await _articleService.ListArticlesAsync(queryContext);
-
-                return Success(list);
+                var articles = await _articleService.ListArticlesAsync(queryContext);
+                Paging<ArticleDto> articleDtos = articles.MapTo<ArticleDto>(_mapper);
+                return Success(articleDtos);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"查询文章列表出错, query: {SerializeToJson(queryContext)}");
-                return Fail<List<ArticleDto>>(ex, "查询文章列表出错");
+                return Fail<Paging<ArticleDto>>(ex, "查询文章列表出错");
             }
         }
 

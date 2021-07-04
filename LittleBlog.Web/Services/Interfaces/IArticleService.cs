@@ -44,7 +44,7 @@ namespace LittleBlog.Web.Services.Interfaces
         /// </summary>
         /// <param name="queryContext">查询参数</param>
         /// <returns></returns>
-        Task<List<ArticleDto>> ListArticlesAsync(ListArticlesQueryContext queryContext);
+        Task<Paging<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext);
 
         /// <summary>
         /// 保存文章内容变化
@@ -65,14 +65,14 @@ namespace LittleBlog.Web.Services.Interfaces
         /// </summary>
         /// <param name="article">要保存的文章</param>
         /// <returns></returns>
-        Task SaveArticleAsync(ArticleDto article);
+        Task SaveArticleAsync(Article article);
 
         /// <summary>
         /// 获取归档的文章列表
         /// </summary>
         /// <param name="queryContext">查询上下文</param>
         /// <returns></returns>
-        Task<List<ArticleDto>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext);
+        Task<Paging<ArticleDto>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext);
 
         /// <summary>
         /// 获取文章归档情况

@@ -15,13 +15,11 @@ namespace LittleBlog.Web.Models.DtoModel
         /// <summary>
         /// 文章Id
         /// </summary>
-        /// <value></value>
         public int Id { get; set; }
 
         /// <summary>
         /// 文章标题
         /// </summary>
-        /// <value></value>
         public string Title { get; set; }
 
         /// <summary>
@@ -44,5 +42,10 @@ namespace LittleBlog.Web.Models.DtoModel
         /// 是否发布
         /// </summary>
         public bool IsPublished { get; set; }
+
+        /// <summary>
+        /// 最后修改时间
+        /// </summary>
+        public DateTime LastEditTime { get; set; }
     }
 }

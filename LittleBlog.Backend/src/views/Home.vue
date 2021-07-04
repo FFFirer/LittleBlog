@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="home-page">
         <h1>
             Welcome to the Blog Administration Panel
         </h1>
@@ -16,3 +16,11 @@
     })
 
 </script>
+
+<style>
+    .home-page {
+        display: flex;
+        justify-content: center;
+    }
+
+</style>

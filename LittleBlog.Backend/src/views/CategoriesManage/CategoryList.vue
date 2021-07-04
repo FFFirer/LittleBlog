@@ -1,24 +1,22 @@
 <template>
-    <a-row :gutter="[8, 8]">
-        <a-col :span="6">
-            <a-input v-model="keyword" placeholder="请输入查询关键词"></a-input>
-        </a-col>
-        <a-col :span="6">
-            <a-space>
-                <a-button>查询</a-button>
-                <a-button type="primary">新增</a-button>
-            </a-space>
-        </a-col>
-    </a-row>
-    <a-row style="margin-top: 5px" :gutter="8">
-        <a-col :span="24">
-            <a-table bordered :columns="columns">
-                <template #opertaion>
-                    <a-button type="primary">编辑</a-button>
-                </template>
-            </a-table>
-        </a-col>
-    </a-row>
+    <n-grid :y-gap="12" :cols="1">
+        <n-grid-item>
+            <n-grid :x-gap="12" :cols="4">
+                <n-grid-item>
+                    <n-input v-model="keyword" placeholder="请输入查询关键词"></n-input>
+                </n-grid-item>
+                <n-grid-item>
+                    <n-space>
+                        <n-button>查询</n-button>
+                        <n-button type="primary">新增</n-button>
+                    </n-space>
+                </n-grid-item>
+            </n-grid>
+        </n-grid-item>
+        <n-grid-item>
+
+        </n-grid-item>
+    </n-grid>
 </template>
 
 <script lang="ts">

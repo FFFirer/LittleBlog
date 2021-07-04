@@ -28,19 +28,19 @@ const FillRouteData = (url: string, routeData: Array<IRouteData>): string => {
     return url
 }
 
-const OnlyFillRouteData = (url: string, data: object): string => {
+const OnlyFillRouteData = (url: string, data: any): string => {
     for (let key of Object.keys(data)) {
-        let value = key.valueOf()
+        let value = data[key]
         url = url.replace('{' + key + '}', value)
     }
 
     return url
 }
 
-const OnlyFillQueryString = (url: string, data: object): string => {
+const OnlyFillQueryString = (url: string, data: any): string => {
     let querys: string[] = []
     for (let key of Object.keys(data)) {
-        let value = key.valueOf()
+        let value = data[key]
         querys.push(key + '=' + value)
     }
 
@@ -56,11 +56,17 @@ interface IArticle {
     content: string
 }
 
+interface ISaveArticle {
+    article: IArticle
+    categroyId: number
+    tagIds: number[]
+}
+
 interface IArticleManageApi {
     List: (data: IListArticlesQueryParams) => {}
     GetDetail: (id: number) => {}
     Delete: (id: number) => {}
-    Save: (article: IArticle) => {}
+    Save: (article: ISaveArticle) => {}
 }
 
 const ArticlesManageApi: IArticleManageApi = {
@@ -75,7 +81,8 @@ const ArticlesManageApi: IArticleManageApi = {
         let actualUrl = OnlyFillQueryString(DeleteArticleApiUrl, { id: id })
         return BaseApi.post(actualUrl, {}, 'json')
     },
-    Save: (article: IArticle) => {
+    Save: (article: ISaveArticle) => {
+        console.log(SaveArticleApiUrl)
         return BaseApi.post(SaveArticleApiUrl, article)
     },
 }

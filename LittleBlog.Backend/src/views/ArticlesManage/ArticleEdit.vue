@@ -1,49 +1,43 @@
 <template>
-    <a-form :label-col="{span: 2}" :wrapper-col="{span: 20}">
-        <a-form-item label="标题">
-            <a-input v-model:value="article.title">
+    <div style="max-width: calc(100% - 5px);">
+        <n-form ref="formRef" label-placement="left" label-align="right" :label-width="60">
+            <n-form-item label="标题">
+                <n-input v-model:value="article.title" placeholder="请输入标题">
 
-            </a-input>
-        </a-form-item>
-        <a-form-item label="作者">
-            <a-input v-model:value="article.author">
+                </n-input>
+            </n-form-item>
+            <n-form-item label="作者">
+                <n-input v-model:value="article.author" placeholder="请输入作者">
 
-            </a-input>
-        </a-form-item>
-        <a-form-item label="正文">
-            <div class="tinymce-box">
-                <Editor v-model="article.content" :init="init" :disabled="disabled" />
-            </div>
-        </a-form-item>
-        <a-form-item label="分类">
-            <a-select v-model:value="article.categoryId" placeholder="选择分类">
-                <a-select-option v-for="(cate, index) in categories" :key="cate.id">
-                    {{ cate.name }}
-                </a-select-option>
-            </a-select>
-        </a-form-item>
-        <a-form-item label="标签">
-            <!-- 自建多选组件 -->
-            <CheckboxGroup :source="tags" v-model:selected="article.tags" value="id" label="name"></CheckboxGroup>
-        </a-form-item>
-        <a-form-item :label-col="{span: 2}" :wrapper-col="{span: 20, offset: 2}">
-            <a-checkbox v-model:checked="article.isPublished">
-                发布
-            </a-checkbox>
-        </a-form-item>
-    </a-form>
-    <a-row>
-        <a-col :span="20" :offset="2">
-            <a-space>
-                <a-button @click="backToList">
-                    取消
-                </a-button>
-                <a-button type="primary" @click="save">
-                    保存
-                </a-button>
-            </a-space>
-        </a-col>
-    </a-row>
+                </n-input>
+            </n-form-item>
+            <n-form-item label="正文">
+                <div class="tinymce-box">
+                    <Editor v-model="article.content" :init="init" :disabled="disabled" />
+                </div>
+            </n-form-item>
+            <n-form-item label="分类">
+                <n-select v-model:value="article.categoryId" :options="categorySelectListOptions" placeholder="选择分类">
+
+                </n-select>
+            </n-form-item>
+            <n-form-item label="发布">
+                <n-checkbox v-model:checked="article.isPublished">
+
+                </n-checkbox>
+            </n-form-item>
+            <n-form-item label=" ">
+                <n-space>
+                    <n-button @click="backToList">
+                        取消
+                    </n-button>
+                    <n-button type="primary" @click="save">
+                        保存
+                    </n-button>
+                </n-space>
+            </n-form-item>
+        </n-form>
+    </div>
 </template>
 
 <script lang="ts">
@@ -55,6 +49,7 @@
         useRouter
     } from "vue-router";
 
+    import Apis from '../../api/index.ts'
     import CheckboxGroup from "../../components/CheckboxGroup.vue";
 
     import Editor from '@tinymce/tinymce-vue'
@@ -103,6 +98,9 @@
     import 'tinymce/plugins/visualchars' //显示不可见字符
     import 'tinymce/plugins/wordcount' //字数统计
 
+    import {
+        useMessage
+    } from "naive-ui";
 
     const Categories = [{
             id: 0,
@@ -197,21 +195,83 @@
                 }
             }
         },
+        computed: {
+            categorySelectListOptions() {
+                let options = []
+                this.categories.forEach(function (cate, index) {
+                    options.push({
+                        label: cate.name,
+                        value: cate.id
+                    })
+                });
+
+                return options;
+            }
+        },
         methods: {
             save() {
                 let article = {
                     ...this.article
                 }
                 article.id = this.id
-
                 console.log(article)
+
+                Apis.ArticlesManageApi.Save(article).then((resp) => {
+                    if (resp.data.isSuccess) {
+                        this.message.success('保存成功')
+                        this.backToList();
+                    } else {
+                        // alert(resp.data.message)
+                        this.message.warning(resp.data.message, {
+                            closable: true,
+                            duration: 5000
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    // alert("保存异常")
+                    this.message.error(err, {
+                        closable: true,
+                        duration: 5000
+                    })
+                })
+            },
+            loadArticle() {
+                Apis.ArticlesManageApi.GetDetail(this.id).then((resp) => {
+                    if (resp.data.isSuccess) {
+                        console.log('success')
+                        this.article = resp.data.data
+                    } else {
+                        // console.log(resp.data.message)
+                        this.message.warning(resp.data.message, {
+                            closable: true,
+                            duration: 5000
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                    // alert("加载异常")
+                    this.message.error('加载异常', {
+                        closable: true,
+                        duration: 5000
+                    })
+                })
             }
         },
         mounted() {
             tinymce.init({})
+            // 加载文章
+            if (this.id > 0) {
+                console.log('edit')
+                this.loadArticle()
+            } else {
+                console.log('new')
+            }
         },
-        setup() {
-            const router = useRouter();
+        setup(props) {
+            const router = useRouter()
+            const message = useMessage()
+
             const backToList = (id) => {
                 router.push({
                     name: "articleList", // 命名路由
@@ -219,9 +279,17 @@
             }
 
             return {
-                backToList
+                backToList,
+                message
             }
         }
     })
 
 </script>
+
+<style>
+    .tinymce-box {
+        width: 100%;
+    }
+
+</style>

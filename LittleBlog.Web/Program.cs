@@ -27,7 +27,8 @@ namespace LittleBlog.Web
                 try
                 {
                     var context = services.GetRequiredService<LittleBlogContext>();
-                    context.Database.Migrate();
+                    //context.Database.Migrate();
+                    context.Database.EnsureCreated();
                     var config = host.Services.GetRequiredService<IConfiguration>();
 
                     SeedData.Initialze(services, config["adminPwd"], config["adminName"]).Wait();

@@ -111,7 +111,8 @@ namespace LittleBlog.Web.Services
                 articleId = articleId
             };
             return await _db.Tags
-                .FromSqlRaw("SELECT * FROM Tags a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE TagId=a.Id AND ArticleId=@articleId)", sqlParameters)
+                //.FromSqlRaw("SELECT * FROM Tags a WHERE EXISTS( SELECT 1 FROM ArticleTags WHERE TagId=a.Id AND ArticleId=@articleId)", sqlParameters)
+                .Where(a=>_db.ArticleTags.Any(b=>b.TagId == a.Id && b.ArticleId == articleId))
                 .AsNoTracking()
                 .Select(a => new TagDto()
                 {

@@ -42,6 +42,7 @@ const routes = [
         component: TagList,
     },
     {
+        name: 'categoryList',
         path: '/categories/manage',
         component: CategoryList,
     },

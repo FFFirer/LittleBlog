@@ -11,9 +11,21 @@
     <!--<DocumentationFile>E:\CodeRepos\LittleBlog\LittleBlog.Web\LittleBlog.Web.xml</DocumentationFile>-->
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Areas\Admin\**" />
+    <Compile Remove="Models\MapProfiles\**" />
+    <Content Remove="Areas\Admin\**" />
+    <Content Remove="Models\MapProfiles\**" />
+    <EmbeddedResource Remove="Areas\Admin\**" />
+    <EmbeddedResource Remove="Models\MapProfiles\**" />
+    <None Remove="Areas\Admin\**" />
+    <None Remove="Models\MapProfiles\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.0" />
@@ -39,12 +51,6 @@
     <Content Update="wwwroot\css\site.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="Areas\Admin\" />
-    <Folder Include="Models\MapProfiles\" />
   </ItemGroup>
 
 

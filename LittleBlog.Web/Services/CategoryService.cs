@@ -87,7 +87,8 @@ namespace LittleBlog.Web.Services
                 articleId = articleId
             };
             return await _db.Categories
-                .FromSqlRaw("SELECT * FROM Categories a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE CategoryId=a.Id AND ArticleId=@articleId)", sqlParameters)
+                //.FromSqlRaw("SELECT * FROM Categories a WHERE EXISTS(SELECT 1 FROM ArticleCategories WHERE CategoryId=a.Id AND ArticleId=@articleId)", sqlParameters)
+                .Where(a=>_db.ArticleCategories.Any(b=>b.CategoryId==a.Id && b.ArticleId == articleId))
                 .AsNoTracking()
                 .Select(a=>new CategoryDto()
                 {

@@ -37,9 +37,11 @@ namespace LittleBlog.Web.Services
                 .ToListAsync();
         }
 
-        public async Task<List<ArticleDto>> ListArticlesAsync(ListArticlesQueryContext queryContext)
+        public async Task<Paging<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext)
         {
             queryContext.CheckPermissions();
+
+            var result = new Paging<Article>();
 
             var Query = db.Articles.AsNoTracking();
 
@@ -56,19 +58,24 @@ namespace LittleBlog.Web.Services
 
             Query = Query.OrderByDescending(a => a.CreateTime);
 
-            queryContext.Total = await Query.CountAsync();
+            result.Total = await Query.CountAsync();
 
             Query = Query.Paging(queryContext);
 
-            return await Query.Select(a => new ArticleDto()
-            {
-                Id = a.Id,
-                Abstract = a.Abstract,
-                Title = a.Title,
-                Author = a.Author,
-                Content = a.Content,
-                SavePath = a.SavePath
-            }).ToListAsync();
+            //result.Rows = await Query.Select(a => new ArticleDto()
+            //{
+            //    Id = a.Id,
+            //    Abstract = a.Abstract,
+            //    Title = a.Title,
+            //    Author = a.Author,
+            //    Content = a.Content,
+            //    SavePath = a.SavePath,
+            //    LastEditTime = a.LastEditTime
+            //}).ToListAsync();
+
+            result.Rows = await Query.ToListAsync();
+
+            return result;
         }
 
         public async Task SaveContentChangeAsync(int articleId, string articleContent)
@@ -102,12 +109,13 @@ namespace LittleBlog.Web.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task SaveArticleAsync(ArticleDto article)
+        public async Task SaveArticleAsync(Article article)
         {
-            var articleEntity = UpdateArticle(article);
-            if(articleEntity.Id == 0)
+            if(article.Id == 0)
             {
-                db.Articles.Add(articleEntity);
+                article.CreateTime = DateTime.Now;
+                article.LastEditTime = DateTime.Now;
+                db.Articles.Add(article);
             }
             else
             {
@@ -130,8 +138,10 @@ namespace LittleBlog.Web.Services
             await db.SaveChangesAsync();
         }
 
-        public async Task<List<ArticleDto>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext)
+        public async Task<Paging<ArticleDto>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext)
         {
+            var result = new Paging<ArticleDto>();
+
             IQueryable<Article> Query;
 
             if (queryContext.OnlyPublished)
@@ -147,11 +157,11 @@ namespace LittleBlog.Web.Services
                     .AsNoTracking();
             }
 
-            queryContext.Total = await Query.CountAsync();
+            result.Total = await Query.CountAsync();
 
             Query = Query.Paging(queryContext);
 
-            return await Query
+            result.Rows = await Query
                 .Select(a => new ArticleDto()
                 {
                     Id = a.Id,
@@ -161,6 +171,8 @@ namespace LittleBlog.Web.Services
                     Content = a.Content,
                     SavePath = a.SavePath
                 }).ToListAsync();
+
+            return result;
         }
 
         public async Task<List<ArticleDto>> ListAllArticlesByCategoryAsync(int categoryId)

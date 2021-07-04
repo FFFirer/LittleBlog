@@ -1,6 +1,7 @@
 import axios, { ResponseType } from 'axios'
 
-axios.defaults.baseURL = 'https://localhost:5001'
+axios.defaults.baseURL = import.meta.env.VITE_REMOTE_API_ADDRESS
+// axios.defaults.baseURL = 'https://localhost:5001'
 
 const BaseApi = {
     get: (url: string, queryData: any, responseType: ResponseType = 'json') => {

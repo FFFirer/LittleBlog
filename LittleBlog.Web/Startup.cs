@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using LittleBlog.Web.Authorization;
 using NSwag;
 using NSwag.Generation;
+using AutoMapper;
 
 namespace LittleBlog.Web
 {
@@ -78,6 +79,8 @@ namespace LittleBlog.Web
                     config.WithOrigins("http://127.0.0.1:3000", "http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                 });
             });
+
+            services.AddAutoMapper(typeof(Models.MapProfile.ArticleProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
