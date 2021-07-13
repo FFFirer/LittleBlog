@@ -7,18 +7,27 @@
             label-width="60"
         >
             <n-form-item label="标题">
-                <n-input placeholder="请输入标题"></n-input>
+                <n-input
+                    v-model:value="article.title"
+                    placeholder="请输入标题"
+                ></n-input>
             </n-form-item>
             <n-form-item label="作者">
-                <n-input placeholder="请输入作者"></n-input>
+                <n-input
+                    v-mdoel:value="article.author"
+                    placeholder="请输入作者"
+                ></n-input>
             </n-form-item>
             <n-form-item label="摘要">
-                <n-input placeholder="请输入摘要"></n-input>
+                <n-input
+                    v-model:value="article.abstract"
+                    placeholder="请输入摘要"
+                ></n-input>
             </n-form-item>
             <n-form-item label="正文">
                 <div class="tinymce-box">
                     <Editor
-                        v-model="contentValue"
+                        v-model="article.content"
                         :init="init"
                         :disabled="disabled"
                     >
@@ -26,15 +35,19 @@
                 </div>
             </n-form-item>
             <n-form-item label="分类">
-                <n-select placeholder="请选择分类"> </n-select>
+                <n-select
+                    v-mdoel:value="article.categoryId"
+                    placeholder="请选择分类"
+                >
+                </n-select>
             </n-form-item>
             <n-form-item label="发布">
-                <n-checkbox> </n-checkbox>
+                <n-checkbox v-model:checked="article.isPublished"> </n-checkbox>
             </n-form-item>
             <n-form-item label=" ">
                 <n-space>
                     <n-button @click="backToList"> 取消 </n-button>
-                    <n-button type="info"> 保存 </n-button>
+                    <n-button type="info" @click="save"> 保存 </n-button>
                 </n-space>
             </n-form-item>
         </n-form>
@@ -93,6 +106,8 @@ import "tinymce/plugins/wordcount"; //字数统计
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
+import { ArticleDto } from "../../types";
+import api from "../../api";
 
 export default defineComponent({
     name: "ArticleEdit",
@@ -180,16 +195,8 @@ export default defineComponent({
                 // }
                 // },
             } as RawEditorSettings,
-            contentValue: this.value,
+            article: {} as ArticleDto,
         };
-    },
-    watch: {
-        value(newValue) {
-            this.contentValue = newValue;
-        },
-        contentValue(newValue) {
-            this.$emit("input", newValue);
-        },
     },
     mounted() {
         tinymce.init({});
@@ -199,7 +206,10 @@ export default defineComponent({
             this.$emit("onClick", e, tinymce);
         },
         clear() {
-            this.contentValue = "";
+            this.article.content = "";
+        },
+        save() {
+            api.admin.articles.save(this.article);
         },
     },
     setup() {

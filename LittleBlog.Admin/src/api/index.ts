@@ -1,9 +1,11 @@
 import axios, { ResponseType } from "axios";
 import {
+    ArticleDto,
     ListArticleResultModel,
     ListArticlesQueryContext,
 } from "../types/index";
 import helper from "./helper";
+const querystring = require("querystring");
 
 // const apiSeverAddress: string | undefined = import.meta.env
 //     .VITE_REMOTE_API_ADDRESS as string | undefined;
@@ -12,11 +14,8 @@ import helper from "./helper";
 //     console.error("没有设置接口地址");
 // }
 
-axios.defaults.baseURL = import.meta.env.VITE_REMOTE_API_ADDRESS as
-    | string
-    | undefined;
-
 // 接口文件
+// 如果路径中含有参数，则是使用冒号表示，/api/with/:params
 const urls = {
     common: {
         Articles: {
@@ -53,6 +52,8 @@ const api = {
                 } as ListArticleResultModel;
                 return a;
             },
+            save: (article: ArticleDto) => {},
+            delete: (id: number) => {},
         },
     },
 };
