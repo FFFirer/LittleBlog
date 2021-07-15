@@ -7,6 +7,7 @@ interface ArticleDto {
     savePath: string;
     isPublished: boolean;
     lastEditTime: string;
+    categoryId: number;
 }
 
 // 基本结果
@@ -33,4 +34,14 @@ interface ListArticleResultModel extends ResultModel {
     data: PagingModel<ArticleDto>;
 }
 
-export { ArticleDto, ListArticlesQueryContext, ListArticleResultModel };
+interface GetArticleResultModel extends ResultModel {
+    data: ArticleDto;
+}
+
+export {
+    ArticleDto,
+    ResultModel,
+    ListArticlesQueryContext,
+    ListArticleResultModel,
+    GetArticleResultModel,
+};

@@ -26,7 +26,7 @@ axios.interceptors.response.use(
     (resp) => {
         // 2xx 范围内的函数都会触发该函数
         // 对响应数据做些什么
-        return resp;
+        return resp.data;
     },
     (err) => {
         // 超过2xx 范围的状态码都会触发该函数

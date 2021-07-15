@@ -12,7 +12,7 @@
                 </n-grid-item>
                 <n-grid-item>
                     <n-space>
-                        <n-button @click="list"> 查询 </n-button>
+                        <n-button @click="list()"> 查询 </n-button>
                         <n-button type="info" @click="gotoEdit(0)">
                             新增
                         </n-button>
@@ -21,12 +21,15 @@
             </n-grid>
         </n-grid-item>
         <n-grid-item :cols="1">
-            <n-data-table
-                :columns="columns"
-                :paging="false"
-                :pagination="pagination"
-            >
-            </n-data-table>
+            <n-spin :show="isLoading">
+                <n-data-table
+                    :data="data"
+                    :columns="columns"
+                    :paging="false"
+                    :pagination="pagination"
+                >
+                </n-data-table>
+            </n-spin>
         </n-grid-item>
     </n-grid>
 </template>
@@ -46,12 +49,12 @@ import {
     useMessage,
 } from "naive-ui";
 import { InternalRowData } from "naive-ui/lib/data-table/src/interface";
-import { ListArticlesQueryContext } from "../../types";
+import { ArticleDto, ListArticlesQueryContext } from "../../types";
 
 // 构建表列
 function createColumns(
-    editArticle: (id: number | string) => void,
-    deleteArticle: (id: number | string) => void // 方法返回类型
+    editArticle: (id: number) => void,
+    deleteArticle: (id: number) => void // 方法返回类型
 ): Array<DataTableColumn> {
     return [
         {
@@ -88,7 +91,7 @@ function createColumns(
                                 NButton,
                                 {
                                     onClick: () => {
-                                        editArticle(row.id as number | string);
+                                        editArticle(row.id as number);
                                     },
                                     type: "info",
                                     size: "small",
@@ -102,9 +105,7 @@ function createColumns(
                                 {
                                     onPositiveClick: () => {
                                         console.log("delete start");
-                                        deleteArticle(
-                                            row.id as number | string
-                                        );
+                                        deleteArticle(row.id as number);
                                     },
                                     onNegativeClick: () => false,
                                     negativeText: "取消",
@@ -146,33 +147,78 @@ export default defineComponent({
                 page: 1,
                 pageSize: 20,
                 itemCount: 0,
-            } as PaginationProps,
+            },
+            isLoading: false,
         };
     },
     methods: {
         list() {
             // console.log(api.urls.admin.Article.list);
-            let query = {} as ListArticlesQueryContext;
-            let result = api.admin.articles.list(query);
-            console.log(result.message);
+            let query = {
+                keyword: this.keyword,
+                page: this.pagination.page,
+                pageSize: this.pagination.pageSize,
+                onlyPublished: false,
+            } as ListArticlesQueryContext;
+            this.isLoading = true;
+            api.admin.articles
+                .list(query)
+                .then((res) => {
+                    console.log(res.message);
+                    if (res.isSuccess) {
+                        this.data = res.data.rows;
+                        this.pagination.itemCount = res.data.total;
+                    } else {
+                        this.message.warning(res.message);
+                    }
+                })
+                .catch((err) => {
+                    if (typeof err == "string") {
+                        this.message.error(err);
+                        return;
+                    } else {
+                        this.message.error(err.message);
+                        return;
+                    }
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                });
         },
-        edit(id: number | string) {
+        edit(id: number) {
             this.gotoEdit(id);
         },
-        delete(id: number | string) {},
+        delete(id: number) {
+            api.admin.articles
+                .delete(id)
+                .then((res) => {
+                    if (res.isSuccess) {
+                        this.pagination.page = 1;
+                        this.list();
+                    } else {
+                        this.message.warning(res.message);
+                    }
+                })
+                .catch((err) => {
+                    this.message.error("删除失败！");
+                    console.log(err);
+                });
+        },
         onPageChangd(page: number) {},
     },
     mounted() {
         let _this = this;
-        const editArticle: (id: number | string) => void = (id) => {
+        const editArticle: (id: number) => void = (id) => {
             _this.edit(id);
         };
 
-        const deleteArticle: (id: number | string) => void = (id) => {
+        const deleteArticle: (id: number) => void = (id) => {
             _this.delete(id);
         };
 
         this.columns = createColumns(editArticle, deleteArticle);
+
+        this.list();
     },
     setup() {
         const router = useRouter();

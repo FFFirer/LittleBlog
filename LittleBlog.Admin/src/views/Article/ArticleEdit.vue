@@ -1,57 +1,60 @@
 <template>
-    <div style="max-width: calc(100% - 5px)">
-        <n-form
-            ref="formRef"
-            label-placement="left"
-            label-align="right"
-            label-width="60"
-        >
-            <n-form-item label="标题">
-                <n-input
-                    v-model:value="article.title"
-                    placeholder="请输入标题"
-                ></n-input>
-            </n-form-item>
-            <n-form-item label="作者">
-                <n-input
-                    v-mdoel:value="article.author"
-                    placeholder="请输入作者"
-                ></n-input>
-            </n-form-item>
-            <n-form-item label="摘要">
-                <n-input
-                    v-model:value="article.abstract"
-                    placeholder="请输入摘要"
-                ></n-input>
-            </n-form-item>
-            <n-form-item label="正文">
-                <div class="tinymce-box">
-                    <Editor
-                        v-model="article.content"
-                        :init="init"
-                        :disabled="disabled"
+    <n-spin :show="editLoading">
+        <div style="max-width: calc(100% - 5px)">
+            <n-form
+                ref="formRef"
+                label-placement="left"
+                label-align="right"
+                label-width="60"
+            >
+                <n-form-item label="标题">
+                    <n-input
+                        v-model:value="article.title"
+                        placeholder="请输入标题"
+                    ></n-input>
+                </n-form-item>
+                <n-form-item label="作者">
+                    <n-input
+                        v-model:value="article.author"
+                        placeholder="请输入作者"
+                    ></n-input>
+                </n-form-item>
+                <n-form-item label="摘要">
+                    <n-input
+                        v-model:value="article.abstract"
+                        placeholder="请输入摘要"
+                    ></n-input>
+                </n-form-item>
+                <n-form-item label="正文">
+                    <div class="tinymce-box">
+                        <Editor
+                            v-model="article.content"
+                            :init="init"
+                            :disabled="disabled"
+                        >
+                        </Editor>
+                    </div>
+                </n-form-item>
+                <n-form-item label="分类">
+                    <n-select
+                        v-model:value="article.categoryId"
+                        placeholder="请选择分类"
                     >
-                    </Editor>
-                </div>
-            </n-form-item>
-            <n-form-item label="分类">
-                <n-select
-                    v-mdoel:value="article.categoryId"
-                    placeholder="请选择分类"
-                >
-                </n-select>
-            </n-form-item>
-            <n-form-item label="发布">
-                <n-checkbox v-model:checked="article.isPublished"> </n-checkbox>
-            </n-form-item>
-            <n-form-item label=" ">
-                <n-space>
-                    <n-button @click="backToList"> 取消 </n-button>
-                    <n-button type="info" @click="save"> 保存 </n-button>
-                </n-space>
-            </n-form-item>
-        </n-form>
-    </div>
+                    </n-select>
+                </n-form-item>
+                <n-form-item label="发布">
+                    <n-checkbox v-model:checked="article.isPublished">
+                    </n-checkbox>
+                </n-form-item>
+                <n-form-item label=" ">
+                    <n-space>
+                        <n-button @click="backToList"> 取消 </n-button>
+                        <n-button type="info" @click="save"> 保存 </n-button>
+                    </n-space>
+                </n-form-item>
+            </n-form>
+        </div>
+    </n-spin>
 </template>
 
 <script lang="ts">
@@ -196,10 +199,15 @@ export default defineComponent({
                 // },
             } as RawEditorSettings,
             article: {} as ArticleDto,
+            editLoading: false as boolean,
         };
     },
     mounted() {
         tinymce.init({});
+
+        if (this.id > 0) {
+            this.load();
+        }
     },
     methods: {
         onClick(e: Event) {
@@ -209,7 +217,46 @@ export default defineComponent({
             this.article.content = "";
         },
         save() {
-            api.admin.articles.save(this.article);
+            this.editLoading = true;
+            api.admin.articles
+                .save(this.article)
+                .then((res) => {
+                    if (res.isSuccess) {
+                        this.message.success("保存成功");
+                        this.backToList();
+                    } else {
+                        this.message.warning(res.message);
+                    }
+                })
+                .catch((err) => {
+                    this.message.error("保存出错！");
+                    console.error("save", err);
+                })
+                .finally(() => {
+                    this.editLoading = false;
+                });
+        },
+        load() {
+            this.editLoading = true;
+            api.admin.articles
+                .getOne(this.id)
+                .then((res) => {
+                    if (res.isSuccess) {
+                        this.article = res.data;
+                    } else {
+                        this.message.warning(res.message, {
+                            closable: true,
+                            duration: 5000,
+                        });
+                    }
+                })
+                .catch((err) => {
+                    this.message.error("无法加载文章内容！");
+                    console.error("get", err);
+                })
+                .finally(() => {
+                    this.editLoading = false;
+                });
         },
     },
     setup() {
@@ -224,6 +271,7 @@ export default defineComponent({
 
         return {
             backToList,
+            message,
         };
     },
 });

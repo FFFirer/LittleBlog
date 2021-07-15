@@ -2,10 +2,11 @@
     <n-layout>
         <n-message-provider>
             <n-layout has-sider>
-                <n-layout-sider>
+                <n-layout-sider bordered>
                     <n-layout-header
                         id="app-header"
                         style="padding: 10px; padding-left: 32px"
+                        bordered
                     >
                         <h1
                             @click="gotoHome"
@@ -20,7 +21,10 @@
                     >
                     </n-menu>
                 </n-layout-sider>
-                <n-layout-content id="app-content">
+                <n-layout-content
+                    id="app-content"
+                    content-style="padding-left: 10px; padding-right: 10px"
+                >
                     <router-view> </router-view>
                 </n-layout-content>
             </n-layout>
@@ -95,5 +99,6 @@ export default defineComponent({
 
 #app-content {
     padding-top: 10px;
+    height: 100vh;
 }
 </style>

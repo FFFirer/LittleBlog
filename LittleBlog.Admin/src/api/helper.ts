@@ -1,4 +1,4 @@
-import Regexp from "path-to-regexp";
+import { compile } from "path-to-regexp";
 // 构建QueryStrings
 const FillRouteData = (url: string, data: any): string => {
     for (let key of Object.keys(data)) {
@@ -30,7 +30,7 @@ const fillUrlParams = (path: string, params: Object): string => {
     try {
         const filler =
             regexpCompileCache[path] ||
-            (regexpCompileCache[path] = Regexp.compile(path));
+            (regexpCompileCache[path] = compile(path));
 
         return filler(params, {
             pretty: true,

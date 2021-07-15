@@ -20,6 +20,9 @@ const routes: RouteRecordRaw[] = [
         name: "articleEdit",
         path: "/articles/edit/:id",
         component: ArticleEdit,
+        props: (route) => ({
+            id: route.params.id, // 函数模式，{id: route.params.id}作为props传递给组件
+        }),
     },
 ];
 const routerHistory = createWebHashHistory();
