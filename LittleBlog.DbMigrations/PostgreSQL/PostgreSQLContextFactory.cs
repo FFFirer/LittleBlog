@@ -7,7 +7,7 @@ namespace LittleBlog.DbMigrations.PostgreSQL
 {
     public class PostgreSQLContextFactory :IDesignTimeDbContextFactory<PostgreSQLContext>
     {
-        public const string PostgreSQLConnectionString = "";
+        public const string PostgreSQLConnectionString = "Host=127.0.0.1;Database=littleblog;Username=postgres;Password=123456;";
 
         public PostgreSQLContext CreateDbContext(string[] args)
         {

@@ -17,6 +17,7 @@ using NSwag;
 using NSwag.Generation;
 using AutoMapper;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace LittleBlog.Web
 {
@@ -133,7 +134,7 @@ namespace LittleBlog.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllers();
+                endpoints.MapControllers(); 
             });
         }
     }

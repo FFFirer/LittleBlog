@@ -1,27 +1,48 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import { RouteRecordRaw } from "vue-router/dist/vue-router";
-// views
+// Home, Login
+import Login from "../views/Login.vue";
 import Home from "../views/Home.vue";
+// views
+import Welcome from "../views/Welcome.vue";
 // article
 import ArticleEdit from "../views/Article/ArticleEdit.vue";
 import ArticleList from "../views/Article/ArticleList.vue";
-
+// 状态管理
+import store from "../store/index";
 const routes: RouteRecordRaw[] = [
     {
         path: "/",
         component: Home,
+        meta: {
+            needLogin: true,
+        },
+        children: [
+            {
+                path: "/",
+                component: Welcome,
+            },
+            {
+                name: "articleList",
+                path: "/articles",
+                component: ArticleList,
+            },
+            {
+                name: "articleEdit",
+                path: "/articles/edit/:id",
+                component: ArticleEdit,
+                props: (route) => ({
+                    id: route.params.id, // 函数模式，{id: route.params.id}作为props传递给组件
+                }),
+            },
+        ],
     },
     {
-        name: "articleList",
-        path: "/articles",
-        component: ArticleList,
-    },
-    {
-        name: "articleEdit",
-        path: "/articles/edit/:id",
-        component: ArticleEdit,
+        path: "/login",
+        component: Login,
+        name: "login",
         props: (route) => ({
-            id: route.params.id, // 函数模式，{id: route.params.id}作为props传递给组件
+            return: route.params.path,
         }),
     },
 ];
@@ -34,6 +55,23 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
+    to.matched.some((route) => {
+        if (route.meta.needLogin) {
+            // 判断是否已经登录
+            if (store.state.isLogin) {
+                next();
+            } else {
+                next({
+                    name: "login",
+                    params: {
+                        path: route.path,
+                    },
+                });
+            }
+        } else {
+            next();
+        }
+    });
     if (to.matched.length !== 0) {
         next();
     } else {

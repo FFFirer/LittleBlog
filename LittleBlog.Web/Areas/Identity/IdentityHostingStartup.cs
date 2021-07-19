@@ -25,7 +25,7 @@ namespace LittleBlog.Web.Areas.Identity
                 string connectionString = context.Configuration.GetConnectionString("LittleBlog");
                 switch (DbType)
                 {
-                    case "Mysql":
+                    case "Mysql":       
                         services.AddDbContext<LittleBlogContext>(options => 
                             options.UseMySql(connectionString));
                         break;

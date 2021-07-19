@@ -80,6 +80,7 @@ const urls = {
             save: "/api/Admin/Tags/Save",
             create: "/api/Admin/Tags/CreateTag",
         },
+        login: "/api/login",
     },
 };
 
