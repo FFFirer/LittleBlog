@@ -1,44 +1,35 @@
 <template>
     <n-layout>
-        <n-message-provider>
-            <n-layout has-sider>
-                <n-layout-sider bordered>
-                    <n-layout-header
-                        ref="leftHeadr"
-                        id="app-header"
-                        style="padding: 10px; padding-left: 32px"
-                        bordered
-                    >
-                        <h1
-                            @click="gotoHome"
-                            style="cursor: pointer; margin: 0"
-                        >
-                            LittleBlog 管理后台
-                        </h1>
-                    </n-layout-header>
-                    <n-menu
-                        @update:value="handleUpdateValue"
-                        :options="menuOptions"
-                    >
-                    </n-menu>
-                </n-layout-sider>
-                <n-layout-content
-                    id="app-content"
-                    content-style="padding-left: 10px; padding-right: 10px"
+        <n-layout has-sider>
+            <n-layout-sider bordered>
+                <n-layout-header
+                    ref="leftHeadr"
+                    id="app-header"
+                    style="padding: 10px; padding-left: 32px"
+                    bordered
                 >
-                    <n-layout-header
-                        ref="rightHeader"
-                        bordered
-                        class="rightHeader"
-                    >
-                        <div class="header-bar">
-                            <n-button @click="logout()"> 注销 </n-button>
-                        </div>
-                    </n-layout-header>
-                    <router-view> </router-view>
-                </n-layout-content>
-            </n-layout>
-        </n-message-provider>
+                    <h1 @click="gotoHome" style="cursor: pointer; margin: 0">
+                        LittleBlog 管理后台
+                    </h1>
+                </n-layout-header>
+                <n-menu
+                    @update:value="handleUpdateValue"
+                    :options="menuOptions"
+                >
+                </n-menu>
+            </n-layout-sider>
+            <n-layout-content
+                id="app-content"
+                content-style="padding-left: 10px; padding-right: 10px"
+            >
+                <n-layout-header ref="rightHeader" bordered class="rightHeader">
+                    <div class="header-bar">
+                        <n-button @click="logout()"> 注销 </n-button>
+                    </div>
+                </n-layout-header>
+                <router-view> </router-view>
+            </n-layout-content>
+        </n-layout>
     </n-layout>
 </template>
 

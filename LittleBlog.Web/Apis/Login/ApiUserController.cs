@@ -15,16 +15,16 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LittleBlog.Web.Apis.Login
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     [AllowAnonymous]
-    public class LoginController : BaseApiController
+    public class ApiUserController : BaseApiController
     {
         private readonly UserManager<LittleBlogIdentityUser> _userManager;
         private readonly SignInManager<LittleBlogIdentityUser> _signInManager;
 
-        public LoginController(SignInManager<LittleBlogIdentityUser> signInManager,
-            ILogger<LoginController> logger,
+        public ApiUserController(SignInManager<LittleBlogIdentityUser> signInManager,
+            ILogger<ApiUserController> logger,
             UserManager<LittleBlogIdentityUser> userManager)
         {
             _userManager = userManager;
@@ -37,7 +37,7 @@ namespace LittleBlog.Web.Apis.Login
         /// </summary>
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<ResultModel> Post([FromBody] LoginViewModel loginViewModel)
         {
             try
@@ -67,8 +67,9 @@ namespace LittleBlog.Web.Apis.Login
         /// <summary>
         /// 注销
         /// </summary>
-        /// <returns></returns>
-        public async Task<ResultModel> Get()
+        /// <returns></returns
+        [HttpGet("logout")]
+        public async Task<ResultModel> Logout()
         {
             try
             {

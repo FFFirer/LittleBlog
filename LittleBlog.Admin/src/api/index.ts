@@ -1,9 +1,10 @@
-import axios, { ResponseType } from "axios";
+import axios, { AxiosResponse, ResponseType } from "axios";
 import {
     ArticleDto,
     GetArticleResultModel,
     ListArticleResultModel,
     ListArticlesQueryContext,
+    LoginModel,
     ResultModel,
 } from "../types/index";
 import helper from "./helper";
@@ -80,8 +81,25 @@ const urls = {
             save: "/api/Admin/Tags/Save",
             create: "/api/Admin/Tags/CreateTag",
         },
-        login: "/api/login",
+        login: "/api/user/login",
+        logout: "/api/user/logout",
     },
+};
+
+const handleResponse = (
+    resp: AxiosResponse<any>,
+    errorMessage: string
+): any => {
+    if (resp.status == 200) {
+        return resp.data;
+    } else {
+        if (errorMessage) {
+            console.error(resp.status, resp.statusText);
+            throw new Error(errorMessage);
+        } else {
+            throw new Error(resp.statusText);
+        }
+    }
 };
 
 const api = {
@@ -141,6 +159,18 @@ const api = {
                     }
                 });
             },
+        },
+        login: async (loginInfo: LoginModel): Promise<ResultModel> => {
+            return await axios
+                .post(urls.admin.login, loginInfo)
+                .then((resp) => {
+                    return handleResponse(resp, "登录失败！");
+                });
+        },
+        logout: async (): Promise<ResultModel> => {
+            return await axios.get(urls.admin.logout).then((resp) => {
+                return handleResponse(resp, "注销失败！");
+            });
         },
     },
 };

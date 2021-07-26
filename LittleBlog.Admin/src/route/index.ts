@@ -42,7 +42,7 @@ const routes: RouteRecordRaw[] = [
         component: Login,
         name: "login",
         props: (route) => ({
-            return: route.params.path,
+            return: route.params.path || "/",
         }),
     },
 ];
@@ -55,25 +55,20 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-    to.matched.some((route) => {
-        if (route.meta.needLogin) {
-            // 判断是否已经登录
-            if (store.state.isLogin) {
-                next();
-            } else {
+    if (to.matched.length !== 0) {
+        to.matched.some((route) => {
+            if (route.meta.needLogin && !store.state.isLogin) {
+                // 判断是否已经登录
                 next({
                     name: "login",
                     params: {
                         path: route.path,
                     },
                 });
+            } else {
+                next();
             }
-        } else {
-            next();
-        }
-    });
-    if (to.matched.length !== 0) {
-        next();
+        });
     } else {
         next({
             path: "/errors/404",

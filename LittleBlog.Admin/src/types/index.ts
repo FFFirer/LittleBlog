@@ -38,10 +38,18 @@ interface GetArticleResultModel extends ResultModel {
     data: ArticleDto;
 }
 
+// 登录登出
+interface LoginModel {
+    email?: string | null;
+    password?: string | null;
+    rememberMe: boolean;
+}
+
 export {
     ArticleDto,
     ResultModel,
     ListArticlesQueryContext,
     ListArticleResultModel,
     GetArticleResultModel,
+    LoginModel,
 };
