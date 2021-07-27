@@ -34,7 +34,7 @@ namespace LittleBlog.Web.Areas.Identity
                             options.UseNpgsql(connectionString));
                         break;
                     default:
-                        throw new BlogException("没有配置数据库连接！");
+                        throw new BlogException($"没有配置数据库连接！当前配置[{DbType}]");
                 }
 
                 services.AddDefaultIdentity<LittleBlogIdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
