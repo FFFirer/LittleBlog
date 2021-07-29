@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite --host --mode dev",
     "build": "vue-tsc --noEmit && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "build-prod": "vue-tsc --noEmit && vite build --mode prod"
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^4.0.3",
