@@ -45,6 +45,10 @@ namespace LittleBlog.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((WebHostBuilderContext, config) =>
+                {
+                    config.AddEnvironmentVariables(prefix: "LittleBlog_");
+                })
                 .UseStartup<Startup>();
     }
 }
