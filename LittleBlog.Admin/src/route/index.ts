@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
                 path: "/articles/edit/:id",
                 component: ArticleEdit,
                 props: (route) => ({
-                    id: route.params.id, // 函数模式，{id: route.params.id}作为props传递给组件
+                    id: parseInt(route.params.id as string), // 函数模式，{id: route.params.id}作为props传递给组件
                 }),
             },
         ],

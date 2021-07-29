@@ -224,7 +224,7 @@ export default defineComponent({
         const router = useRouter();
         const message = useMessage();
 
-        const gotoEdit = (id: number | string) => {
+        const gotoEdit = (id: number) => {
             router.push({
                 name: "articleEdit",
                 params: {
