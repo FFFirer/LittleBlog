@@ -68,6 +68,7 @@ namespace LittleBlog.Web
             // Razor Pages
             services.AddRazorPages(options => { 
                 options.Conventions.AllowAnonymousToPage("/");
+                options.Conventions.AllowAnonymousToFolder("/");
             }).AddRazorRuntimeCompilation();
 
             // 依赖注入
