@@ -53,11 +53,13 @@ const router = createRouter({
     history: routerHistory,
 });
 
+const noLogin = import.meta.env.VITE_NOLOGIN;
+
 // 路由守卫
 router.beforeEach((to, from, next) => {
     if (to.matched.length !== 0) {
         to.matched.some((route) => {
-            if (route.meta.needLogin && !store.state.isLogin) {
+            if (route.meta.needLogin && !store.state.isLogin && !noLogin) {
                 // 判断是否已经登录
                 next({
                     name: "login",

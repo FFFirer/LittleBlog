@@ -18,6 +18,8 @@ using NSwag.Generation;
 using AutoMapper;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
 
 namespace LittleBlog.Web
 {
@@ -115,8 +117,25 @@ namespace LittleBlog.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+
+            var adminDirectory = Path.Join(env.ContentRootPath, "wwwroot", "admin");
+            FileServerOptions options = new FileServerOptions()
+            {
+                FileProvider = new PhysicalFileProvider(adminDirectory),
+                RequestPath = "/admin"
+            };
+
+            options.DefaultFilesOptions.DefaultFileNames.Clear();
+            options.DefaultFilesOptions.DefaultFileNames.Add("index.html");
+
+            app.UseFileServer(options);
+
+            if (!env.IsProduction())
+            {
+                app.UseOpenApi();
+                app.UseSwaggerUi3();
+            }
+
             app.UseRouting();
 
             app.UseCors(DefaultCorsPolicyName);

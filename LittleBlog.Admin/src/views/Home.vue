@@ -1,17 +1,22 @@
 <template>
     <n-layout>
+        <n-layout-header
+            ref="leftHeadr"
+            id="app-header"
+            style="padding: 10px; padding-left: 32px"
+            bordered
+        >
+            <span
+                class="site-title"
+                @click="gotoHome"
+                style="cursor: pointer; margin: 0"
+            >
+                LittleBlog 管理后台
+            </span>
+            <n-button @click="logout()"> 注销 </n-button>
+        </n-layout-header>
         <n-layout has-sider>
             <n-layout-sider bordered>
-                <n-layout-header
-                    ref="leftHeadr"
-                    id="app-header"
-                    style="padding: 10px; padding-left: 32px"
-                    bordered
-                >
-                    <h1 @click="gotoHome" style="cursor: pointer; margin: 0">
-                        LittleBlog 管理后台
-                    </h1>
-                </n-layout-header>
                 <n-menu
                     @update:value="handleUpdateValue"
                     :options="menuOptions"
@@ -22,11 +27,6 @@
                 id="app-content"
                 content-style="padding-left: 10px; padding-right: 10px"
             >
-                <n-layout-header ref="rightHeader" bordered class="rightHeader">
-                    <div class="header-bar">
-                        <n-button @click="logout()"> 注销 </n-button>
-                    </div>
-                </n-layout-header>
                 <router-view> </router-view>
             </n-layout-content>
         </n-layout>
@@ -118,8 +118,13 @@ export default defineComponent({
     padding-bottom: 10px;
 }
 
-.header-bar {
+/* .header-bar {
     display: flex;
     justify-content: right;
+} */
+
+.site-title {
+    font-size: 24px;
+    font-weight: 600;
 }
 </style>
