@@ -8,7 +8,7 @@ param (
     # 是否构建Docker
     [Parameter()]
     [bool]
-    $build_docker = "False"
+    $build_docker
 )
 
 $NPM_BUILD_CMD = "build";
