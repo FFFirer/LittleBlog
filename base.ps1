@@ -26,3 +26,18 @@ function Get-GitBranchName {
 
     Write-Output $BranchName
 }
+
+function Get-GitTag {
+    param (
+        
+    )
+    
+    $CurrentTagInfo = git describe
+    $Tag = ""
+
+    if (-not $CurrentTagInfo.StartsWith("fatal")) {
+        $Tag = $CurrentTagInfo
+    }
+
+    Write-Output $Tag
+}

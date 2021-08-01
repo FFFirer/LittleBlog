@@ -53,6 +53,7 @@ Write-Output ("COPY TO:" + $ADMIN_APP_DIR)
 Copy-Item $ADMIN_APP_DIST_DIR $ADMIN_APP_DIR -Recurse
 
 Set-Location $CURRENT_DIR
+. .\base.ps1
 
 # 发布
 dotnet publish $WEB_DIR -c Release -o $PUBLISHED_DIR
@@ -60,9 +61,15 @@ dotnet publish $WEB_DIR -c Release -o $PUBLISHED_DIR
 if ($build_docker) {
     Write-Output "START TO BUILD <docker>"
 
+    $BranchName = Get-GitBranchName
+
+    $TagName = Get-GitTag
+
     # 构建镜像
     Set-Location $PUBLISHED_DIR
 
+    $BuildDockerCmd = ".\BuildDocker.ps1 --Branch " + $BranchName + "--Tag " + $TagName
+
     # 调用构建Docker的脚本
-    Invoke-Expression -Command .\BuildDocker.ps1
+    Invoke-Expression -Command $BuildDockerCmd
 }
