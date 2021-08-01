@@ -1,30 +1,68 @@
-$currentFolder = ($PWD).Path
-$wwwrootPath = Join-Path -Path $currentFolder -ChildPath "/LittleBlog.Web/wwwroot/" 
-$webProjPath = Join-Path -Path $currentFolder -ChildPath "/LittleBlog.Web/LittleBlog.Web.csproj"
-$outputPath = Join-Path -Path $currentFolder -ChildPath "/published"
-$appName = "/admin"
-$appPath = Join-Path -Path $wwwrootPath -ChildPath $appName
-$distPath = Join-Path -Path $currentFolder -ChildPath "/LittleBlog.Admin/dist/"
-$adminProjPath = Join-Path -Path $currentFolder -ChildPath "/LittleBlog.Admin"
+[CmdletBinding()]
+param (
+    # 发布模式：Prod:生产，Dev:开发
+    [Parameter()]
+    [string]
+    $mode = "Prod",
 
-Set-Location $adminProjPath
-Write-Output ("IN:" + $adminProjPath)
-# npm run build-dev
+    # 是否构建Docker
+    [Parameter()]
+    [bool]
+    $build_docker = "False"
+)
 
-$HAS_DIR = (Test-Path $appPath)
-if (-not $HAS_DIR) {
-    New-Item -Path $appPath -ItemType Directory
-    Write-Output ("Create:" + $appPath)
+$NPM_BUILD_CMD = "build";
+
+if ($mode -eq "") {
+    $mode = "Prod"
 }
 
-Write-Output ("REMOVE IN:" + $appPath)
-Remove-Item -Path $appPath -Recurse
+if ($mode -eq "Prod") {
+    $NPM_BUILD_CMD = "build-prod"
+}
 
-Write-Output ("COPY TO:" + $appPath)
+if ($mode -eq "Dev") {
+    $NPM_BUILD_CMD = "build-dev"
+}
+
+$CURRENT_DIR = ($PWD).Path
+$WWWROOT_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Web/wwwroot/" 
+$WEB_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Web/LittleBlog.Web.csproj"
+$PUBLISHED_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/published"
+$ADMIN_APP_NAME = "/admin"
+$ADMIN_APP_DIR = Join-Path -Path $WWWROOT_DIR -ChildPath $ADMIN_APP_NAME
+$ADMIN_APP_DIST_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Admin/dist/"
+$ADMIN_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Admin"
+
+Set-Location $ADMIN_DIR
+Write-Output ("IN:" + $ADMIN_DIR)
+
+npm run $NPM_BUILD_CMD
+
+$HAS_DIR = (Test-Path $ADMIN_APP_DIR)
+if (-not $HAS_DIR) {
+    New-Item -Path $ADMIN_APP_DIR -ItemType Directory
+    Write-Output ("Create:" + $ADMIN_APP_DIR)
+}
+
+Write-Output ("REMOVE IN:" + $ADMIN_APP_DIR)
+Remove-Item -Path $ADMIN_APP_DIR -Recurse
+
+Write-Output ("COPY TO:" + $ADMIN_APP_DIR)
 # 拷贝dist的内容到
-Copy-Item $distPath $appPath -Recurse
+Copy-Item $ADMIN_APP_DIST_DIR $ADMIN_APP_DIR -Recurse
 
-Set-Location $currentFolder
+Set-Location $CURRENT_DIR
 
 # 发布
-dotnet publish $webProjPath -c Release -o $outputPath
+dotnet publish $WEB_DIR -c Release -o $PUBLISHED_DIR
+
+if ($build_docker) {
+    Write-Output "START TO BUILD <docker>"
+
+    # 构建镜像
+    Set-Location $PUBLISHED_DIR
+
+    # 调用构建Docker的脚本
+    Invoke-Expression -Command .\BuildDocker.ps1
+}
