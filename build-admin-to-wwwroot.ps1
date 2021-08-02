@@ -3,7 +3,7 @@ param (
     # 发布模式：Prod:生产，Dev:开发
     [Parameter()]
     [string]
-    $mode = "Prod",
+    $mode,
 
     # 是否构建Docker
     [Parameter()]
@@ -68,7 +68,7 @@ if ($build_docker) {
     # 构建镜像
     Set-Location $PUBLISHED_DIR
 
-    $BuildDockerCmd = ".\BuildDocker.ps1 --Branch " + $BranchName + "--Tag " + $TagName
+    $BuildDockerCmd = ".\BuildDocker.ps1 --Branch " + $BranchName + " --Tag " + $TagName
 
     # 调用构建Docker的脚本
     Invoke-Expression -Command $BuildDockerCmd
