@@ -25,7 +25,7 @@ namespace LittleBlog.Web.Apis.Admin
     [Description("文章管理相关端口（Admin）")]
     [ApiExplorerSettings(GroupName = "Admin")]
     [OpenApiTags("Admin Articles")]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public class ArticlesManageController : BaseApiController
     {
         private IArticleService _articleService;

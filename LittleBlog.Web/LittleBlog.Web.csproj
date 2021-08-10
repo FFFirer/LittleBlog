@@ -7,6 +7,7 @@
 	  <RazorCompileOnPublish>false</RazorCompileOnPublish>
 	  <UserSecretsId>675f875c-094e-4ac1-ace5-e1c09c08e6d9</UserSecretsId>
 	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	  <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

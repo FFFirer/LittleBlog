@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
+using LittleBlog.Web.Options;
 
 namespace LittleBlog.Web
 {
@@ -28,10 +29,13 @@ namespace LittleBlog.Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            var logProvider = new NLogLoggerProvider();
+            Logger = logProvider.CreateLogger(nameof(Startup));
         }
 
         private static string DefaultCorsPolicyName = "default";
         public IConfiguration Configuration { get; }
+        public ILogger Logger { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -68,19 +72,21 @@ namespace LittleBlog.Web
             //services.AddControllersWithViews();
 
             // Razor Pages
-            services.AddRazorPages(options => { 
+            services.AddRazorPages(options =>
+            {
                 options.Conventions.AllowAnonymousToPage("/");
                 options.Conventions.AllowAnonymousToFolder("/");
             }).AddRazorRuntimeCompilation();
 
             // 依赖注入
-            services.AddTransient<IArticleService, ArticleService>();
-            services.AddTransient<ITagService, TagService>();
-            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddScoped<IArticleService, ArticleService>();
+            services.AddScoped<ITagService, TagService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddSingleton<IAuthorizationHandler, ArticleAuthorizationHandler>();
+            services.AddScoped<IFileService, FileService>();
 
             // Swagger OpenApi
-            services.AddSwaggerDocument((settings)=> 
+            services.AddSwaggerDocument((settings) =>
             {
                 settings.Version = "v1.0.0";
                 settings.Title = "LittleBlog Web API";
@@ -99,11 +105,23 @@ namespace LittleBlog.Web
 
             // AutoMapper
             services.AddAutoMapper(typeof(Models.MapProfile.ArticleProfile));
+
+            // 配置上传文件验证
+            services.AddOptions<UploadOption>(UploadTypes.Image)
+                .Configure((o) =>
+                {
+                    o.Rule = new ImageUploadRule();
+                });
+            services.AddOptions<UploadOption>(UploadTypes.Pdf)
+                .Configure((o) =>
+                {
+                    o.Rule = new PdfUploadRule();
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        {   
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -119,16 +137,23 @@ namespace LittleBlog.Web
             app.UseStaticFiles();
 
             var adminDirectory = Path.Join(env.ContentRootPath, "wwwroot", "admin");
-            FileServerOptions options = new FileServerOptions()
+
+            if (Directory.Exists(adminDirectory))
             {
-                FileProvider = new PhysicalFileProvider(adminDirectory),
-                RequestPath = "/admin"
-            };
-
-            options.DefaultFilesOptions.DefaultFileNames.Clear();
-            options.DefaultFilesOptions.DefaultFileNames.Add("index.html");
-
-            app.UseFileServer(options);
+                Directory.CreateDirectory(adminDirectory);
+                FileServerOptions options = new FileServerOptions()
+                {
+                    FileProvider = new PhysicalFileProvider(adminDirectory),
+                    RequestPath = "/admin"
+                };
+                options.DefaultFilesOptions.DefaultFileNames.Clear();
+                options.DefaultFilesOptions.DefaultFileNames.Add("index.html");
+                app.UseFileServer(options);
+            }
+            else
+            {
+                Logger.LogError($"缺少目录[{adminDirectory}]，后台管理功能将无法使用。");
+            }
 
             if (!env.IsProduction())
             {
@@ -146,7 +171,7 @@ namespace LittleBlog.Web
             {
                 ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
             });
-            
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();
@@ -154,7 +179,7 @@ namespace LittleBlog.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllers(); 
+                endpoints.MapControllers();
             });
         }
     }
