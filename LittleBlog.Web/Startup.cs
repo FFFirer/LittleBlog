@@ -21,21 +21,27 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
 using LittleBlog.Web.Options;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using LittleBlog.Web.Extensions;
+using System.Linq;
 
 namespace LittleBlog.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             Configuration = configuration;
             var logProvider = new NLogLoggerProvider();
             Logger = logProvider.CreateLogger(nameof(Startup));
+
+            HostEnvironment = hostEnvironment;
         }
 
         private static string DefaultCorsPolicyName = "default";
         public IConfiguration Configuration { get; }
         public ILogger Logger { get; }
+        public IHostEnvironment HostEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -71,11 +77,15 @@ namespace LittleBlog.Web
             });
             //services.AddControllersWithViews();
 
+            // uploadRules
+            var imageRule = new ImageUploadRule(HostEnvironment);
+
             // Razor Pages
             services.AddRazorPages(options =>
             {
                 options.Conventions.AllowAnonymousToPage("/");
                 options.Conventions.AllowAnonymousToFolder("/");
+                options.Conventions.AllowAnonymousToFolder(imageRule.RequestPath);
             }).AddRazorRuntimeCompilation();
 
             // 依赖注入
@@ -84,6 +94,7 @@ namespace LittleBlog.Web
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddSingleton<IAuthorizationHandler, ArticleAuthorizationHandler>();
             services.AddScoped<IFileService, FileService>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             // Swagger OpenApi
             services.AddSwaggerDocument((settings) =>
@@ -110,12 +121,7 @@ namespace LittleBlog.Web
             services.AddOptions<UploadOption>(UploadTypes.Image)
                 .Configure((o) =>
                 {
-                    o.Rule = new ImageUploadRule();
-                });
-            services.AddOptions<UploadOption>(UploadTypes.Pdf)
-                .Configure((o) =>
-                {
-                    o.Rule = new PdfUploadRule();
+                    o.Rule = imageRule;
                 });
         }
 
@@ -154,12 +160,14 @@ namespace LittleBlog.Web
             {
                 Logger.LogError($"缺少目录[{adminDirectory}]，后台管理功能将无法使用。");
             }
+            app.UseFileServerForUpload(UploadOptions.Types.Select(a=>a.Value).ToList());
 
             if (!env.IsProduction())
             {
                 app.UseOpenApi();
                 app.UseSwaggerUi3();
             }
+
 
             app.UseRouting();
 

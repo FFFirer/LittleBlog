@@ -1,11 +1,14 @@
 ﻿using LittleBlog.Web.Models;
 using LittleBlog.Web.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Services
@@ -13,11 +16,13 @@ namespace LittleBlog.Web.Services
     public class FileService : IFileService
     {
         private const string _uploadFolder = "upload";
+        private readonly IActionContextAccessor _actionContextAccessor;
 
         private readonly IOptionsSnapshot<UploadOption> _namedOptionsAccesser;
-        public FileService(IOptionsSnapshot<UploadOption> namedOptionsAccessor)
+        public FileService(IOptionsSnapshot<UploadOption> namedOptionsAccessor, IActionContextAccessor actionContextAccessor)
         {
             _namedOptionsAccesser = namedOptionsAccessor;
+            _actionContextAccessor = actionContextAccessor;
         }
 
         /// <summary>
@@ -30,29 +35,15 @@ namespace LittleBlog.Web.Services
         {
             var uploadOption = _namedOptionsAccesser.Get(info.Type);
 
-            if(uploadOption != null)
+            if(uploadOption == null || uploadOption.Rule == null)
             {
-                if (!uploadOption.Rule.FileExtensions.Contains(Path.GetExtension(file.FileName)))
-                {
-                    throw new Exception($"允许的扩展为[{string.Join(",", uploadOption.Rule.FileExtensions)}]");
-                }
+                throw new UploadException("没有指定的上传规则"); 
             }
 
-            if (string.IsNullOrEmpty(info.Group))
-            {
-                info.Group = Guid.NewGuid().ToString();
-            }
-            var saveFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _uploadFolder, info.Group);
+            uploadOption.Rule.Validate(file, info);
 
-            if (!Directory.Exists(saveFolder))
-            {
-                Directory.CreateDirectory(saveFolder);
-            }
-
-            if (string.IsNullOrEmpty(info.FileName))
-            {
-                info.FileName = $"TMP_{Guid.NewGuid().ToString("N")}{Path.GetExtension(file.FileName)}";
-            }
+            
+            var saveFolder = uploadOption.Rule.GetUploadFileFolder(info);
 
             var saveFilePath = Path.Combine(saveFolder, info.FileName);
 
@@ -69,13 +60,15 @@ namespace LittleBlog.Web.Services
             {
                 await file.OpenReadStream().CopyToAsync(fs);
             }
+            
+            var urlHelper = new UrlHelper(_actionContextAccessor.ActionContext);
 
             return new UploadResult()
             {
                 Group = info.Group,
                 FileName = info.FileName,
                 FileId = null,
-                Url = $"{_uploadFolder}/{info.Group}/{info.FileName}",
+                Url = uploadOption.Rule.GetFileUrl(urlHelper, info),
                 IsFinish = true
             };
         }

@@ -35,7 +35,7 @@ namespace LittleBlog.Web.Apis.Admin
             try
             {
                 var result = await _fileService.SaveFileAsync(upload, data);
-
+                
                 return Success(result);
             }
             catch (Exception ex)
