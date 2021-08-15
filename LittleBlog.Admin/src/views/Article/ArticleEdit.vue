@@ -109,15 +109,28 @@ import "tinymce/plugins/wordcount"; //字数统计
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
-import { ArticleDto } from "../../types";
+import { ArticleDto, UploadInfo, UploadTypes } from "../../types";
 import api from "../../api";
 
 const viteAppName = import.meta.env.VITE_APP_NAME || "/";
+const serverBaseUrl = import.meta.env.VITE_REMOTE_API_ADDRESS;
 
 const TinyMCE_LANGUAGE_Zh_CN_URL = viteAppName + "tinymce/langs/zh_CN.js";
 const TinyMCE_SKIN_URL = viteAppName + "tinymce/skins/ui/oxide";
 const TinyMCE_CONTENT_CSS_URL =
     viteAppName + "tinymce/skins/content/default/content.css";
+
+let TIMYMCE_IMAOE_PREPEND_URL = serverBaseUrl + viteAppName;
+
+if (
+    TIMYMCE_IMAOE_PREPEND_URL.indexOf("/") ===
+    TIMYMCE_IMAOE_PREPEND_URL.length - 1
+) {
+    TIMYMCE_IMAOE_PREPEND_URL = TIMYMCE_IMAOE_PREPEND_URL.substring(
+        0,
+        TIMYMCE_IMAOE_PREPEND_URL.length - 1
+    );
+}
 
 export default defineComponent({
     name: "ArticleEdit",
@@ -204,9 +217,49 @@ export default defineComponent({
                 //   })
                 // }
                 // },
+                file_picker_callback: (callback, value, meta) => {
+                    let _this = this;
+                    var uploadInput = document.createElement("input");
+                    uploadInput.setAttribute("type", "file");
+
+                    if (meta.filetype === "image") {
+                        uploadInput.setAttribute("accept", "image/*");
+
+                        uploadInput.onchange = function () {
+                            let file = (uploadInput.files || [])[0];
+
+                            if (!file) {
+                                alert("请选择要上传的图片！");
+                            }
+
+                            let uploadInfo: UploadInfo = {
+                                fileName: file.name,
+                                uploadPath: "/images",
+                                index: 1,
+                                total: 1,
+                                group: "articles",
+                                type: UploadTypes.Image,
+                                data: file,
+                            };
+                            api.admin.file.upload(uploadInfo).then((res) => {
+                                if (res.isSuccess) {
+                                    if (res.data.isFinish) {
+                                        callback(res.data.url);
+                                    }
+                                } else {
+                                    console.error(res.message);
+                                }
+                            });
+                        };
+                    }
+
+                    uploadInput.click();
+                },
+                image_prepend_url: TIMYMCE_IMAOE_PREPEND_URL,
             } as RawEditorSettings,
             article: {} as ArticleDto,
             editLoading: false as boolean,
+            file_picker_types: "image",
         };
     },
     mounted() {
@@ -265,6 +318,7 @@ export default defineComponent({
                     this.editLoading = false;
                 });
         },
+        uploadFile() {},
     },
     setup() {
         const router = useRouter();

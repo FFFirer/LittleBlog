@@ -6,10 +6,16 @@ import {
     ListArticlesQueryContext,
     LoginModel,
     ResultModel,
+    UploadFileResultModel,
+    UploadInfo,
+    UploadResult,
 } from "../types/index";
 import helper from "./helper";
 import querystring from "querystring";
+import { routerKey } from "vue-router";
 
+// 携带cookie
+axios.defaults.withCredentials = true;
 axios.defaults.baseURL = import.meta.env.VITE_REMOTE_API_ADDRESS as
     | string
     | undefined;
@@ -17,6 +23,7 @@ axios.defaults.baseURL = import.meta.env.VITE_REMOTE_API_ADDRESS as
 axios.interceptors.request.use(
     (config) => {
         // 在请求之前做些什么
+        config.withCredentials = true; // 允许携带cookie
         // TODO: 判断是否已经登录或者需要登录
         return config;
     },
@@ -83,6 +90,9 @@ const urls = {
         },
         login: "/api/user/login",
         logout: "/api/user/logout",
+        File: {
+            upload: "/api/File/Upload",
+        },
     },
 };
 
@@ -171,6 +181,25 @@ const api = {
             return await axios.get(urls.admin.logout).then((resp) => {
                 return handleResponse(resp, "注销失败！");
             });
+        },
+        file: {
+            upload: async (
+                uploadinfo: UploadInfo
+            ): Promise<UploadFileResultModel> => {
+                let formData = new FormData();
+                Object.keys(uploadinfo).forEach(function (key) {
+                    formData.append(key, uploadinfo[key]);
+                });
+                return await axios
+                    .post(urls.admin.File.upload, formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    })
+                    .then((resp) => {
+                        return handleResponse(resp, "上传文件失败");
+                    });
+            },
         },
     },
 };

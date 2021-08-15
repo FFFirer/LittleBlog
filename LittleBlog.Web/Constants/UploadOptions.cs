@@ -16,17 +16,22 @@ namespace LittleBlog.Web
 
     public class UploadTypes
     {
-        public const string Default = "Default";
-        public const string Image = "Image";
+        public const string Default = "default";
+        public const string Image = "image";
         public const string Pdf = "pdf";
     }
 
     /// <summary>
-    /// 写入数据库，系统默认值
+    /// 上传帮助类
     /// </summary>
     public static class UploadHelper
     {
         private static Dictionary<string, string> _uploadTypesDict = null;
+        
+        /// <summary>
+        /// 获取所有可以上传的类型
+        /// </summary>
+        /// <returns></returns>
         public static Dictionary<string, string> GetAllTypes()
         {
             if(_uploadTypesDict == null)

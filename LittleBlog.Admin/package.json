@@ -2,7 +2,7 @@
   "name": "littleblog-admin",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite --host --mode dev",
+    "dev": "vite --mode dev",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "build-prod": "vue-tsc --noEmit && vite build --mode prod",

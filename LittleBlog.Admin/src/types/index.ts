@@ -45,6 +45,34 @@ interface LoginModel {
     rememberMe: boolean;
 }
 
+interface UploadInfo {
+    fileName: string;
+    uploadPath: string;
+    index: number;
+    total: number;
+    group: string;
+    type: string | UploadTypes;
+    data: File;
+}
+
+interface UploadResult {
+    group: string;
+    url: string;
+    fileId: string;
+    fileName: string;
+    isFinish: boolean;
+}
+
+interface UploadFileResultModel extends ResultModel {
+    data: UploadResult;
+}
+
+enum UploadTypes {
+    Default = "default",
+    Image = "image",
+    Pdf = "pdf",
+}
+
 export {
     ArticleDto,
     ResultModel,
@@ -52,4 +80,8 @@ export {
     ListArticleResultModel,
     GetArticleResultModel,
     LoginModel,
+    UploadInfo,
+    UploadResult,
+    UploadTypes,
+    UploadFileResultModel,
 };

@@ -26,6 +26,7 @@ namespace LittleBlog.Web.Apis.Admin
     [ApiExplorerSettings(GroupName = "Admin")]
     [OpenApiTags("Admin Articles")]
     //[AllowAnonymous]
+    [Authorize]
     public class ArticlesManageController : BaseApiController
     {
         private IArticleService _articleService;

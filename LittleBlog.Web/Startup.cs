@@ -110,7 +110,10 @@ namespace LittleBlog.Web
             {
                 setup.AddPolicy(DefaultCorsPolicyName, config =>
                 {
-                    config.WithOrigins(allowedOrigins.ToArray()).AllowAnyMethod().AllowAnyHeader();
+                    config.WithOrigins(allowedOrigins.ToArray())
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
 
