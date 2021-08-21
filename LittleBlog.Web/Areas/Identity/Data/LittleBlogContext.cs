@@ -26,6 +26,10 @@ namespace LittleBlog.Web.Data
             builder.Entity<IdentityUserToken<string>>(entity => entity.Property(m => m.LoginProvider).HasMaxLength(127));
             builder.Entity<IdentityUserToken<string>>(entity => entity.Property(m => m.Name).HasMaxLength(127));
             builder.Entity<ArchivedArticlesSummary>(aas => aas.HasNoKey());
+
+            builder.Entity<ArticleCategory>().HasKey(a => new {a.ArticleId, a.CategoryName});
+            builder.Entity<ArticleTag>().HasKey(a => new { a.ArticleId, a.TagName });
+
             base.OnModelCreating(builder);
         }
 

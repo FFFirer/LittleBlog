@@ -15,7 +15,6 @@ namespace LittleBlog.Web.Models
         public Article()
         {
             Author = GlobalConfig.AuthorName;
-            ArticleTags = new List<Tag>();
         }
 
         /// <summary>
@@ -79,10 +78,6 @@ namespace LittleBlog.Web.Models
         [Display(Name ="状态")]
         public bool IsPublished { get; set; }
 
-        [NotMapped]
-        public Category ArticleCategory { get; set; }
-
-        [NotMapped]
-        public List<Tag> ArticleTags { get; set; }
+        public string Category { get; set; }
     }
 }

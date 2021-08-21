@@ -26,14 +26,14 @@ namespace LittleBlog.Web.CustomComponents
         {
             SidebarViewModel model = new SidebarViewModel();
 
-            var tagSummaries = _tagService.ListSummaryAsync().Result;
-            var categorySummaries = _categoryService.ListSummaryAsync().Result;
+            //var tagSummaries = _tagService.ListSummaryAsync().Result;
+            //var categorySummaries = _categoryService.ListSummaryAsync().Result;
 
-            model.tagSummaries = tagSummaries
-                .Select(t => new TagSummary() { TagId=t.Id, TagName = t.DisplayName, Count = t.ArticlesCount }).Where(ts => ts.Count > 0).ToList();
-            model.categorySummaries = categorySummaries
-                .Select(c => new CategorySummary() { CategoryId = c.Id, CategoryName = c.DisplayName, Count = c.ArticlesCount }).Where(cs => cs.Count > 0).ToList();
-            model.archivedArticlesSummaries =  _articleService.GetArchivedArticlesSummariesAsync().Result.Where(aas => aas.ArticlesCount > 0).ToList();
+            //model.tagSummaries = tagSummaries
+            //    .Select(t => new TagSummary() { TagId=t.Id, TagName = t.DisplayName, Count = t.ArticlesCount }).Where(ts => ts.Count > 0).ToList();
+            //model.categorySummaries = categorySummaries
+            //    .Select(c => new CategorySummary() { CategoryId = c.Id, CategoryName = c.Name, Count = c.ArticlesCount }).Where(cs => cs.Count > 0).ToList();
+            //model.archivedArticlesSummaries =  _articleService.GetArchivedArticlesSummariesAsync().Result.Where(aas => aas.ArticlesCount > 0).ToList();
 
             return View(model);
         }

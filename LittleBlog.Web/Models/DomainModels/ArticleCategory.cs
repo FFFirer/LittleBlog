@@ -8,14 +8,10 @@ namespace LittleBlog.Web.Models.DomainModels
 {
     public class ArticleCategory
     {
-        [Key]
         [Required]
-        public int Id { get; set; }
+        public string CategoryName { get; set; }
 
         [Required]
         public int ArticleId { get; set; }
-
-        [Required]
-        public int CategoryId { get; set; }
     }
 }

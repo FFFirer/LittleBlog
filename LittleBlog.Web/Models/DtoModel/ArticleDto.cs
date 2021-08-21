@@ -47,5 +47,9 @@ namespace LittleBlog.Web.Models.DtoModel
         /// 最后修改时间
         /// </summary>
         public DateTime LastEditTime { get; set; }
+
+        public List<Tag> Tags { get; set; }
+
+        public List<Category> Categories { get; set; }
     }
 }
