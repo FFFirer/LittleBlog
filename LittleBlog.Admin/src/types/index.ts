@@ -7,7 +7,8 @@ interface ArticleDto {
     savePath: string;
     isPublished: boolean;
     lastEditTime: string;
-    categoryId: number;
+    categoryName: string;
+    tags: string[];
 }
 
 // 基本结果
@@ -15,6 +16,10 @@ interface ResultModel {
     isSuccess: boolean;
     message: string;
     exceptionMessage: string;
+}
+
+interface BaseResultModel<T> extends ResultModel {
+    data: T;
 }
 
 // 分页模型
@@ -46,6 +51,7 @@ interface LoginModel {
 }
 
 interface UploadInfo {
+    [index: string]: any; // 类型索引
     fileName: string;
     uploadPath: string;
     index: number;
@@ -73,6 +79,15 @@ enum UploadTypes {
     Pdf = "pdf",
 }
 
+interface Category {
+    name: string;
+    createTime: string;
+}
+
+interface ListCategoriesResultModel extends ResultModel {
+    data: Category[];
+}
+
 export {
     ArticleDto,
     ResultModel,
@@ -84,4 +99,7 @@ export {
     UploadResult,
     UploadTypes,
     UploadFileResultModel,
+    BaseResultModel as TResultModel,
+    Category,
+    ListCategoriesResultModel,
 };

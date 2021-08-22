@@ -1,4 +1,15 @@
-﻿@page
+﻿@page "{errorCode?}"
 @model LittleBlog.Web.Pages.ErrorModel
 @{
 }
+
+
+
+<div>
+    <h1>
+        错误码：@Model.CurrentErrorCode
+    </h1>
+    <p>
+        <a class="link-default" asp-area="" asp-page="/Index">返回首页</a>  
+    </p>
+</div>

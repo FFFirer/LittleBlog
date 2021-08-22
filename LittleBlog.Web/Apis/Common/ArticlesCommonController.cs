@@ -61,7 +61,9 @@ namespace LittleBlog.Web.Apis.Common
                 {
                     return Fail<ArticleDto>("未找到文章");
                 }
-                return Success(article);
+
+                var articleDto = _mapper.Map<ArticleDto>(article);
+                return Success(articleDto);
             }
             catch (Exception ex)
             {

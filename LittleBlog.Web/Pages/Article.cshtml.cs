@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LittleBlog.Web.Models.DtoModel;
 using LittleBlog.Web.Services.Interfaces;
+using AutoMapper;
 
 namespace LittleBlog.Web.Pages
 {
@@ -14,6 +15,7 @@ namespace LittleBlog.Web.Pages
         public ArticleDto Article { get; set; }
 
         public IArticleService _service { get; set; }
+        public IMapper _mapper { get; set; }
 
         public ArticleModel(IArticleService articleService)
         {
@@ -22,11 +24,15 @@ namespace LittleBlog.Web.Pages
 
         public async Task OnGet(int id)
         {
-            Article = await _service.GetArticleAsync(id);
-            if(Article == null)
+
+            var article = await _service.GetArticleAsync(id);
+
+            if (article == null)
             {
-                RedirectToPage("/Error");
+                RedirectToPage("/Error/404");
             }
+
+            Article = _mapper.Map<ArticleDto>(article);
         }
     }
 }

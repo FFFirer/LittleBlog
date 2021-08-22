@@ -4,8 +4,10 @@ import {
     GetArticleResultModel,
     ListArticleResultModel,
     ListArticlesQueryContext,
+    ListCategoriesResultModel,
     LoginModel,
     ResultModel,
+    TResultModel,
     UploadFileResultModel,
     UploadInfo,
     UploadResult,
@@ -83,10 +85,14 @@ const urls = {
         },
         Tags: {
             list: "/api/Admin/Tags/List",
-            getOne: "/api/Admin/Tags/GetOne",
-            delete: "/api/Admin/Tags/Delete",
-            save: "/api/Admin/Tags/Save",
-            create: "/api/Admin/Tags/CreateTag",
+            delete: "/api/Admin/Tags/Delete/:tagName",
+            save: "/api/Admin/Tags/Save/:tagName",
+        },
+        Categories: {
+            list: "/api/Admin/Categories/List",
+            listAll: "/api/Admin/Categories/ListAll",
+            delete: "/api/Admin/Categories/Delete/:categoryName",
+            save: "/api/Admin/Categories/Save/:categoryName",
         },
         login: "/api/user/login",
         logout: "/api/user/logout",
@@ -199,6 +205,67 @@ const api = {
                     .then((resp) => {
                         return handleResponse(resp, "上传文件失败");
                     });
+            },
+        },
+        tags: {
+            list: async (): Promise<TResultModel<string[]>> => {
+                return await axios.get(urls.admin.Tags.list).then((resp) => {
+                    return handleResponse(resp, "获取标签失败");
+                });
+            },
+            delete: async (tagName: string): Promise<ResultModel> => {
+                let targetUrl = helper.fillUrlParams(urls.admin.Tags.delete, {
+                    tagName: tagName,
+                });
+                return await axios.post(targetUrl).then((resp) => {
+                    return handleResponse(resp, "删除标签失败");
+                });
+            },
+            save: async (tagName: string): Promise<ResultModel> => {
+                let targetUrl = helper.fillUrlParams(urls.admin.Tags.save, {
+                    tagName: tagName,
+                });
+                return await axios.post(targetUrl).then((resp) => {
+                    return handleResponse(resp, "保存标签失败");
+                });
+            },
+        },
+        categories: {
+            list: async (): Promise<TResultModel<string[]>> => {
+                return await axios
+                    .get(urls.admin.Categories.list)
+                    .then((resp) => {
+                        return handleResponse(resp, "获取分类失败");
+                    });
+            },
+            listAll: async (): Promise<ListCategoriesResultModel> => {
+                return await axios
+                    .get(urls.admin.Categories.listAll)
+                    .then((resp) => {
+                        return handleResponse(resp, "获取分类失败");
+                    });
+            },
+            delete: async (categoryName: string): Promise<ResultModel> => {
+                let targetUrl = helper.fillUrlParams(
+                    urls.admin.Categories.delete,
+                    {
+                        categoryName: categoryName,
+                    }
+                );
+                return await axios.post(targetUrl).then((resp) => {
+                    return handleResponse(resp, "删除分类失败");
+                });
+            },
+            save: async (categoryName: string): Promise<ResultModel> => {
+                let targetUrl = helper.fillUrlParams(
+                    urls.admin.Categories.save,
+                    {
+                        categoryName: categoryName,
+                    }
+                );
+                return await axios.post(targetUrl).then((resp) => {
+                    return handleResponse(resp, "baocu");
+                });
             },
         },
     },

@@ -27,6 +27,7 @@
                     :columns="columns"
                     :paging="false"
                     :pagination="pagination"
+                    :row-class-name="checkRowClass"
                 >
                 </n-data-table>
             </n-spin>
@@ -65,6 +66,18 @@ function createColumns(
             title: "作者",
             width: 200,
             key: "author",
+        },
+        {
+            title: "状态",
+            width: 200,
+            key: "status",
+            render(row: InternalRowData) {
+                if (row["isPublished"]) {
+                    return "已发布";
+                } else {
+                    return "未发布";
+                }
+            },
         },
         {
             title: "最后修改日期",
@@ -205,6 +218,13 @@ export default defineComponent({
                 });
         },
         onPageChangd(page: number) {},
+        checkRowClass(row: InternalRowData, index: number) {
+            if (row["isPublished"]) {
+                return "article-published";
+            } else {
+                return "article-pending";
+            }
+        },
     },
     mounted() {
         let _this = this;
@@ -241,4 +261,13 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style>
+tr.article-published td[data-col-key="status"] {
+    background-color: rgb(0, 128, 0) !important;
+    color: white;
+}
+
+tr.article-pending td[data-col-key="status"] {
+    background-color: rgb(255, 255, 0) !important;
+}
+</style>

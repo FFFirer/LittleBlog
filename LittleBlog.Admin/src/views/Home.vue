@@ -23,11 +23,10 @@
                 >
                 </n-menu>
             </n-layout-sider>
-            <n-layout-content
-                id="app-content"
-                content-style="padding-left: 10px; padding-right: 10px"
-            >
-                <router-view> </router-view>
+            <n-layout-content id="app-content">
+                <div style="padding: 10px">
+                    <router-view> </router-view>
+                </div>
             </n-layout-content>
         </n-layout>
     </n-layout>
@@ -71,7 +70,11 @@ export default defineComponent({
                 name: "articleList",
             });
         };
-        const toCategoryList = () => {};
+        const toCategoryList = () => {
+            router.push({
+                name: "categoryList",
+            });
+        };
         const handleUpdateValue = (key: string) => {
             if (key == menuCategoryManageKey) {
                 toCategoryList();
@@ -110,8 +113,8 @@ export default defineComponent({
 }
 
 #app-content {
-    padding-top: 10px;
-    height: 100vh;
+    overflow: auto;
+    height: calc(100vh - 60px);
 }
 
 .rightHeader {

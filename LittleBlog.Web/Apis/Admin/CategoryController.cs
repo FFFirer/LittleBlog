@@ -47,6 +47,22 @@ namespace LittleBlog.Web.Apis.Admin
             }
         }
 
+        [HttpGet("[action]")]
+        public async Task<ResultModel<List<Category>>> ListAll()
+        {
+            try
+            {
+                var categories = await _categoryService.ListAllAsync();
+
+                return Success(categories);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "加载所有分类出错");
+                return Fail<List<Category>>(ex);
+            }
+        }
+
         [HttpPost("[action]/{categoryName}")]
         public async Task<ResultModel> Save(string categoryName)
         {

@@ -11,8 +11,10 @@ namespace LittleBlog.Web.Models.MapProfile
     {
         public ArticleProfile()
         {
-            CreateMap<Article, ArticleDto>().ReverseMap();
-
+            CreateMap<Article, ArticleDto>()
+                .ForMember(a => a.CategoryName, map => map.MapFrom(b => b.Category))
+                .ForMember(a => a.SavePath, map => map.MapFrom(b => b.SavePath ?? string.Empty))
+                .ReverseMap();
         }
     }
 }

@@ -9,8 +9,11 @@ namespace LittleBlog.Web.Pages
 {
     public class ErrorModel : PageModel
     {
-        public void OnGet()
+        public int CurrentErrorCode { get; set; }
+        
+        public void OnGet(int errorCode)
         {
+            CurrentErrorCode = errorCode;
         }
     }
 }

@@ -77,7 +77,7 @@ namespace LittleBlog.Web
             });
             //services.AddControllersWithViews();
 
-            // uploadRules
+            // 文件上传
             var imageRule = new ImageUploadRule(HostEnvironment);
 
             // Razor Pages
@@ -86,6 +86,7 @@ namespace LittleBlog.Web
                 options.Conventions.AllowAnonymousToPage("/");
                 options.Conventions.AllowAnonymousToFolder("/");
                 options.Conventions.AllowAnonymousToFolder(imageRule.RequestPath);
+                options.Conventions.AllowAnonymousToPage("/Error/");
             }).AddRazorRuntimeCompilation();
 
             // 依赖注入

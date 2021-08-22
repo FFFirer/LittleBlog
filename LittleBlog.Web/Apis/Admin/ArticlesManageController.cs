@@ -98,22 +98,8 @@ namespace LittleBlog.Web.Apis.Admin
                 var article = await _articleService.GetArticleAsync(id);
                 if (article == null) return Fail<ArticleDto>("未找到该文章！");
 
-                //var articleDetail = new ArticleDetailDto(article);
-
-                //ArticleEditViewModel viewModel = new ArticleEditViewModel(articleDetail);
-                //viewModel.Article.ArticleCategory = await categoryService.GetCategoryByArticleAsync(article.Id);
-                //viewModel.Article.ArticleTags = await tagService.ListTagsByArticleAsync(article.Id);
-
-                //if (viewModel.Article.ArticleCategory != null && viewModel.Article.ArticleCategory.Id > 0)
-                //{
-                //    viewModel.CategoryId = viewModel.Article.ArticleCategory.Id;
-                //}
-
-                //if (viewModel.Article.ArticleTags != null && viewModel.Article.ArticleTags.Count() > 0)
-                //{
-                //    viewModel.TagIds = viewModel.Article.ArticleTags.Select(t => t.Id).ToList();
-                //}
-                return Success(article, "获取成功");
+                var articleDto = _mapper.Map<ArticleDto>(article);
+                return Success(articleDto, "获取成功");
             }
             catch (Exception ex)
             {

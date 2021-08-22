@@ -20,9 +20,4 @@ export default defineComponent({
     /* text-align: center; */
     color: #2c3e50;
 }
-
-#app-content {
-    padding-top: 10px;
-    height: 100vh;
-}
 </style>

@@ -37,8 +37,16 @@
                 </n-form-item>
                 <n-form-item label="分类">
                     <n-select
-                        v-model:value="article.categoryId"
+                        v-model:value="article.categoryName"
                         placeholder="请选择分类"
+                        :options="categoryOptions"
+                        :filterable="true"
+                        :loading="selectCategoryLoading"
+                        tag
+                        clearable
+                        @update:value="handleSelectionUpdate"
+                        @create="handleSelectionCreate"
+                        :fallback-option="handleFallbackOption"
                     >
                     </n-select>
                 </n-form-item>
@@ -46,7 +54,7 @@
                     <n-checkbox v-model:checked="article.isPublished">
                     </n-checkbox>
                 </n-form-item>
-                <n-form-item label=" ">
+                <n-form-item label="">
                     <n-space>
                         <n-button @click="backToList"> 取消 </n-button>
                         <n-button type="info" @click="save"> 保存 </n-button>
@@ -108,7 +116,7 @@ import "tinymce/plugins/wordcount"; //字数统计
 
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { useMessage } from "naive-ui";
+import { SelectOption, useMessage } from "naive-ui";
 import { ArticleDto, UploadInfo, UploadTypes } from "../../types";
 import api from "../../api";
 
@@ -260,11 +268,17 @@ export default defineComponent({
             article: {} as ArticleDto,
             editLoading: false as boolean,
             file_picker_types: "image",
+            categories: [] as string[],
+            categoryOptions: [] as SelectOption[],
+            currentCategoryInput: "" as string,
+            selectCategoryLoading: false,
         };
     },
+    computed: {},
     mounted() {
         tinymce.init({});
 
+        this.loadBase();
         if (this.id > 0) {
             this.load();
         }
@@ -319,6 +333,71 @@ export default defineComponent({
                 });
         },
         uploadFile() {},
+        loadBase() {
+            // 加载类别
+            api.admin.categories
+                .list()
+                .then((res) => {
+                    if (res.isSuccess) {
+                        this.categories = res.data;
+                        this.categoryOptions = res.data.map((v) => {
+                            return {
+                                label: v,
+                                value: v,
+                            };
+                        }) as SelectOption[];
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        },
+        saveCategoryName() {
+            let currentValue = this.article.categoryName;
+            console.log("current value", currentValue);
+        },
+        filterCategory(value: string): boolean {
+            return (
+                this.categories.filter((c) => {
+                    return c === value;
+                }).length > 0
+            );
+        },
+        handleSelectionUpdate(value: string) {
+            console.log("update", value);
+
+            this.handleFallbackOption = () => {
+                return false;
+            };
+            this.selectCategoryLoading = true;
+            if (!this.filterCategory(value)) {
+                api.admin.categories
+                    .save(value)
+                    .then((res) => {
+                        if (res.isSuccess) {
+                            this.loadBase();
+                        } else {
+                            this.message.warning(res.message);
+                        }
+                    })
+                    .catch((err) => console.error(err))
+                    .finally(() => {
+                        this.selectCategoryLoading = false;
+                    });
+            }
+        },
+        handleSelectionCreate(value: string): SelectOption {
+            return {
+                label: (this.filterCategory(value) ? "" : "添加: ") + value,
+                value,
+            } as SelectOption;
+        },
+        handleFallbackOption(value: string): SelectOption | boolean {
+            return {
+                label: "（已删除）" + value,
+                value,
+            };
+        },
     },
     setup() {
         const router = useRouter();

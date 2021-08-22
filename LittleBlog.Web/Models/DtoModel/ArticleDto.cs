@@ -48,8 +48,8 @@ namespace LittleBlog.Web.Models.DtoModel
         /// </summary>
         public DateTime LastEditTime { get; set; }
 
-        public List<Tag> Tags { get; set; }
+        public List<string> Tags { get; set; }
 
-        public List<Category> Categories { get; set; }
+        public string CategoryName { get; set; }
     }
 }

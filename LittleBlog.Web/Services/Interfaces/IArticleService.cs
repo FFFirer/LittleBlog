@@ -58,7 +58,7 @@ namespace LittleBlog.Web.Services.Interfaces
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        Task<ArticleDto> GetArticleAsync(int Id);
+        Task<Article> GetArticleAsync(int Id);
 
         /// <summary>
         /// 保存文章

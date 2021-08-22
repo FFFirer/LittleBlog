@@ -92,20 +92,11 @@ namespace LittleBlog.Web.Services
             await db.SaveChangesAsync();
         }
 
-        public async Task<ArticleDto> GetArticleAsync(int Id)
+        public async Task<Article> GetArticleAsync(int Id)
         {
             return await db.Articles
                 .AsNoTracking()
                 .Where(a => a.Id.Equals(Id))
-                .Select(a => new ArticleDto()
-                {
-                    Id = a.Id,
-                    Abstract = a.Abstract,
-                    Title = a.Title,
-                    Author = a.Author,
-                    Content = a.Content,
-                    SavePath = a.SavePath
-                })
                 .FirstOrDefaultAsync();
         }
 
@@ -134,6 +125,7 @@ namespace LittleBlog.Web.Services
                 oldArticle.SavePath = article.SavePath;
                 oldArticle.LastEditTime = DateTime.Now;
                 oldArticle.IsPublished = article.IsPublished;
+                oldArticle.Category = article.Category;
             }
             await db.SaveChangesAsync();
         }
