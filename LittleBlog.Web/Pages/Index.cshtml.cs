@@ -14,10 +14,16 @@ namespace LittleBlog.Web.Pages
 {
     public class IndexModel : PageModel
     {
-        public List<ArticleDto> Articles;
+        #region ViewModel
+        [BindProperty]
+        public List<ArticleDto> Articles { get; set; }
+        #endregion
+
+        #region Services
         private readonly ILogger<IndexModel> _logger;
-        private IArticleService _service { get; set; }
+        private readonly IArticleService _service;
         private readonly IMapper _mapper;
+        #endregion
 
         public IndexModel(IArticleService articleService, ILogger<IndexModel> logger, IMapper mapper)
         {

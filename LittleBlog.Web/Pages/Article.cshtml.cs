@@ -17,9 +17,10 @@ namespace LittleBlog.Web.Pages
         public IArticleService _service { get; set; }
         public IMapper _mapper { get; set; }
 
-        public ArticleModel(IArticleService articleService)
+        public ArticleModel(IArticleService articleService, IMapper mapper)
         {
             _service = articleService;
+            _mapper = mapper;
         }
 
         public async Task OnGet(int id)
