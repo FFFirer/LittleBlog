@@ -1,10 +1,12 @@
 [CmdletBinding()]
 param (
-    # 发布模式：Prod:生产，Dev:开发
+    # 代码分支
+    [Parameter()]
     [string]
     $Branch,
 
-    # 是否构建Docker
+    # 容器的标签
+    [Parameter()]
     [string]
     $Tag
 )
@@ -18,5 +20,7 @@ if ($Tag -eq "") {
 }
 
 $DockerTag = "littleblog:" + $Branch + "-" + $Tag
+
+Write-Host ("DOCKER TAG: ", $DockerTag)
 
 docker build -t $DockerTag .
