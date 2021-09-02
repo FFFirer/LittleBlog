@@ -56,7 +56,9 @@ namespace LittleBlog.Web
                     services.AddDbContext<LittleBlogContext>(options => options.UseMySql(connectionString));
                     break;
                 case "Pgsql":
-                    services.AddDbContext<LittleBlogContext>(options => options.UseNpgsql(connectionString));
+                    services.AddDbContext<LittleBlogContext>(options => options.UseNpgsql(connectionString, x=> {
+                        x.MigrationsHistoryTable("__EFMigrationsHistory", "public");
+                    }));
                     break;
                 default:
                     throw new BlogException("没有配置数据库连接！");
