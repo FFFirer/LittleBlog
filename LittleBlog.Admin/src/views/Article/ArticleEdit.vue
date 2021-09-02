@@ -128,7 +128,7 @@ const TinyMCE_SKIN_URL = viteAppName + "tinymce/skins/ui/oxide";
 const TinyMCE_CONTENT_CSS_URL =
     viteAppName + "tinymce/skins/content/default/content.css";
 
-let TIMYMCE_IMAOE_PREPEND_URL = serverBaseUrl + viteAppName;
+let TIMYMCE_IMAOE_PREPEND_URL = serverBaseUrl;
 
 if (
     TIMYMCE_IMAOE_PREPEND_URL.indexOf("/") ===
