@@ -93,7 +93,7 @@ Write-Host ("COPY TO:" + $ADMIN_APP_DIR)
 Copy-Item $ADMIN_APP_DIST_DIR $ADMIN_APP_DIR -Recurse
 
 Set-Location $CURRENT_DIR
-. .\base.ps1
+. ./base.ps1
 
 # 发布站点到发布目录
 dotnet publish $WEB_DIR -c Release -o $PUBLISHED_DIR
@@ -119,6 +119,9 @@ if ($build_docker) {
 
     # 调用构建Docker的脚本
     Invoke-Expression -Command $BuildDockerCmd
+
+    # 清理镜像
+    Invoke-Expression -Command "docker image prune -y"
 }
 
 # 返回原来的目录
