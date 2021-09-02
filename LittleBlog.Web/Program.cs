@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace LittleBlog.Web
@@ -27,8 +28,14 @@ namespace LittleBlog.Web
                 try
                 {
                     var context = services.GetRequiredService<LittleBlogContext>();
-                    //context.Database.Migrate();
-                    context.Database.EnsureCreated();
+                    var env = services.GetRequiredService<IWebHostEnvironment>();
+                    if (context.Database.EnsureCreated())
+                    {
+                        if (env.IsProduction())
+                        {
+                            context.Database.Migrate();
+                        }
+                    }
                     var config = host.Services.GetRequiredService<IConfiguration>();
 
                     SeedData.Initialze(services, config["adminPwd"], config["adminName"]).Wait();
