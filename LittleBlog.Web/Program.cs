@@ -25,15 +25,19 @@ namespace LittleBlog.Web
             {
                 var services = scope.ServiceProvider;
 
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                
                 try
                 {
                     var context = services.GetRequiredService<LittleBlogContext>();
                     var env = services.GetRequiredService<IWebHostEnvironment>();
                     if (context.Database.EnsureCreated())
                     {
+                        logger.LogInformation("Database ensure created");   
                         if (env.IsProduction())
                         {
                             context.Database.Migrate();
+                            logger.LogInformation("Database migrated");
                         }
                     }
                     var config = host.Services.GetRequiredService<IConfiguration>();
@@ -42,7 +46,6 @@ namespace LittleBlog.Web
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred seeding the DB.");
                 }
             }
