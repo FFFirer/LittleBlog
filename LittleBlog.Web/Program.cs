@@ -31,15 +31,20 @@ namespace LittleBlog.Web
                 {
                     var context = services.GetRequiredService<LittleBlogContext>();
                     var env = services.GetRequiredService<IWebHostEnvironment>();
-                    if (context.Database.EnsureCreated())
+                    if (env.IsProduction())
                     {
-                        logger.LogInformation("Database ensure created");   
-                        if (env.IsProduction())
+                        context.Database.Migrate();
+                        logger.LogInformation("Database migrated");
+                    }
+                    else
+                    {
+                        if (context.Database.EnsureCreated())
                         {
-                            context.Database.Migrate();
-                            logger.LogInformation("Database migrated");
+                            logger.LogInformation("Database ensure created");
+
                         }
                     }
+                    
                     var config = host.Services.GetRequiredService<IConfiguration>();
 
                     SeedData.Initialze(services, config["adminPwd"], config["adminName"]).Wait();
