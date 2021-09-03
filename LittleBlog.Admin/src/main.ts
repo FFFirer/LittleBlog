@@ -4,4 +4,7 @@ import App from "./App.vue";
 import naive from "naive-ui";
 import router from "./route/index";
 
-createApp(App).use(naive).use(router).mount("#app");
+const app = createApp(App);
+app.use(naive);
+app.use(router);
+app.mount("#app");

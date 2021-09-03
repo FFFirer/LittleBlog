@@ -12,6 +12,9 @@ import ArticleList from "../views/Article/ArticleList.vue";
 // Categories
 import CategoryList from "../views/Category/CategoryList.vue";
 
+// Cookies
+import Cookie from "js-cookie";
+
 // 状态管理
 import store from "../store/index";
 const routes: RouteRecordRaw[] = [
@@ -62,29 +65,47 @@ const router = createRouter({
     history: routerHistory,
 });
 
-const noLogin = import.meta.env.VITE_NOLOGIN;
-
 // 路由守卫
 router.beforeEach((to, from, next) => {
     if (to.matched.length !== 0) {
-        to.matched.some((route) => {
-            if (route.meta.needLogin && !store.state.isLogin && !noLogin) {
-                // 判断是否已经登录
+        if (to.matched.some((route) => route.meta.needLogin)) {
+            if (
+                !store.state.isLogin &&
+                Cookie.get("login_status") !== "logined"
+            ) {
                 next({
                     name: "login",
                     params: {
-                        path: route.path,
+                        path: to.fullPath,
                     },
                 });
+            } else {
+                next();
             }
-        });
-
-        next();
+        } else {
+            next();
+        }
     } else {
         next({
             path: "/errors/404",
         });
     }
+
+    // if (to.matched.length !== 0) {
+    //     to.matched.some((route) => {
+    //         if (route.meta.needLogin && !store.state.isLogin) {
+    //             // 判断是否已经登录
+    //             next({
+    //                 name: "login",
+    //                 params: {
+    //                     path: route.path,
+    //                 },
+    //             });
+    //         }
+    //     });
+    //     next();
+    // } else {
+    // }
 });
 
 export default router;

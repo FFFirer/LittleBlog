@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import Cookie from "js-cookie";
 
 const store = {
     debug: true,
@@ -12,6 +13,7 @@ const store = {
         }
 
         this.state.isLogin = true;
+        Cookie.set("login_status", "logined");
     },
     checkLogout() {
         if (this.debug) {
@@ -19,6 +21,7 @@ const store = {
         }
 
         this.state.isLogin = false;
+        Cookie.remove("login_status");
     },
 };
 
