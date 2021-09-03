@@ -13,7 +13,7 @@ const store = {
         }
 
         this.state.isLogin = true;
-        Cookie.set("login_status", "logined");
+        Cookie.set("login_status", "logined", { expires: 1 });
     },
     checkLogout() {
         if (this.debug) {

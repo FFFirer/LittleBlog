@@ -41,6 +41,7 @@ import { MenuOption } from "naive-ui/lib/menu/index";
 import { MenuGroupOption } from "naive-ui/lib/menu/src/interface";
 
 import { useRouter } from "vue-router";
+import api from "../api";
 
 const menuArticleManageKey: string = "article-manage";
 const menuCategoryManageKey: string = "category-manage";
@@ -90,8 +91,12 @@ export default defineComponent({
             });
         };
         const logout = () => {
-            store.checkLogout();
-            toLogin();
+            api.admin.logout().then((res) => {
+                if (res.isSuccess) {
+                    store.checkLogout();
+                    toLogin();
+                }
+            });
         };
         return {
             gotoHome,
@@ -114,7 +119,7 @@ export default defineComponent({
 
 #app-content {
     overflow: auto;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 61px);
 }
 
 .rightHeader {

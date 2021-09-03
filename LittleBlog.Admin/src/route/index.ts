@@ -65,14 +65,17 @@ const router = createRouter({
     history: routerHistory,
 });
 
+function checkLoginStatus() {
+    let loginStatus = Cookie.get("login_status") || "";
+
+    return store.state.isLogin || loginStatus === "logined";
+}
+
 // 路由守卫
 router.beforeEach((to, from, next) => {
     if (to.matched.length !== 0) {
         if (to.matched.some((route) => route.meta.needLogin)) {
-            if (
-                !store.state.isLogin &&
-                Cookie.get("login_status") !== "logined"
-            ) {
+            if (!checkLoginStatus()) {
                 next({
                     name: "login",
                     params: {

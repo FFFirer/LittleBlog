@@ -120,7 +120,6 @@ function createColumns(
                                         console.log("delete start");
                                         deleteArticle(row.id as number);
                                     },
-                                    onNegativeClick: () => false,
                                     negativeText: "取消",
                                     positiveText: "确认",
                                     filp: true,

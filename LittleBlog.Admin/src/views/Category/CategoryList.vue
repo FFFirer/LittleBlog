@@ -65,7 +65,6 @@ function CreateColumns(
                                     onPositiveClick: () => {
                                         deleteCategory(row.name as string);
                                     },
-                                    onNegativeClick: () => false,
                                     negativeText: "取消",
                                     positiveText: "确认",
                                     filp: true,
