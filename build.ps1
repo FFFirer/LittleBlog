@@ -76,7 +76,10 @@ Write-Host ("Admin Prefix: ", $admin_prefix)
 Set-Content -Path $TARGET_ENV_EXAMPLE_FILE_PATH -Value $ENV_EXAMPLE_CONTENT
 Write-Host ("Generated: ", $TARGET_ENV_EXAMPLE_FILE_PATH)
 
-npm run $NPM_BUILD_CMD
+npm install     # 拉取最新的库
+
+$BuildVueCommand = "npm run " + $NPM_BUILD_CMD
+Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
 
 $HAS_DIR = (Test-Path $ADMIN_APP_DIR)
 if (-not $HAS_DIR) {
@@ -96,7 +99,8 @@ Set-Location $CURRENT_DIR
 . ./base.ps1
 
 # 发布站点到发布目录
-dotnet publish $WEB_DIR -c Release -o $PUBLISHED_DIR
+$BuildWebCommand = "dotnet publish {0} -c Release -o {1}" -f $WEB_DIR, $PUBLISHED_DIR
+Invoke-Expression -Command $BuildWebCommand -ErrorAction "Stop"
 
 if ($build_docker) {
     Write-Host "START TO BUILD <docker>"
