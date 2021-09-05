@@ -19,9 +19,7 @@ if ($Tag -eq "") {
     $Tag = "0.0.0"
 }
 
-$DATE = Get-Date -Format "yyyyMMddHHmmssfff"
-
-$DockerTag = "littleblog:" + $Branch + "-" + $Tag + "-" + $DATE
+$DockerTag = "littleblog:{0}-{1}" -f $Branch, $Tag
 
 Write-Host ("DOCKER TAG: ", $DockerTag)
 
