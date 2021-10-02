@@ -24,6 +24,8 @@ using LittleBlog.Web.Options;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using LittleBlog.Web.Extensions;
 using System.Linq;
+using LittleBlog.Web.Repositories.Interfaces;
+using LittleBlog.Web.Repositories;
 
 namespace LittleBlog.Web
 {
@@ -98,6 +100,8 @@ namespace LittleBlog.Web
             services.AddSingleton<IAuthorizationHandler, ArticleAuthorizationHandler>();
             services.AddScoped<IFileService, FileService>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<ISettingService, SettingService>();
+            services.AddScoped<ISettingRepo, SettingRepo>();
 
             // Swagger OpenApi
             services.AddSwaggerDocument((settings) =>

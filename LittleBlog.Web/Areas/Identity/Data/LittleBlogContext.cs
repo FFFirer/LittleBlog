@@ -30,6 +30,8 @@ namespace LittleBlog.Web.Data
             builder.Entity<ArticleCategory>().HasKey(a => new {a.ArticleId, a.CategoryName});
             builder.Entity<ArticleTag>().HasKey(a => new { a.ArticleId, a.TagName });
 
+            builder.Entity<SettingModel>();
+
             base.OnModelCreating(builder);
         }
 
@@ -38,8 +40,11 @@ namespace LittleBlog.Web.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ArticleCategory> ArticleCategories { get; set; }
         public DbSet<ArticleTag> ArticleTags { get; set; }
+
         //public DbSet<FriendShipLink> FriendShipLinks { get; set; }
         //public DbSet<BlogBasicInfo> BlogBasicInfos { get; set; }
+
+        public DbSet<SettingModel> SettingModels { get; set; }
 
         #region 无键实体类
         public DbSet<ArchivedArticlesSummary> ArchivedArticlesSummaries { get; set; }

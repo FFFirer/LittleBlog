@@ -32,7 +32,9 @@ namespace LittleBlog.Web.Apis.Admin
         private IArticleService _articleService;
         private IMapper _mapper;
 
-        public ArticlesManageController(IArticleService articleService, ILogger<ArticlesManageController> logger, IMapper mapper)
+        public ArticlesManageController(IArticleService articleService
+                                      , ILogger<ArticlesManageController> logger
+                                      , IMapper mapper)
         {
             _articleService = articleService;
             _logger = logger;
