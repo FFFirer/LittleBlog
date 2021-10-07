@@ -11,7 +11,7 @@
                 @click="gotoHome"
                 style="cursor: pointer; margin: 0"
             >
-                LittleBlog 管理后台
+                管理后台
             </span>
             <n-button @click="logout()"> 注销 </n-button>
         </n-layout-header>
@@ -45,6 +45,8 @@ import api from "../api";
 
 const menuArticleManageKey: string = "article-manage";
 const menuCategoryManageKey: string = "category-manage";
+const menuSysCfgBaseManageKey: string = "system-base";
+
 const menuOptions: Array<MenuOption | MenuGroupOption> = [
     {
         label: () => h("a", {}, "文章管理"),
@@ -53,6 +55,10 @@ const menuOptions: Array<MenuOption | MenuGroupOption> = [
     {
         label: () => h("a", {}, "分类管理"),
         key: menuCategoryManageKey,
+    },
+    {
+        label: () => h("a", {}, "系统配置"),
+        key: menuSysCfgBaseManageKey,
     },
 ];
 
@@ -84,6 +90,10 @@ export default defineComponent({
             if (key == menuArticleManageKey) {
                 toArticleList();
             }
+
+            if (key == menuSysCfgBaseManageKey) {
+                toSystemBaseSetting();
+            }
         };
         const toLogin = () => {
             router.push({
@@ -96,6 +106,11 @@ export default defineComponent({
                     store.checkLogout();
                     toLogin();
                 }
+            });
+        };
+        const toSystemBaseSetting = () => {
+            router.push({
+                name: "baseSetting",
             });
         };
         return {

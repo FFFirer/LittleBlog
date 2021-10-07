@@ -88,6 +88,20 @@ interface ListCategoriesResultModel extends ResultModel {
     data: Category[];
 }
 
+// 系统配置-网站信息配置
+interface WebSiteBaseInfo {
+    siteName: string;
+}
+
+interface WebSiteFiling {
+    number: string;
+}
+
+interface SystemConfig {
+    baseInfo: WebSiteBaseInfo;
+    filing: WebSiteFiling;
+}
+
 export {
     ArticleDto,
     ResultModel,
@@ -102,4 +116,7 @@ export {
     BaseResultModel as TResultModel,
     Category,
     ListCategoriesResultModel,
+    WebSiteFiling,
+    WebSiteBaseInfo,
+    SystemConfig,
 };

@@ -7,6 +7,7 @@ import {
     ListCategoriesResultModel,
     LoginModel,
     ResultModel,
+    SystemConfig,
     TResultModel,
     UploadFileResultModel,
     UploadInfo,
@@ -98,6 +99,9 @@ const urls = {
         logout: "/api/user/logout",
         File: {
             upload: "/api/File/Upload",
+        },
+        SysCfg: {
+            base: "/api/Admin/SysCfg/Base",
         },
     },
 };
@@ -266,6 +270,30 @@ const api = {
                 return await axios.post(targetUrl).then((resp) => {
                     return handleResponse(resp, "baocu");
                 });
+            },
+        },
+        syscfg: {
+            base: {
+                get: async (): Promise<TResultModel<SystemConfig>> => {
+                    return await axios
+                        .get(urls.admin.SysCfg.base)
+                        .then((resp) => {
+                            return handleResponse(
+                                resp,
+                                "获取系统基础配置失败！"
+                            );
+                        });
+                },
+                save: async (config: SystemConfig): Promise<ResultModel> => {
+                    return await axios
+                        .post(urls.admin.SysCfg.base, config)
+                        .then((resp) => {
+                            return handleResponse(
+                                resp,
+                                "保存系统基础配置失败！"
+                            );
+                        });
+                },
             },
         },
     },

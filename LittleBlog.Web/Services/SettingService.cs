@@ -51,7 +51,7 @@ namespace LittleBlog.Web.Services
             var currentSettings = MergeSettingDetails(oldSettingDetails, newSettingDetails);
             var effected = await _settings.SaveListAsync(currentSettings);
 
-            if(effected <= 0)
+            if (effected <= 0)
             {
                 throw new Exception("保存失败");
             }
@@ -143,52 +143,27 @@ namespace LittleBlog.Web.Services
         /// <param name="newSettings"></param>
         private IList<SettingModel> MergeSettingDetails(IList<SettingModel> oldSettings, IList<SettingModel> newSettings)
         {
-            //return oldSettings.Join(newSettings
-            //    , a => new { a.Section, a.Key }
-            //    , b => new { b.Section, b.Key }
-            //    , (x, y) => new
-            //    {
-            //        oldone = x,
-            //        newone = y
-            //    }).Select(link =>
-            //    {
-            //        if (link.oldone == null)
-            //        {
-            //            return link.newone;
-            //        }
-            //        else if (link.oldone != null && link.newone != null)
-            //        {
-            //            link.oldone.Value = link.newone.Value;
-            //            link.oldone.Description = link.newone.Description;
-            //            return link.oldone;
-            //        }
-            //        else
-            //        {
-            //            return null;
-            //        }
-            //    }).Where(a => a != null).ToList();
+            var result = new List<SettingModel>();
 
-            var settingGroups = from oldone in oldSettings
-                                join newone in newSettings on new { oldone.Section, oldone.Key } equals new { newone.Section, newone.Key } into settingsGroup
-                                from sgp in settingsGroup
-                                select new { oldone, sgp };
-            var result = settingGroups.Select(link =>
-                {
-                    if (link.oldone == null)
-                    {
-                        return link.newone;
-                    }
-                    else if (link.oldone != null && link.newone != null)
-                    {
-                        link.oldone.Value = link.newone.Value;
-                        link.oldone.Description = link.newone.Description;
-                        return link.oldone;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }).Where(a => a != null).ToList();
+            var toUpdate = oldSettings.Join(newSettings
+                                            , a => new { a.Key, a.Section }
+                                            , b => new { b.Key, b.Section }
+                                            , (oldone, newonw) =>
+              {
+                  oldone.Value = newonw.Value;
+                  oldone.Description = newonw.Description;
+                  return oldone;
+              });
+
+            result.AddRange(toUpdate.ToList());
+
+            var toAdd = from newone in newSettings
+                        join oldone in oldSettings on new { newone.Key, newone.Section } equals new { oldone.Key, oldone.Section } into allSettings
+                        from setting in allSettings.DefaultIfEmpty()
+                        where setting == null
+                        select newone;
+
+            result.AddRange(toAdd.ToList());
 
             return result;
         }

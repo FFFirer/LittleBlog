@@ -15,6 +15,9 @@ import CategoryList from "../views/Category/CategoryList.vue";
 // Cookies
 import Cookie from "js-cookie";
 
+// 系统配置
+import BaseSetting from "../views/System/BaseSetting.vue";
+
 // 状态管理
 import store from "../store/index";
 const routes: RouteRecordRaw[] = [
@@ -46,6 +49,11 @@ const routes: RouteRecordRaw[] = [
                 name: "categoryList",
                 path: "/categories",
                 component: CategoryList,
+            },
+            {
+                name: "baseSetting",
+                path: "/system/setting/base",
+                component: BaseSetting,
             },
         ],
     },

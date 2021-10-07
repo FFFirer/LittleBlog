@@ -32,7 +32,7 @@ namespace LittleBlog.Web.Repositories
             var olds = await db.SettingModels.Where(a => toUpdate.Select(b => b.Id).Contains(a.Id))
                     .ToListAsync();
 
-            var oldHasUpdated = olds.Join(toUpdate, newone => newone.Id, oldone => oldone.Id, (newone, oldone) =>
+            var oldHasUpdated = olds.Join(toUpdate, newone => newone.Id, oldone => oldone.Id, (oldone, newone) =>
                 {
                     oldone.Value = newone.Value;
                     oldone.Description = newone.Description;
