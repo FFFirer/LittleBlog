@@ -5,8 +5,8 @@
 }
 <div style="width: 100%; height: 200px; display: flex; justify-content: flex-start; place-items: center">
     <p class="h1">
-        LittleBlog
-        <small class="text-muted"> To Share Knowledge</small>
+        @Model.SiteInfo.SiteName
+        <small class="text-muted"> @(Model.SiteInfo.Welcome ?? string.Empty)</small>
     </p>
 </div>
 

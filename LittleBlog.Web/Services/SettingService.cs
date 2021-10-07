@@ -23,7 +23,14 @@ namespace LittleBlog.Web.Services
 
         public async Task<WebSiteBaseInfo> GetWebSiteBaseInfo()
         {
-            return await GetAsync<WebSiteBaseInfo>();
+            var info = await GetAsync<WebSiteBaseInfo>();
+
+            if (string.IsNullOrEmpty(info.SiteName))
+            {
+                info.SiteName = "LittleBlog";
+            }
+
+            return info;
         }
 
         public async Task<WebSiteFiling> GetWebSiteFiling()
@@ -50,13 +57,9 @@ namespace LittleBlog.Web.Services
             var newSettingDetails = GetDetails(setting);
             var currentSettings = MergeSettingDetails(oldSettingDetails, newSettingDetails);
             var effected = await _settings.SaveListAsync(currentSettings);
-
-            if (effected <= 0)
-            {
-                throw new Exception("保存失败");
-            }
         }
 
+        #region 帮助扩展
         /// <summary>
         /// 获取段名称
         /// </summary>
@@ -149,11 +152,11 @@ namespace LittleBlog.Web.Services
                                             , a => new { a.Key, a.Section }
                                             , b => new { b.Key, b.Section }
                                             , (oldone, newonw) =>
-              {
-                  oldone.Value = newonw.Value;
-                  oldone.Description = newonw.Description;
-                  return oldone;
-              });
+                                            {
+                                                oldone.Value = newonw.Value;
+                                                oldone.Description = newonw.Description;
+                                                return oldone;
+                                            });
 
             result.AddRange(toUpdate.ToList());
 
@@ -167,5 +170,6 @@ namespace LittleBlog.Web.Services
 
             return result;
         }
+        #endregion
     }
 }

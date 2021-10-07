@@ -9,7 +9,7 @@ export default ({ mode }) => {
         base: loadEnv(mode, process.cwd()).VITE_APP_NAME,
         server: {
             https: true,
-            port: 3000,
+            port: 30000,
             host: "127.0.0.1",
         },
     });

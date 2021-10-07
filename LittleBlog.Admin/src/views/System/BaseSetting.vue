@@ -11,6 +11,13 @@
                 >
                 </n-input>
             </n-form-item-gi>
+            <n-form-item-gi path="baseInfo.welcome" label="欢迎语">
+                <n-input
+                    placeholder="首屏欢迎语"
+                    v-model:value="systemConfig.baseInfo.welcome"
+                >
+                </n-input>
+            </n-form-item-gi>
         </n-grid>
 
         <n-grid x-gap="12" cols="1">

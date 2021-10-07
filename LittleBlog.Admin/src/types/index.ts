@@ -91,6 +91,7 @@ interface ListCategoriesResultModel extends ResultModel {
 // 系统配置-网站信息配置
 interface WebSiteBaseInfo {
     siteName: string;
+    welcome: string;
 }
 
 interface WebSiteFiling {

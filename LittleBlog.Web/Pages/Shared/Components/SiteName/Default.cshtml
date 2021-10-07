@@ -1,0 +1,12 @@
+﻿@model LittleBlog.Web.Models.DtoModel.Settings.WebSiteBaseInfo
+
+
+@{
+    if (string.IsNullOrEmpty(Model.SiteName))
+    {
+        Model.SiteName = "LittleBlog";
+    }
+}
+
+
+@Model.SiteName

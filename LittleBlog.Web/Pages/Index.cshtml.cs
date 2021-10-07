@@ -9,6 +9,7 @@ using LittleBlog.Web.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using LittleBlog.Web.Models.QueryContext;
 using AutoMapper;
+using LittleBlog.Web.Models.DtoModel.Settings;
 
 namespace LittleBlog.Web.Pages
 {
@@ -17,23 +18,28 @@ namespace LittleBlog.Web.Pages
         #region ViewModel
         [BindProperty]
         public List<ArticleDto> Articles { get; set; }
+
+        public WebSiteBaseInfo SiteInfo { get; set; }
         #endregion
 
         #region Services
         private readonly ILogger<IndexModel> _logger;
         private readonly IArticleService _service;
         private readonly IMapper _mapper;
+        private readonly ISettingService _settingService;
         #endregion
 
-        public IndexModel(IArticleService articleService, ILogger<IndexModel> logger, IMapper mapper)
+        public IndexModel(IArticleService articleService, ISettingService settingService, ILogger<IndexModel> logger, IMapper mapper)
         {
             _logger = logger;
             _service = articleService;
             _mapper = mapper;
+            _settingService = settingService;
         }
 
         public async Task OnGetAsync()
         {
+            SiteInfo = await _settingService.GetWebSiteBaseInfo();
             var queryContext = new ListArticlesQueryContext();
             queryContext.Source = QuerySource.Common;
             queryContext.Page = 1;
