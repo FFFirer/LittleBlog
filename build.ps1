@@ -24,7 +24,7 @@ param (
 $NPM_BUILD_CMD = "build";
 
 if ($api_address -eq "") {
-    $api_address = "https://127.0.0.1:50001"
+    $api_address = "/"
 }
 
 if ($admin_prefix -eq "" ) {
