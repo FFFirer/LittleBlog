@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
+using LittleBlog.Core.Models;
+using LittleBlog.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using LittleBlog.Web.Models.DtoModel;
-using LittleBlog.Web.Services.Interfaces;
 using Microsoft.Extensions.Logging;
-using LittleBlog.Web.Models.QueryContext;
-using AutoMapper;
-using LittleBlog.Web.Models.DtoModel.Settings;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Pages
 {

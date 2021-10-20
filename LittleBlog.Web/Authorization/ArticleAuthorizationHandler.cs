@@ -1,10 +1,7 @@
-﻿using LittleBlog.Web.Constants;
-using LittleBlog.Web.Models;
+﻿using LittleBlog.Core.Common;
+using LittleBlog.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Authorization

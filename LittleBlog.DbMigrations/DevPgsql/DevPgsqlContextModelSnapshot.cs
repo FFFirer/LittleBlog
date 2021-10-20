@@ -84,7 +84,7 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("LittleBlog.Web.Models.ArchivedArticlesSummary", b =>
+            modelBuilder.Entity("LittleBlog.Core.Models.ArchivedArticlesSummary", b =>
                 {
                     b.Property<string>("ArchiveDate")
                         .HasColumnType("text");
@@ -95,7 +95,7 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.ToTable("ArchivedArticlesSummaries");
                 });
 
-            modelBuilder.Entity("LittleBlog.Web.Models.Article", b =>
+            modelBuilder.Entity("LittleBlog.Core.Models.Article", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,7 +140,7 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.ToTable("Articles");
                 });
 
-            modelBuilder.Entity("LittleBlog.Web.Models.Category", b =>
+            modelBuilder.Entity("LittleBlog.Core.Models.Category", b =>
                 {
                     b.Property<string>("Name")
                         .HasColumnType("character varying(255)")
@@ -154,7 +154,7 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("LittleBlog.Web.Models.DomainModels.ArticleCategory", b =>
+            modelBuilder.Entity("LittleBlog.Core.Models.ArticleCategory", b =>
                 {
                     b.Property<int>("ArticleId")
                         .HasColumnType("integer");
@@ -167,7 +167,7 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.ToTable("ArticleCategories");
                 });
 
-            modelBuilder.Entity("LittleBlog.Web.Models.DomainModels.ArticleTag", b =>
+            modelBuilder.Entity("LittleBlog.Core.Models.ArticleTag", b =>
                 {
                     b.Property<int>("ArticleId")
                         .HasColumnType("integer");
@@ -180,7 +180,7 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.ToTable("ArticleTags");
                 });
 
-            modelBuilder.Entity("LittleBlog.Web.Models.DomainModels.SettingModel", b =>
+            modelBuilder.Entity("LittleBlog.Core.Models.SettingModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -211,7 +211,7 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.ToTable("SettingModels");
                 });
 
-            modelBuilder.Entity("LittleBlog.Web.Models.Tag", b =>
+            modelBuilder.Entity("LittleBlog.Core.Models.Tag", b =>
                 {
                     b.Property<string>("Name")
                         .HasColumnType("character varying(255)")

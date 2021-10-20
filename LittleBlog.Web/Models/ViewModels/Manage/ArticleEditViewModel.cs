@@ -1,10 +1,6 @@
-﻿using LittleBlog.Web.Common;
-using LittleBlog.Web.Models.DtoModel;
-using System;
+﻿using LittleBlog.Core.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LittleBlog.Web.Models.ViewModels.Manage
 {

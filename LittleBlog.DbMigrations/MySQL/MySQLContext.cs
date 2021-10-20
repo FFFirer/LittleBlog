@@ -1,4 +1,4 @@
-using LittleBlog.Web.Data;
+using LittleBlog.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace LittleBlog.DbMigrations.MySQL

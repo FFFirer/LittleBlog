@@ -1,5 +1,4 @@
-using System;
-using LittleBlog.Web.Models;
+using LittleBlog.Core.Models;
 
 namespace LittleBlog.Web.Models
 {

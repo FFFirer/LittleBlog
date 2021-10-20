@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using LittleBlog.Core.Models;
+using LittleBlog.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using System;
@@ -6,11 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using LittleBlog.Web.Models.QueryContext;
-using LittleBlog.Web.Models.DtoModel;
-using LittleBlog.Web.Models;
-using LittleBlog.Web.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 namespace LittleBlog.Web.Apis.Admin
 {

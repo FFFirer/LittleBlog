@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore.Design;
-using LittleBlog.Web.Data;
+using LittleBlog.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace LittleBlog.DbMigrations.MySQL
 {

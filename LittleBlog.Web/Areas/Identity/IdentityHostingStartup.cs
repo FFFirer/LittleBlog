@@ -1,10 +1,8 @@
-﻿using System;
+﻿using LittleBlog.Core;
+using LittleBlog.Core.Models;
 using LittleBlog.Web.Areas.Identity.Data;
-using LittleBlog.Web.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

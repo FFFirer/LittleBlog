@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
-using LittleBlog.Web.EXtensions;
-using LittleBlog.Web.Models;
-using LittleBlog.Web.Models.DtoModel;
-using LittleBlog.Web.Models.QueryContext;
-using LittleBlog.Web.Services.Interfaces;
+using LittleBlog.Core.Models;
+using LittleBlog.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

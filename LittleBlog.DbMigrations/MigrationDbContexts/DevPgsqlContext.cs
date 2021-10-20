@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using LittleBlog.Web.Data;
+﻿using LittleBlog.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace LittleBlog.DbMigrations

@@ -16,6 +16,8 @@
 	  <UserSecretsId>675f875c-094e-4ac1-ace5-e1c09c08e6d9</UserSecretsId>
 	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	  <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	  <AssemblyVersion>1.0.0.0</AssemblyVersion>
+	  <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,12 +26,16 @@
 
   <ItemGroup>
     <Compile Remove="Areas\Admin\**" />
+    <Compile Remove="Constants\**" />
     <Compile Remove="Models\MapProfiles\**" />
     <Content Remove="Areas\Admin\**" />
+    <Content Remove="Constants\**" />
     <Content Remove="Models\MapProfiles\**" />
     <EmbeddedResource Remove="Areas\Admin\**" />
+    <EmbeddedResource Remove="Constants\**" />
     <EmbeddedResource Remove="Models\MapProfiles\**" />
     <None Remove="Areas\Admin\**" />
+    <None Remove="Constants\**" />
     <None Remove="Models\MapProfiles\**" />
   </ItemGroup>
 
@@ -69,6 +75,11 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\LittleBlog.Core\LittleBlog.Core.csproj" />
   </ItemGroup>
 
 

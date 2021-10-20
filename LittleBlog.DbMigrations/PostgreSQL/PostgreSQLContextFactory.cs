@@ -1,7 +1,6 @@
-using Microsoft.EntityFrameworkCore.Design;
-using System;
-using LittleBlog.Web.Data;
+using LittleBlog.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace LittleBlog.DbMigrations.PostgreSQL
 {

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using LittleBlog.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using LittleBlog.Web.Data;
 
 namespace LittleBlog.DbMigrations
 {
@@ -14,6 +11,7 @@ namespace LittleBlog.DbMigrations
         public DevPgsqlContext CreateDbContext(string[] args)
         {
             var builder = new DbContextOptionsBuilder<LittleBlogContext>();
+
             builder.UseNpgsql(ConnectionString);
 
             return new DevPgsqlContext(builder.Options);

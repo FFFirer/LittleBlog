@@ -1,31 +1,26 @@
-﻿using LittleBlog.Web.Data;
+﻿using LittleBlog.Core;
+using LittleBlog.Core.Common;
+using LittleBlog.Core.Extensions;
+using LittleBlog.Core.Models;
+using LittleBlog.Core.Options;
+using LittleBlog.Core.Repositories;
+using LittleBlog.Core.Services;
+using LittleBlog.Web.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using LittleBlog.Web.Services;
-using LittleBlog.Web.Services.Interfaces;
-using NLog.Extensions.Logging;
-using Microsoft.Extensions.Logging;
-using LittleBlog.Web.Areas.Identity.Data;
-using Microsoft.AspNetCore.Authorization;
-using LittleBlog.Web.Authorization;
-using NSwag;
-using NSwag.Generation;
-using AutoMapper;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.IO;
 using Microsoft.Extensions.FileProviders;
-using LittleBlog.Web.Options;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using LittleBlog.Web.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using LittleBlog.Web.Repositories.Interfaces;
-using LittleBlog.Web.Repositories;
 
 namespace LittleBlog.Web
 {
@@ -125,7 +120,7 @@ namespace LittleBlog.Web
             });
 
             // AutoMapper
-            services.AddAutoMapper(typeof(Models.MapProfile.ArticleProfile));
+            services.AddAutoMapper(typeof(ArticleProfile));
 
             // 配置上传文件验证
             services.AddOptions<UploadOption>(UploadTypes.Image)

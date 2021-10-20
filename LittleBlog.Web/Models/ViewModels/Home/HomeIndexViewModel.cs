@@ -1,5 +1,4 @@
-using System;
-using LittleBlog.Web.Models;
+using LittleBlog.Core.Models;
 using System.Collections.Generic;
 
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LittleBlog.Web.Models;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using LittleBlog.Core.Models;
 
 namespace LittleBlog.Web.Apis
 {
