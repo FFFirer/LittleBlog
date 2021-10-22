@@ -145,3 +145,14 @@ a.link-default {
     text-decoration: none;
     color: initial;
 }
+
+
+.friendship-links {
+    min-height: 200px;
+    background-color: #eee;
+    padding-top: 10px;
+}
+
+.lp-0 {
+    padding-left: 0;
+}
