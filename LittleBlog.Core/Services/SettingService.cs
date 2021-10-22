@@ -56,6 +56,40 @@ namespace LittleBlog.Core.Services
             var effected = await _settings.SaveListAsync(currentSettings);
         }
 
+
+        public async Task<List<FriendshipLink>> GetFriendshipLinks(params string[] groups)
+        {
+            var subSections = groups.Select(a => a.ToString()).ToList();
+            var section = GetSectionName<FriendshipLink>();
+            var settings = await _settings.GetListAsync(section, subSections);
+
+            var links = settings.Select(a => new FriendshipLink()
+            {
+                Description = a.Description,
+                Link = a.Value,
+                Group = a.SubSection
+            });
+
+            return links.ToList();
+        }
+
+        public async Task SaveFriendshipLinks(List<FriendshipLink> links)
+        {
+            var section = GetSectionName<FriendshipLink>();
+            var subSections = links.Select(a => a.Group).ToList();
+
+            var settingsInDb = await _settings.GetListAsync(section, subSections);
+
+            var currSettings = links.Select(a => new SettingModel()
+            {
+                Description = a.Description,
+                Value = a.Link,
+                SubSection = a.Group,
+            });
+
+
+        }
+
         #region 帮助扩展
         /// <summary>
         /// 获取段名称
@@ -167,6 +201,7 @@ namespace LittleBlog.Core.Services
 
             return result;
         }
+
         #endregion
     }
 }

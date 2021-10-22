@@ -8,6 +8,8 @@ namespace LittleBlog.Core.Repositories
     {
         Task<IList<SettingModel>> GetOneAsync(string sectionName);
 
+        Task<IList<SettingModel>> GetListAsync(string sectionName, List<string> subSectionNames);
+
         Task<long> SaveListAsync(IList<SettingModel> list);
     }
 }

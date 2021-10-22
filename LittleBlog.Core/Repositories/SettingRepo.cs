@@ -41,5 +41,12 @@ namespace LittleBlog.Core.Repositories
 
             return await db.SaveChangesAsync();
         }
+
+        public async Task<IList<SettingModel>> GetListAsync(string sectionName, List<string> subSectionNames)
+        {
+            return await db.SettingModels.AsNoTracking()
+                .Where(a => a.Section == sectionName && subSectionNames.Contains(a.SubSection))
+                .ToListAsync();
+        }
     }
 }

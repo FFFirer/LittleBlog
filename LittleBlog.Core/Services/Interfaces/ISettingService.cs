@@ -1,4 +1,5 @@
 ﻿using LittleBlog.Core.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LittleBlog.Core.Services
@@ -10,5 +11,9 @@ namespace LittleBlog.Core.Services
         Task<WebSiteFiling> GetWebSiteFiling();
 
         Task SaveAsync<TSetting>(TSetting setting) where TSetting : class, new();
+
+        Task<List<FriendshipLink>> GetFriendshipLinks(params string[] groups);
+
+        Task SaveFriendshipLinks(List<FriendshipLink> links);
     }
 }
