@@ -61,12 +61,13 @@ namespace LittleBlog.Core.Services
         {
             var subSections = groups.Select(a => a.ToString()).ToList();
             var section = GetSectionName<FriendshipLink>();
-            var settings = await _settings.GetListAsync(section, subSections);
+
+            var settings = await _settings.GetListAsync(section);
 
             var links = settings.Select(a => new FriendshipLink()
             {
                 Description = a.Description,
-                Link = a.Value,
+                Link = a.Key,
                 Group = a.SubSection
             });
 
@@ -78,16 +79,12 @@ namespace LittleBlog.Core.Services
             var section = GetSectionName<FriendshipLink>();
             var subSections = links.Select(a => a.Group).ToList();
 
-            var settingsInDb = await _settings.GetListAsync(section, subSections);
+            var settings = await _settings.GetListAsync(section);
+            // 组合
+            var (toSave, toDelete) = DiffLinks(links, settings);
 
-            var currSettings = links.Select(a => new SettingModel()
-            {
-                Description = a.Description,
-                Value = a.Link,
-                SubSection = a.Group,
-            });
-
-
+            // var added = _settings.SaveListAsync(toAdd);
+            await _settings.SaveOrDeleteAsync(toSave, toDelete);
         }
 
         #region 帮助扩展
@@ -171,7 +168,7 @@ namespace LittleBlog.Core.Services
         }
 
         /// <summary>
-        /// 合并修改
+        /// 合并修改(Key&Section)
         /// </summary>
         /// <param name="oldSettings"></param>
         /// <param name="newSettings"></param>
@@ -202,6 +199,78 @@ namespace LittleBlog.Core.Services
             return result;
         }
 
+        /// <summary>
+        /// 区分要删除，修改，新增的链接
+        /// </summary>
+        /// <param name="links">输入的链接</param>
+        /// <param name="existsLinks">已经存在的链接</param>
+        /// <returns>
+        /// toSave, toDelete
+        /// </returns>
+        private (IList<SettingModel>, IList<SettingModel>) DiffLinks(IList<FriendshipLink> links, IList<SettingModel> existsLinks)
+        {
+            var inputLinks = ToSettings(links);
+            var toUpdateOrAdd = from inputLink in inputLinks
+                                join existsLink in existsLinks on new { inputLink.Key, inputLink.Section, inputLink.SubSection } equals new { existsLink.Key, existsLink.Section, existsLink.SubSection } into linksGroup
+                                from link in linksGroup.DefaultIfEmpty()
+                                select new
+                                {
+                                    inputLink,
+                                    link
+                                };
+
+            var toAdd = toUpdateOrAdd.Where(a => a.link == null).Select(a => a.inputLink);
+
+            var toUpdate = toUpdateOrAdd.Where(a => a.link != null).Select(a =>
+            {
+                a.inputLink.Id = a.link.Id;
+                return a.inputLink;
+            });
+
+            foreach (var toSave in toUpdateOrAdd)
+            {
+                if (toSave.link != null)
+                {
+                    toSave.inputLink.Id = toSave.link.Id;
+                }
+            }
+
+            var toDelete = from existsLink in existsLinks
+                           join inputLink in inputLinks on new { existsLink.Key, existsLink.Section, existsLink.SubSection } equals new { inputLink.Key, inputLink.Section, inputLink.SubSection } into linksGroup
+                           from link in linksGroup.DefaultIfEmpty()
+                           where link == null
+                           select existsLink;
+
+            return (toUpdateOrAdd.Select(a => a.inputLink).ToList(), toDelete.ToList());
+        }
+
+        /// <summary>
+        /// 设置转化为链接
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        private IList<FriendshipLink> ToLinks(IList<SettingModel> settings)
+        {
+            return settings.Select(a => new FriendshipLink()
+            {
+                Description = a.Description,
+                Link = a.Value,
+                Group = a.SubSection
+            }).ToList();
+        }
+
+        private IList<SettingModel> ToSettings(IList<FriendshipLink> links)
+        {
+            var section = GetSectionName<FriendshipLink>();
+            return links.Select(a => new SettingModel()
+            {
+                Key = a.Link,
+                Value = a.Link,
+                Description = a.Description,
+                SubSection = a.Group,
+                Section = section
+            }).ToList();
+        }
         #endregion
     }
 }

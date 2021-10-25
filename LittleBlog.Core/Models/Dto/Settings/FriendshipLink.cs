@@ -14,7 +14,7 @@ namespace LittleBlog.Core.Models
         /// 名称
         /// </summary>
         [JsonProperty("description")]
-        public string Description { get; set;}
+        public string Description { get; set; }
 
         /// <summary>
         /// 链接
