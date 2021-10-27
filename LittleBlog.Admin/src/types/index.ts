@@ -103,6 +103,12 @@ interface SystemConfig {
     filing: WebSiteFiling;
 }
 
+interface FriendshipLink {
+    description: string;
+    link: string;
+    group: string;
+}
+
 export {
     ArticleDto,
     ResultModel,
@@ -120,4 +126,5 @@ export {
     WebSiteFiling,
     WebSiteBaseInfo,
     SystemConfig,
+    FriendshipLink,
 };

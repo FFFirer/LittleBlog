@@ -1,6 +1,7 @@
 import axios, { AxiosResponse, ResponseType } from "axios";
 import {
     ArticleDto,
+    FriendshipLink,
     GetArticleResultModel,
     ListArticleResultModel,
     ListArticlesQueryContext,
@@ -102,6 +103,7 @@ const urls = {
         },
         SysCfg: {
             base: "/api/Admin/SysCfg/Base",
+            friendshipLinks: "/api/Admin/SysCfg/FriendshipLinks",
         },
     },
 };
@@ -292,6 +294,22 @@ const api = {
                                 resp,
                                 "保存系统基础配置失败！"
                             );
+                        });
+                },
+            },
+            friendshipLinks: {
+                list: async (): Promise<TResultModel<FriendshipLink[]>> => {
+                    return await axios
+                        .get(urls.admin.SysCfg.friendshipLinks)
+                        .then((resp) => {
+                            return handleResponse(resp, "获取友情链接失败！");
+                        });
+                },
+                save: async (links: FriendshipLink[]): Promise<ResultModel> => {
+                    return await axios
+                        .post(urls.admin.SysCfg.friendshipLinks, links)
+                        .then((resp) => {
+                            return handleResponse(resp, "保存友情链接失败！");
                         });
                 },
             },

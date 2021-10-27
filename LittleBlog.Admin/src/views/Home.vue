@@ -20,10 +20,11 @@
                 <n-menu
                     @update:value="handleUpdateValue"
                     :options="menuOptions"
+                    :default-expand-all="true"
                 >
                 </n-menu>
             </n-layout-sider>
-            <n-layout-content id="app-content">
+            <n-layout-content id="app-content" style="background-color: #eee">
                 <div style="padding: 10px">
                     <router-view> </router-view>
                 </div>
@@ -45,7 +46,9 @@ import api from "../api";
 
 const menuArticleManageKey: string = "article-manage";
 const menuCategoryManageKey: string = "category-manage";
-const menuSysCfgBaseManageKey: string = "system-base";
+const systemConfigKey = "system-config";
+const menuSysCfgBaseManageKey: string = "base-config-manage";
+const friendshipLinksManageKey: string = "friendship-links-manage";
 
 const menuOptions: Array<MenuOption | MenuGroupOption> = [
     {
@@ -58,7 +61,17 @@ const menuOptions: Array<MenuOption | MenuGroupOption> = [
     },
     {
         label: () => h("a", {}, "系统配置"),
-        key: menuSysCfgBaseManageKey,
+        key: systemConfigKey,
+        children: [
+            {
+                label: () => h("a", {}, "基础设置"),
+                key: menuSysCfgBaseManageKey,
+            },
+            {
+                label: () => h("a", {}, "友情链接配置"),
+                key: friendshipLinksManageKey,
+            },
+        ],
     },
 ];
 
@@ -94,6 +107,10 @@ export default defineComponent({
             if (key == menuSysCfgBaseManageKey) {
                 toSystemBaseSetting();
             }
+
+            if (key == friendshipLinksManageKey) {
+                toFriendshipLinksSetting();
+            }
         };
         const toLogin = () => {
             router.push({
@@ -111,6 +128,11 @@ export default defineComponent({
         const toSystemBaseSetting = () => {
             router.push({
                 name: "baseSetting",
+            });
+        };
+        const toFriendshipLinksSetting = () => {
+            router.push({
+                name: "friendlinksSetting",
             });
         };
         return {

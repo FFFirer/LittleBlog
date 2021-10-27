@@ -29,32 +29,7 @@
         </main>
     </div>
 
-    <div class="friendship-links">
-        <div class="container ">
-            <div class="row">
-                <div class="col-xs-12 col-sm-4">
-                    <h5>
-                        博客
-                    </h5>
-                    <a class="nav-link text-black-50 lp-0" href="https://www.cnblogs.com/FFFirer/">Watt不想上班</a>
-                </div>
-                <div class="col-xs-12 col-sm-4">
-                    <h5>
-                        文档资源
-                    </h5>
-                    <a class="nav-link text-black-50 lp-0" href="https://docs.microsoft.com/zh-cn/">Microsoft Docs</a>
-                    <a class="nav-link text-black-50 lp-0" href="https://docs.microsoft.com/zh-cn/dotnet/api/">.NET API浏览器</a>
-                </div>
-                <div class="col-xs-12 col-sm-4">
-                    <h5>
-                        项目开源
-                    </h5>
-                    <a class="nav-link text-black-50 lp-0" href="https://gitee.com/fffirer/LittleBlog">[Gitee.com]FFFirer/LittleBlog</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    @await Component.InvokeAsync("FriendshipLinks")
 
     <footer class="footer text-muted">
         <div class="container">

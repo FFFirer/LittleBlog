@@ -1,0 +1,21 @@
+﻿@using LittleBlog.Core.Models;
+@model Dictionary<string, List<FriendshipLink>>
+
+<div class="friendship-links">
+    <div class="container ">
+        <div class="row">
+            @foreach (var linksGroup in Model)
+            {
+                <div class="col-xs-12 col-sm-4">
+                    <h5>
+                        @linksGroup.Key
+                    </h5>
+                    @foreach (var link in linksGroup.Value)
+                    {
+                        <a class="nav-link text-black-50 lp-0" href="@link.Link">@link.Description</a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

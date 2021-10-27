@@ -14,11 +14,11 @@ using System.Linq;
 
 namespace LittleBlog.Web.Apis.Admin
 {
-    [Route("api/Admin/FriendshipLinks")]
+    [Route("api/Admin/SysCfg")]
     [ApiController]
-    [Description("友情链接管理相关接口")]
-    [ApiExplorerSettings(GroupName = "Admin FriendshipLinks")]
-    [OpenApiTags("Admin FriendshipLinks")]
+    [Description("系统配置相关接口（Admin）")]
+    [ApiExplorerSettings(GroupName = "Admin-SysCfg")]
+    [OpenApiTags("Admin Systen Configuration")]
     [Authorize]
     public class FriendshipLinksController : BaseApiController
     {
@@ -31,7 +31,7 @@ namespace LittleBlog.Web.Apis.Admin
             _logger = logger;
         }
 
-        [HttpGet("List")]
+        [HttpGet("FriendshipLinks")]
         public async Task<ResultModel<List<FriendshipLink>>> List()
         {
             try
@@ -46,7 +46,7 @@ namespace LittleBlog.Web.Apis.Admin
             }
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("FriendshipLinks")]
         public async Task<ResultModel> Save(IList<FriendshipLink> links)
         {
             try

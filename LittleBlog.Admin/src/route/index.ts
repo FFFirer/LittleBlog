@@ -17,6 +17,7 @@ import Cookie from "js-cookie";
 
 // 系统配置
 import BaseSetting from "../views/System/BaseSetting.vue";
+import FriendshipLinksSetting from "../views/System/FriendshipLinksSetting.vue";
 
 // 状态管理
 import store from "../store/index";
@@ -54,6 +55,11 @@ const routes: RouteRecordRaw[] = [
                 name: "baseSetting",
                 path: "/system/setting/base",
                 component: BaseSetting,
+            },
+            {
+                name: "friendlinksSetting",
+                path: "/system/setting/friendship-link",
+                component: FriendshipLinksSetting,
             },
         ],
     },
