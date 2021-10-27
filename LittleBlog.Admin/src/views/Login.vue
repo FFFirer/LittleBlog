@@ -23,6 +23,7 @@
                                     id="password"
                                     type="password"
                                     v-model:value="loginInfo.password"
+                                    @keydown.enter="login"
                                 />
                             </n-form-item>
                         </n-space>

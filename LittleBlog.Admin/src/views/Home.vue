@@ -6,17 +6,28 @@
             style="padding: 10px; padding-left: 32px"
             bordered
         >
-            <span
-                class="site-title"
-                @click="gotoHome"
-                style="cursor: pointer; margin: 0"
-            >
-                管理后台
-            </span>
-            <n-button @click="logout()"> 注销 </n-button>
+            <n-space>
+                <span
+                    class="site-title"
+                    @click="gotoHome"
+                    style="cursor: pointer; margin: 0"
+                >
+                    管理后台
+                </span>
+                <n-button class="hide-min-640" @click="openMenu">
+                    菜单
+                </n-button>
+                <n-button @click="logout()"> 注销 </n-button>
+            </n-space>
         </n-layout-header>
         <n-layout has-sider>
-            <n-layout-sider bordered>
+            <n-layout-sider
+                bordered
+                collapse-mode="transform"
+                :collapsed-with="0"
+                show-trigger="bar"
+                :show-collapsed-content="false"
+            >
                 <n-menu
                     @update:value="handleUpdateValue"
                     :options="menuOptions"
@@ -31,10 +42,20 @@
             </n-layout-content>
         </n-layout>
     </n-layout>
+    <n-drawer v-model:show="active" placement="left">
+        <n-drawer-content title="管理后台">
+            <n-menu
+                @update:value="handleUpdateValue"
+                :options="menuOptions"
+                :default-expand-all="true"
+            >
+            </n-menu>
+        </n-drawer-content>
+    </n-drawer>
 </template>
 
 <script lang="ts">
-import { defineComponent, h } from "vue";
+import { defineComponent, h, ref } from "vue";
 import store from "../store/index";
 
 // naive-ui 类型定义
@@ -77,9 +98,23 @@ const menuOptions: Array<MenuOption | MenuGroupOption> = [
 
 export default defineComponent({
     name: "Home",
+    data() {
+        return {
+            active: false,
+        };
+    },
     components: {},
     setup() {
         const router = useRouter();
+        const active = ref(false);
+        const openMenu = () => {
+            active.value = true;
+        };
+        const closeMenu = () => {
+            if (active.value) {
+                active.value = false;
+            }
+        };
         const gotoHome = () => {
             router.push({
                 path: "/",
@@ -111,6 +146,8 @@ export default defineComponent({
             if (key == friendshipLinksManageKey) {
                 toFriendshipLinksSetting();
             }
+
+            closeMenu();
         };
         const toLogin = () => {
             router.push({
@@ -135,11 +172,15 @@ export default defineComponent({
                 name: "friendlinksSetting",
             });
         };
+
         return {
             gotoHome,
             handleUpdateValue,
             menuOptions,
             logout,
+            closeMenu,
+            openMenu,
+            active,
         };
     },
 });
@@ -171,5 +212,27 @@ export default defineComponent({
 .site-title {
     font-size: 24px;
     font-weight: 600;
+}
+
+.n-layout-sider .n-layout-toggle-bar {
+    right: 0px;
+}
+
+/* 小于等于640px时 */
+@media screen and (max-width: 640px) {
+    .n-layout-sider {
+        display: none;
+    }
+
+    #app-header {
+        padding-left: 10px !important;
+    }
+}
+
+/* 大于等于641px */
+@media screen and (min-width: 641px) {
+    .hide-min-640 {
+        display: none;
+    }
 }
 </style>

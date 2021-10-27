@@ -417,4 +417,8 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style>
+.n-form-item-blank {
+    overflow-x: auto;
+}
+</style>

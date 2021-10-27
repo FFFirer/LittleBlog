@@ -2,9 +2,6 @@
     <div class="home-page">
         <h1>Welcome to the Blog Administration Panel</h1>
     </div>
-    <div>
-        <p>Ready to start</p>
-    </div>
 </template>
 
 <script lang="ts">

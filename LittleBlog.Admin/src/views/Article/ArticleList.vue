@@ -1,7 +1,7 @@
 <template>
-    <n-grid :y-gap="12" :cols="1">
+    <n-grid y-gap="12" cols="1">
         <n-grid-item>
-            <n-grid :x-gap="12" :cols="4">
+            <n-grid x-gap="12" y-gap="3" cols="1 640:4">
                 <n-grid-item>
                     <n-input
                         type="input"
