@@ -35,7 +35,7 @@ namespace LittleBlog.Web.Pages
 
         public async Task OnGetAsync()
         {
-            _logger.LogInformation("·ÃÎÊÖ÷Ò³");
+            _logger.LogInformation("Â·ÃƒÃŽÃŠÃ–Ã·Ã’Â³");
 
             SiteInfo = await _settingService.GetWebSiteBaseInfo();
             var queryContext = new ListArticlesQueryContext();
