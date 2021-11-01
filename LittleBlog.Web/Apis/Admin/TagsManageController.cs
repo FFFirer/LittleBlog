@@ -2,6 +2,7 @@
 using LittleBlog.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,10 @@ namespace LittleBlog.Web.Apis.Admin
     {
         private ITagService _tagService;
 
-        public TagsManageController(ITagService tagService)
+        public TagsManageController(ITagService tagService, LoggerFactory loggerFactory)
         {
             _tagService = tagService;
+            _logger = loggerFactory.CreateLogger<TagsManageController>();
         }
 
         /// <summary>

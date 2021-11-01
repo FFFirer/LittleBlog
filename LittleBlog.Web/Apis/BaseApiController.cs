@@ -133,7 +133,7 @@ namespace LittleBlog.Web.Apis
 
         protected void Log(string message, Exception exception = null, LogLevel level = LogLevel.Information)
         {
-            _logger.Log(level, exception, message);
+            _logger?.Log(level, exception, message);
         }
 
         protected string SerializeToJson(object data)
