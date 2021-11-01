@@ -25,7 +25,7 @@ namespace LittleBlog.Web.Pages
 
         public async Task OnGet(int id)
         {
-            _logger.LogInformation($"·ÃÎÊÎÄÕÂ[{id}]");
+            _logger.LogInformation($"访问文章[{id}]");
 
             var article = await _service.GetArticleAsync(id);
 
