@@ -6,6 +6,7 @@ using LittleBlog.Core.Options;
 using LittleBlog.Core.Repositories;
 using LittleBlog.Core.Services;
 using LittleBlog.Web.Authorization;
+using LittleBlog.Web.NLogConfig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
 using NLog.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +39,7 @@ namespace LittleBlog.Web
 
         private static string DefaultCorsPolicyName = "default";
         public IConfiguration Configuration { get; }
-        public ILogger Logger { get; }
+        public Microsoft.Extensions.Logging.ILogger Logger { get; }
         public IHostEnvironment HostEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -50,11 +52,16 @@ namespace LittleBlog.Web
             switch (db)
             {
                 case "Mysql":
-                    services.AddDbContext<LittleBlogContext>(options => options.UseMySql(connectionString));
+                    services.AddDbContext<LittleBlogContext>(options => options.UseMySql(connectionString, x =>
+                    {
+                        x.MigrationsAssembly("LittleBlog.Core");
+                    }));
                     break;
                 case "Pgsql":
-                    services.AddDbContext<LittleBlogContext>(options => options.UseNpgsql(connectionString, x=> {
+                    services.AddDbContext<LittleBlogContext>(options => options.UseNpgsql(connectionString, x =>
+                    {
                         x.MigrationsHistoryTable("__EFMigrationsHistory", "public");
+                        x.MigrationsAssembly("LittleBlog.Core");
                     }));
                     break;
                 default:
@@ -72,7 +79,17 @@ namespace LittleBlog.Web
             // 日志
             services.AddLogging(configLogger =>
             {
-                configLogger.AddNLog("NLog.config");
+                configLogger.ClearProviders();
+
+                NLogConfigExtension.AddNLogByDatabase(connectionString);
+
+                LogManager.ConfigurationReloaded += (sender, e) =>
+                {
+                    NLogConfigExtension.AddNLogByDatabase(connectionString);
+                };
+
+                //configLogger.AddNLog("NLog.config");
+                configLogger.AddNLog(NLog.LogManager.Configuration);
             });
             //services.AddControllersWithViews();
 
@@ -132,7 +149,7 @@ namespace LittleBlog.Web
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
-        {   
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -165,7 +182,7 @@ namespace LittleBlog.Web
             {
                 Logger.LogError($"缺少目录[{adminDirectory}]，后台管理功能将无法使用。");
             }
-            app.UseFileServerForUpload(UploadOptions.Types.Select(a=>a.Value).ToList());
+            app.UseFileServerForUpload(UploadOptions.Types.Select(a => a.Value).ToList());
 
             if (!env.IsProduction())
             {

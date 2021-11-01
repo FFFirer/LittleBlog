@@ -1,5 +1,6 @@
 ﻿using LittleBlog.Core;
 using LittleBlog.Web.Areas.Identity.Data;
+using LittleBlog.Web.NLogConfig;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
 using System;
 
 namespace LittleBlog.Web
@@ -15,6 +17,13 @@ namespace LittleBlog.Web
     {
         public static void Main(string[] args)
         {
+            //NLogConfigExtension.AddNLogByDatabase(string.Empty);
+
+            //LogManager.ConfigurationReloaded += (sender, e) =>
+            //{
+            //    NLogConfigExtension.AddNLogByDatabase(string.Empty);
+            //};
+
             var host = CreateWebHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())

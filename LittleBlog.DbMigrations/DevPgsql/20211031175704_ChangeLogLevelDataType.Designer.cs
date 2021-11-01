@@ -3,15 +3,17 @@ using System;
 using LittleBlog.DbMigrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace LittleBlog.DbMigrations.DevPgsql
 {
     [DbContext(typeof(DevPgsqlContext))]
-    partial class DevPgsqlContextModelSnapshot : ModelSnapshot
+    [Migration("20211031175704_ChangeLogLevelDataType")]
+    partial class ChangeLogLevelDataType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,8 +137,8 @@ namespace LittleBlog.DbMigrations.DevPgsql
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Logged")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("Logged")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Logger")
                         .HasColumnType("text");
