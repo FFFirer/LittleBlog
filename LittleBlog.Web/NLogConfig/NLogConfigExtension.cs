@@ -26,9 +26,9 @@ namespace LittleBlog.Web.NLogConfig
             databaseTarget.DBProvider = "Npgsql.NpgsqlConnection, Npgsql";
             databaseTarget.CommandType = System.Data.CommandType.Text;
             databaseTarget.ConnectionString = connectionString;
-            databaseTarget.CommandText = "INSERT INTO \"Logs\" (\"LogLevel\", \"Message\", \"Logger\", \"Application\", \"Callsite\", \"Exception\", \"Logged\")VALUES(@LogLevel, @Message, @Logger, @Application, @Callsite, @Exception, @Logged)";
+            databaseTarget.CommandText = "INSERT INTO \"Logs\" (\"LogLevel\", \"Message\", \"Logger\", \"Application\", \"Callsite\", \"Exception\", \"Logged\")VALUES(@LogLevel, @Message, @Logger, @Application, @Callsite, @Exception, CAST(@Logged AS TIMESTAMP))";
 
-            databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Logged", "${longdate}"));
+            databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Logged", "${date}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@LogLevel", "${level}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Message", "${message}"));
             databaseTarget.Parameters.Add(new DatabaseParameterInfo("@Logger", "${logger}"));

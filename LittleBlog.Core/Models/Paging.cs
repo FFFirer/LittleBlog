@@ -9,11 +9,6 @@ namespace LittleBlog.Core.Models
 
         public int Total { get; set; }
 
-        //public Tuple<IList<T>, int> Result()
-        //{
-        //    return new Tuple<IList<T>, int>(RowData, Total);
-        //}
-
         public Paging<TDestination> MapTo<TDestination>(IMapper mapper)
         {
             var DestinationPaging = new Paging<TDestination>()

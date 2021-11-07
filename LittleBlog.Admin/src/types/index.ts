@@ -35,12 +35,39 @@ interface ListArticlesQueryContext {
     onlyPublished: boolean;
 }
 
+interface BasePagingQueryContext {
+    page: number;
+    pageSize: number;
+}
+
+interface ListLogsQueryContext extends BasePagingQueryContext {
+    startTime?: string | null;
+    endTime?: string | null;
+    logger?: string | null;
+    logLevel?: number | null;
+}
+
 interface ListArticleResultModel extends ResultModel {
     data: PagingModel<ArticleDto>;
 }
 
 interface GetArticleResultModel extends ResultModel {
     data: ArticleDto;
+}
+
+interface LogModel {
+    id: number;
+    logLevel: string;
+    message: string;
+    logger: string;
+    application: string;
+    callSite: string;
+    exception: string;
+    logged: string;
+}
+
+interface ListLogResultModel extends ResultModel {
+    data: PagingModel<LogModel>;
 }
 
 // 登录登出
@@ -127,4 +154,7 @@ export {
     WebSiteBaseInfo,
     SystemConfig,
     FriendshipLink,
+    ListLogsQueryContext,
+    ListLogResultModel,
+    LogModel,
 };

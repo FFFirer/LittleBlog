@@ -19,6 +19,9 @@ import Cookie from "js-cookie";
 import BaseSetting from "../views/System/BaseSetting.vue";
 import FriendshipLinksSetting from "../views/System/FriendshipLinksSetting.vue";
 
+// 日志
+import LogSummary from "../views/Log/LogSummary.vue";
+
 // 状态管理
 import store from "../store/index";
 const routes: RouteRecordRaw[] = [
@@ -60,6 +63,11 @@ const routes: RouteRecordRaw[] = [
                 name: "friendlinksSetting",
                 path: "/system/setting/friendship-link",
                 component: FriendshipLinksSetting,
+            },
+            {
+                name: "logSummary",
+                path: "/logs/summary",
+                component: LogSummary,
             },
         ],
     },

@@ -114,6 +114,8 @@ namespace LittleBlog.Web
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<ISettingRepo, SettingRepo>();
+            services.AddScoped<ILogRepo, LogRepo>();
+            services.AddScoped<ILogService, LogService>();
 
             // Swagger OpenApi
             services.AddSwaggerDocument((settings) =>
@@ -138,6 +140,7 @@ namespace LittleBlog.Web
 
             // AutoMapper
             services.AddAutoMapper(typeof(ArticleProfile));
+            services.AddAutoMapper(typeof(LogProfile));
 
             // 配置上传文件验证
             services.AddOptions<UploadOption>(UploadTypes.Image)

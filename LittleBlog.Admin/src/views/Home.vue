@@ -70,6 +70,7 @@ const menuCategoryManageKey: string = "category-manage";
 const systemConfigKey = "system-config";
 const menuSysCfgBaseManageKey: string = "base-config-manage";
 const friendshipLinksManageKey: string = "friendship-links-manage";
+const logSummaryKey: string = "logs-summary";
 
 const menuOptions: Array<MenuOption | MenuGroupOption> = [
     {
@@ -93,6 +94,10 @@ const menuOptions: Array<MenuOption | MenuGroupOption> = [
                 key: friendshipLinksManageKey,
             },
         ],
+    },
+    {
+        label: () => h("a", {}, "日志管理"),
+        key: logSummaryKey,
     },
 ];
 
@@ -147,6 +152,10 @@ export default defineComponent({
                 toFriendshipLinksSetting();
             }
 
+            if (key == logSummaryKey) {
+                toLogSummary();
+            }
+
             closeMenu();
         };
         const toLogin = () => {
@@ -170,6 +179,11 @@ export default defineComponent({
         const toFriendshipLinksSetting = () => {
             router.push({
                 name: "friendlinksSetting",
+            });
+        };
+        const toLogSummary = () => {
+            router.push({
+                name: "logSummary",
             });
         };
 

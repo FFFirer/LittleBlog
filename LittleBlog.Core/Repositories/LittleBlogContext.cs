@@ -52,9 +52,7 @@ namespace LittleBlog.Core
 
             builder.Entity<SettingModel>();
 
-            builder.Entity<LogEntity>()
-                   .Property(a => a.LogLevel)
-                   .HasConversion<string>();
+            builder.Entity<LogEntity>();
 
             base.OnModelCreating(builder);
         }

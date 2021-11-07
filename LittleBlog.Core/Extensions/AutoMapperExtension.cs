@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using LittleBlog.Core.Models;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace LittleBlog.Core.Models
+namespace LittleBlog.Core.Extensions
 {
-    public static class PagingMapExtension
+    public static class AutoMapperExtension
     {
         public static Paging<TDestination> MapPaging<TSource, TDestination>(this IMapper mapper, Paging<TSource> paging)
         {

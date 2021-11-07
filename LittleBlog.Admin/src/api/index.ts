@@ -6,6 +6,8 @@ import {
     ListArticleResultModel,
     ListArticlesQueryContext,
     ListCategoriesResultModel,
+    ListLogResultModel,
+    ListLogsQueryContext,
     LoginModel,
     ResultModel,
     SystemConfig,
@@ -104,6 +106,9 @@ const urls = {
         SysCfg: {
             base: "/api/Admin/SysCfg/Base",
             friendshipLinks: "/api/Admin/SysCfg/FriendshipLinks",
+        },
+        Logs: {
+            list: "/api/Admin/Logs/List",
         },
     },
 };
@@ -312,6 +317,17 @@ const api = {
                             return handleResponse(resp, "保存友情链接失败！");
                         });
                 },
+            },
+        },
+        logs: {
+            list: async (
+                queryContext: ListLogsQueryContext
+            ): Promise<ListLogResultModel> => {
+                return await axios
+                    .post(urls.admin.Logs.list, queryContext)
+                    .then((resp) => {
+                        return handleResponse(resp, "查询日志失败！");
+                    });
             },
         },
     },
