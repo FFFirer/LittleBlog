@@ -20,7 +20,7 @@ import BaseSetting from "../views/System/BaseSetting.vue";
 import FriendshipLinksSetting from "../views/System/FriendshipLinksSetting.vue";
 
 // 日志
-import LogSummary from "../views/Log/LogSummary.vue";
+import LogSummary from "../views/LogManage/LogSummary.vue";
 
 // 状态管理
 import store from "../store/index";
