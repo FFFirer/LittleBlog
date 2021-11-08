@@ -3,15 +3,17 @@ using System;
 using LittleBlog.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace LittleBlog.Web.Migrations
+namespace LittleBlog.Core.Migrations
 {
     [DbContext(typeof(LittleBlogContext))]
-    partial class LittleBlogContextModelSnapshot : ModelSnapshot
+    [Migration("20211108152130_ChangeLogInDb")]
+    partial class ChangeLogInDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
