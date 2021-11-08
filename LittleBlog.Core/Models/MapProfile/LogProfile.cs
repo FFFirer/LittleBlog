@@ -10,8 +10,7 @@ namespace LittleBlog.Core.Models
         public LogProfile()
         {
             CreateMap<LogEntity, LogDto>()
-                .ForMember(a => a.LogLevel, map => map.MapFrom(b => b.LogLevel.ToString()))
-                .ForMember(a => a.Logged, map => map.MapFrom(b => b.Logged.ToLocalTime().ToLongTimeString()));
+                .ForMember(a => a.LogLevel, map => map.MapFrom(b => b.LogLevel.ToString()));
         }
     }
 }
