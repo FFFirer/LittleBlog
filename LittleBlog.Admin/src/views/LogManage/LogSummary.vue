@@ -143,8 +143,8 @@ export default defineComponent({
             queryContext.page = this.page;
             queryContext.pageSize = this.pageSize;
             if (this.queryDateTimeRange) {
-                let startTimeStamp = this.queryDateTimeRange[0];
-                let endTimeStamp = this.queryDateTimeRange[1];
+                let startTimeStamp = this.queryDateTimeRange![0];
+                let endTimeStamp = this.queryDateTimeRange![1];
 
                 console.log(
                     "start timestamp",
