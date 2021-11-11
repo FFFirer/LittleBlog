@@ -51,12 +51,12 @@ namespace LittleBlog.Web
             string connectionString = Configuration.GetConnectionString("LittleBlog");
             switch (db)
             {
-                case "Mysql":
-                    services.AddDbContext<LittleBlogContext>(options => options.UseMySql(connectionString, x =>
-                    {
-                        x.MigrationsAssembly("LittleBlog.Core");
-                    }));
-                    break;
+                //case "Mysql":
+                //    services.AddDbContext<LittleBlogContext>(options => options.UseMySql(connectionString, x =>
+                //    {
+                //        x.MigrationsAssembly("LittleBlog.Core");
+                //    }));
+                //    break;
                 case "Pgsql":
                     services.AddDbContext<LittleBlogContext>(options => options.UseNpgsql(connectionString, x =>
                     {
