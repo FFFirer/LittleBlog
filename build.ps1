@@ -98,6 +98,9 @@ Copy-Item $ADMIN_APP_DIST_DIR $ADMIN_APP_DIR -Recurse
 Set-Location $CURRENT_DIR
 . ./base.ps1
 
+Write-Host ("EMPTY Publish Directory")
+Remove-Item -LiteralPath $PUBLISHED_DIR -Force -Recurse
+
 # 发布站点到发布目录
 $BuildWebCommand = "dotnet publish {0} -c Release -o {1}" -f $WEB_DIR, $PUBLISHED_DIR
 Invoke-Expression -Command $BuildWebCommand -ErrorAction "Stop"
