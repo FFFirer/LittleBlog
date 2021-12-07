@@ -43,7 +43,7 @@ namespace LittleBlog.Core.Services
             category = new Category()
             {
                 Name = categoryName,
-                CreateTime = DateTime.Now,
+                CreateTime = DateTime.UtcNow,
             };
 
             _db.Categories.Add(category);

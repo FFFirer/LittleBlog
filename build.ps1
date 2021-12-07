@@ -58,7 +58,7 @@ $ADMIN_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Admin"
 
 # 进入后端admin的目录，准备将其发布到web的wwwroot下
 Set-Location $ADMIN_DIR
-Write-Host ("IN:" + $ADMIN_DIR)
+Write-Output "IN: $ADMIN_DIR"
 
 # 构建新的环境配置文件，从.env.example
 $ENV_EXAMPLE_FILE_PATH = Join-Path -Path $ADMIN_DIR -ChildPath ".env.example"
@@ -70,11 +70,11 @@ $ENV_EXAMPLE_CONTENT = Get-Content $ENV_EXAMPLE_FILE_PATH
 $ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@API_ADDRESS", $api_address
 $ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@APP_NAME", $admin_prefix
 
-Write-Host ("API Address: ", $api_address)
-Write-Host ("Admin Prefix: ", $admin_prefix)
+Write-Output "API Address: $api_address"
+Write-Output "Admin Prefix: $admin_prefix"
 
 Set-Content -Path $TARGET_ENV_EXAMPLE_FILE_PATH -Value $ENV_EXAMPLE_CONTENT
-Write-Host ("Generated: ", $TARGET_ENV_EXAMPLE_FILE_PATH)
+Write-Output "Generated: $TARGET_ENV_EXAMPLE_FILE_PATH"
 
 npm install     # 拉取最新的库
 
@@ -84,13 +84,13 @@ Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错�
 $HAS_DIR = (Test-Path $ADMIN_APP_DIR)
 if (-not $HAS_DIR) {
     New-Item -Path $ADMIN_APP_DIR -ItemType Directory
-    Write-Host ("Create:" + $ADMIN_APP_DIR)
+    Write-Output "Create: $ADMIN_APP_DIR"
 }
 
-Write-Host ("REMOVE IN:" + $ADMIN_APP_DIR)
+Write-Output "REMOVE IN: $ADMIN_APP_DIR"
 Remove-Item -Path $ADMIN_APP_DIR -Recurse
 
-Write-Host ("COPY TO:" + $ADMIN_APP_DIR)
+Write-Output "COPY TO: $ADMIN_APP_DIR"
 
 # 拷贝dist的内容到
 Copy-Item $ADMIN_APP_DIST_DIR $ADMIN_APP_DIR -Recurse
@@ -98,7 +98,7 @@ Copy-Item $ADMIN_APP_DIST_DIR $ADMIN_APP_DIR -Recurse
 Set-Location $CURRENT_DIR
 . ./base.ps1
 
-Write-Host ("EMPTY Publish Directory")
+Write-Output "EMPTY Publish Directory"
 Remove-Item -LiteralPath $PUBLISHED_DIR -Force -Recurse
 
 # 发布站点到发布目录
@@ -106,23 +106,23 @@ $BuildWebCommand = "dotnet publish {0} -c Release -o {1}" -f $WEB_DIR, $PUBLISHE
 Invoke-Expression -Command $BuildWebCommand -ErrorAction "Stop"
 
 if ($build_docker) {
-    Write-Host "START TO BUILD <docker>"
+    Write-Output "START TO BUILD <docker>"
 
     # 获取GIT版本信息
     $BranchName = Get-GitBranchName
 
-    Write-Host ("Branch: ", $BranchName)
+    Write-Output "Branch: $BranchName"
 
     $TagName = Get-GitTag
 
-    Write-Host ("Tag: ", $TagName)
+    Write-Output "Tag: $TagName"
 
     # 构建镜像
     Set-Location $PUBLISHED_DIR
 
     $BuildDockerCmd = ".\BuildDocker.ps1 -Branch " + $BranchName + " -Tag " + $TagName
 
-    Write-Host ("Build docker command: ", $BuildDockerCmd)
+    Write-Output "Build docker command:  $BuildDockerCmd"
 
     # 调用构建Docker的脚本
     Invoke-Expression -Command $BuildDockerCmd

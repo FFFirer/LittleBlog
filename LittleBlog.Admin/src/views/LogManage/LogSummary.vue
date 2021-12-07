@@ -57,7 +57,9 @@
                             <td>
                                 {{ log.message }}
                             </td>
-                            <td></td>
+                            <td>
+                                {{ log.exception }}
+                            </td>
                             <td>
                                 {{ log.logged }}
                             </td>
