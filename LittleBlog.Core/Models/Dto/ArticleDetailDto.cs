@@ -13,6 +13,8 @@ namespace LittleBlog.Core.Models
             this.Abstract = article.Abstract;
             this.Author = article.Author;
             this.Content = article.Content;
+            this.MarkdownContent = article.MarkdownContent;
+            this.UseMarkdown = article.UseMarkdown;
         }
 
         public CategoryDto ArticleCategory { get; set; }

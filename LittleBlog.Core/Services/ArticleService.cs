@@ -19,14 +19,16 @@ namespace LittleBlog.Core.Services
         public async Task<List<ArticleDto>> ListAllArticlesAsync()
         {
             return await db.Articles.AsNoTracking()
-                .Select(a=>new ArticleDto()
+                .Select(a => new ArticleDto()
                 {
                     Id = a.Id,
                     Abstract = a.Abstract,
                     Title = a.Title,
                     Author = a.Author,
                     Content = a.Content,
-                    SavePath = a.SavePath
+                    SavePath = a.SavePath,
+                    UseMarkdown = a.UseMarkDown,
+                    MarkdownContent = a.MarkdownContent
                 })
                 .ToListAsync();
         }
@@ -76,11 +78,11 @@ namespace LittleBlog.Core.Services
         {
             var oldarticle = await db.Articles
                 .Where(p => p.Id.Equals(articleId)).FirstOrDefaultAsync();
-            if(oldarticle == null)
+            if (oldarticle == null)
             {
                 throw new BlogException("未找到文章");
             }
-            
+
             oldarticle.LastEditTime = DateTime.Now;
             oldarticle.Content = articleContent;
             await db.SaveChangesAsync();
@@ -96,7 +98,7 @@ namespace LittleBlog.Core.Services
 
         public async Task SaveArticleAsync(Article article)
         {
-            if(article.Id == 0)
+            if (article.Id == 0)
             {
                 article.CreateTime = DateTime.Now;
                 article.LastEditTime = DateTime.Now;
@@ -108,7 +110,7 @@ namespace LittleBlog.Core.Services
                 Article oldArticle = await db.Articles
                     .Where(a => a.Id.Equals(article.Id))
                     .FirstOrDefaultAsync();
-                if(oldArticle == null)
+                if (oldArticle == null)
                 {
                     throw new BlogException("更新的文章不存在");
                 }
@@ -120,6 +122,8 @@ namespace LittleBlog.Core.Services
                 oldArticle.LastEditTime = DateTime.Now;
                 oldArticle.IsPublished = article.IsPublished;
                 oldArticle.Category = article.Category;
+                oldArticle.UseMarkDown = article.UseMarkDown;
+                oldArticle.MarkdownContent = article.MarkdownContent;
             }
             await db.SaveChangesAsync();
         }
@@ -155,7 +159,9 @@ namespace LittleBlog.Core.Services
                     Title = a.Title,
                     Author = a.Author,
                     Content = a.Content,
-                    SavePath = a.SavePath
+                    SavePath = a.SavePath,
+                    UseMarkdown = a.UseMarkDown,
+                    MarkdownContent = a.MarkdownContent
                 }).ToListAsync();
 
             return result;
@@ -178,7 +184,9 @@ namespace LittleBlog.Core.Services
                     Title = a.Title,
                     Author = a.Author,
                     Content = a.Content,
-                    SavePath = a.SavePath
+                    SavePath = a.SavePath,
+                    UseMarkdown = a.UseMarkDown,
+                    MarkdownContent = a.MarkdownContent
                 })
                 .ToListAsync();
         }
@@ -200,7 +208,9 @@ namespace LittleBlog.Core.Services
                     Title = a.Title,
                     Author = a.Author,
                     Content = a.Content,
-                    SavePath = a.SavePath
+                    SavePath = a.SavePath,
+                    UseMarkdown = a.UseMarkDown,
+                    MarkdownContent = a.MarkdownContent
                 })
                 .ToListAsync();
         }
@@ -212,7 +222,7 @@ namespace LittleBlog.Core.Services
         /// <returns></returns> 
         public async Task<List<ArchivedArticlesSummary>> GetArchivedArticlesSummariesAsync()
         {
-            
+
             List<ArchivedArticlesSummary> archivedArticlesSummaries = await db.ArchivedArticlesSummaries
                 .FromSqlRaw("SELECT DATE_FORMAT(CreateTime, '%Y-%m') AS ArchiveDate,count(1) AS ArticlesCount FROM Articles WHERE IsPublished=true GROUP BY ArchiveDate;")
                 .AsNoTracking()
@@ -248,7 +258,9 @@ namespace LittleBlog.Core.Services
                     Title = a.Title,
                     Author = a.Author,
                     Content = a.Content,
-                    SavePath = a.SavePath
+                    SavePath = a.SavePath,
+                    UseMarkdown = a.UseMarkDown,
+                    MarkdownContent = a.MarkdownContent,
                 })
                 .ToListAsync();
         }
@@ -282,7 +294,9 @@ namespace LittleBlog.Core.Services
                 Abstract = articleDto.Abstract,
                 Content = articleDto.Content,
                 SavePath = articleDto.SavePath,
-                IsPublished = articleDto.IsPublished
+                IsPublished = articleDto.IsPublished,
+                UseMarkDown = articleDto.UseMarkdown,
+                MarkdownContent = articleDto.MarkdownContent,
             };
 
             if (article.Id == 0)

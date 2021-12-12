@@ -75,6 +75,16 @@ namespace LittleBlog.Core.Models
         [Display(Name ="状态")]
         public bool IsPublished { get; set; }
 
+        /// <summary>
+        /// 使用Markdown编辑
+        /// </summary>
+        public bool UseMarkDown { get; set; }
+
+        /// <summary>
+        /// Markdown内容
+        /// </summary>
+        public string MarkdownContent { get; set; }
+
         public string Category { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace LittleBlog.Core
         public LittleBlogContext(DbContextOptions<LittleBlogContext> options)
             : base(options)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

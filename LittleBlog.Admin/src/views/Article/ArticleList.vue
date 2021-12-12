@@ -18,6 +18,13 @@
                         </n-button>
                     </n-space>
                 </n-grid-item>
+                <n-grid-item>
+                    <n-space>
+                        <n-button @click="gotoMdEdit()">
+                            打开Markdown编辑器
+                        </n-button>
+                    </n-space>
+                </n-grid-item>
             </n-grid>
         </n-grid-item>
         <n-grid-item :cols="1">
@@ -252,9 +259,16 @@ export default defineComponent({
             });
         };
 
+        const gotoMdEdit = () => {
+            router.push({
+                name: "mdeditorv2",
+            });
+        };
+
         return {
             message,
             gotoEdit,
+            gotoMdEdit,
         };
     },
 });

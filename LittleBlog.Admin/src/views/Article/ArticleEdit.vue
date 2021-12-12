@@ -25,8 +25,20 @@
                         placeholder="请输入摘要"
                     ></n-input>
                 </n-form-item>
+                <n-form-item v-show="!article.id" label=" ">
+                    <n-checkbox v-model:checked="article.useMarkdown">
+                        使用Markdown编辑器
+                    </n-checkbox>
+                </n-form-item>
                 <n-form-item label="正文">
-                    <div class="tinymce-box">
+                    <div v-if="article.useMarkdown" class="markdown-box">
+                        <markdown-editor
+                            v-model:MarkdownContent="article.markdownContent"
+                            v-model:HtmlContent="article.content"
+                        >
+                        </markdown-editor>
+                    </div>
+                    <div v-else class="tinymce-box">
                         <Editor
                             v-model="article.content"
                             :init="init"
@@ -119,6 +131,7 @@ import { useRouter } from "vue-router";
 import { SelectOption, useMessage } from "naive-ui";
 import { ArticleDto, UploadInfo, UploadTypes } from "../../types";
 import api from "../../api";
+import MarkdownEditor from "../../components/MarkdownEditor.vue";
 
 const viteAppName = import.meta.env.VITE_APP_NAME || "/";
 const serverBaseUrl = import.meta.env.VITE_REMOTE_API_ADDRESS;
@@ -144,6 +157,7 @@ export default defineComponent({
     name: "ArticleEdit",
     components: {
         Editor,
+        MarkdownEditor,
     },
     props: {
         id: {
@@ -384,6 +398,8 @@ export default defineComponent({
                     .finally(() => {
                         this.selectCategoryLoading = false;
                     });
+            } else {
+                this.selectCategoryLoading = false;
             }
         },
         handleSelectionCreate(value: string): SelectOption {
@@ -420,5 +436,13 @@ export default defineComponent({
 <style>
 .n-form-item-blank {
     overflow-x: auto;
+}
+
+.tinymce-box {
+    width: 100%;
+}
+
+.markdown-box {
+    width: 100%;
 }
 </style>

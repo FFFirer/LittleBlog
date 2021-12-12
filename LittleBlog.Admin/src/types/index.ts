@@ -9,6 +9,8 @@ interface ArticleDto {
     lastEditTime: string;
     categoryName: string;
     tags: string[];
+    useMarkdown: boolean;
+    markdownContent: string;
 }
 
 // 基本结果

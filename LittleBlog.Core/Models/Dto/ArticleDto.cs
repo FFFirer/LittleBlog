@@ -46,6 +46,16 @@ namespace LittleBlog.Core.Models
         /// </summary>
         public DateTime LastEditTime { get; set; }
 
+        /// <summary>
+        /// 使用Markdown编辑
+        /// </summary>
+        public bool UseMarkdown { get; set; }
+
+        /// <summary>
+        /// Markdown内容
+        /// </summary>
+        public string MarkdownContent { get; set; }
+
         public List<string> Tags { get; set; }
 
         public string CategoryName { get; set; }
