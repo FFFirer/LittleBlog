@@ -10,7 +10,7 @@ namespace LittleBlog.DbMigrations.MySQL
         public MySQLContext CreateDbContext(string[] args)
         {
             var builder = new DbContextOptionsBuilder<LittleBlogContext>()
-                                .UseMySql(MySQLConnectionString);
+                                .UseMySql(MySQLConnectionString, ServerVersion.Parse("8.0"));
             return new MySQLContext(builder.Options);
         }
     }
