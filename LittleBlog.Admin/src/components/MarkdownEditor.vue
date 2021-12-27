@@ -1,6 +1,13 @@
 <template>
     <div class="md-editor">
-        <div class="md-editor-tools"></div>
+        <div class="md-editor-tools">
+            <button @click="uploadImg">上传图片</button>
+            <ul>
+                <li v-for="(url, index) in uploadedImgs" :key="index">
+                    {{ url }}
+                </li>
+            </ul>
+        </div>
         <div class="md-editor-body">
             <div class="md-editor-origin">
                 <textarea ref="textareaRef"></textarea>
@@ -41,10 +48,13 @@ import {
     defineComponent,
     onMounted,
     PropType,
+    reactive,
     Ref,
     ref,
     watch,
 } from "vue";
+import { UploadInfo, UploadTypes } from "../types";
+import api from "../api";
 
 interface MarkdownEditorProps {
     markdown: Ref<string>;
@@ -70,7 +80,11 @@ export default defineComponent({
         const md = new MarkdownIt();
         const textareaRef = ref();
 
+        const ImagePrependUrl = import.meta.env.VITE_REMOTE_API_ADDRESS;
+
         let renderedHtml: Ref<string> = ref("");
+
+        let uploadedImgs: Ref<Array<string>> = ref([]);
 
         let { MarkdownContent, HtmlContent, height } = props;
 
@@ -119,6 +133,62 @@ export default defineComponent({
             }
         };
 
+        const JoinUrl = (prepend: string, relativeUrl: string): string => {
+            if (prepend.indexOf("/") === ImagePrependUrl.length - 1) {
+                prepend = prepend.substring(0, ImagePrependUrl.length - 1);
+            }
+
+            if (relativeUrl.indexOf("/") === 0) {
+                relativeUrl = relativeUrl.substring(1);
+            }
+
+            return `${prepend}/${relativeUrl}`;
+        };
+
+        const uploadImg = () => {
+            console.log("click upload image");
+
+            let uploadInput = document.createElement("input");
+
+            uploadInput.setAttribute("type", "file");
+
+            uploadInput.setAttribute("accept", "image/*"); // 设置过滤条件
+
+            uploadInput.onchange = () => {
+                let file = (uploadInput.files || [])[0];
+
+                if (!file) {
+                    alert("请选择要上传的图片！");
+                    return;
+                }
+
+                let uploadInfo: UploadInfo = {
+                    fileName: file.name,
+                    uploadPath: "/images",
+                    index: 1,
+                    total: 1,
+                    group: "articles",
+                    type: UploadTypes.Image,
+                    data: file,
+                };
+
+                api.admin.file.upload(uploadInfo).then((res) => {
+                    if (res.isSuccess) {
+                        if (res.data.isFinish) {
+                            // 回调
+                            uploadedImgs.value.push(
+                                JoinUrl(ImagePrependUrl, res.data.url)
+                            );
+                        }
+                    } else {
+                        console.error(res.message);
+                    }
+                });
+            };
+
+            uploadInput.click();
+        };
+
         return {
             md,
             textareaRef,
@@ -127,6 +197,8 @@ export default defineComponent({
             renderHtml,
             mdEditor,
             editorHeight,
+            uploadImg,
+            uploadedImgs,
         };
     },
 });

@@ -279,7 +279,9 @@ export default defineComponent({
                 },
                 image_prepend_url: TIMYMCE_IMAOE_PREPEND_URL,
             } as RawEditorSettings,
-            article: {} as ArticleDto,
+            article: {
+                markdownContent: "",
+            } as ArticleDto,
             editLoading: false as boolean,
             file_picker_types: "image",
             categories: [] as string[],
