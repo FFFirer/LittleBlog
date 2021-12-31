@@ -33,8 +33,9 @@
                 <n-form-item label="正文">
                     <div v-if="article.useMarkdown" class="markdown-box">
                         <markdown-editor
-                            v-model:MarkdownContent="article.markdownContent"
-                            v-model:HtmlContent="article.content"
+                            v-model:markdown="article.markdownContent"
+                            v-model:html="article.content"
+                            :height="600"
                         >
                         </markdown-editor>
                     </div>
@@ -67,10 +68,8 @@
                     </n-checkbox>
                 </n-form-item>
                 <n-form-item label="">
-                    <n-space>
-                        <n-button @click="backToList"> 取消 </n-button>
-                        <n-button type="info" @click="save"> 保存 </n-button>
-                    </n-space>
+                    <n-button @click="backToList"> 取消 </n-button>
+                    <n-button type="info" @click="save"> 保存 </n-button>
                 </n-form-item>
             </n-form>
         </div>

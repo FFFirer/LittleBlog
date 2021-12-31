@@ -1,23 +1,28 @@
 <template>
-    <div class="md-editor">
-        <div class="md-editor-tools">
-            <button @click="uploadImg">上传图片</button>
-            <ul>
-                <li v-for="(url, index) in uploadedImgs" :key="index">
-                    {{ url }}
-                </li>
-            </ul>
+    <div class="editor-container" ref="editorRef">
+        <div class="editor-toolbar" ref="toolbarRef">
+            <button @click="uploadImg()">上传图片</button>
+            <button @click="insertLink('')">添加链接</button>
+            <button @click="reloadPreviewStyle('img{max-width:100%}')">
+                加载主题
+            </button>
+            <button @click="">选择主题</button>
         </div>
-        <div class="md-editor-body">
-            <div class="md-editor-origin">
+        <div class="editor-body">
+            <div class="origin-content">
                 <textarea ref="textareaRef"></textarea>
             </div>
-            <div class="md-editor-preview">
-                <div v-html="renderedHtml"></div>
-            </div>
+            <div class="spliter"></div>
+            <iframe
+                class="markdown-content"
+                ref="previewRef"
+                frameborder="0"
+            ></iframe>
         </div>
+        <div class="editor-foot"></div>
     </div>
 </template>
+
 <script lang="ts">
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript";
@@ -42,17 +47,7 @@ import "codemirror/addon/fold/comment-fold.js";
 import MarkdownIt from "markdown-it";
 import CodeMirror from "codemirror";
 
-import {
-    computed,
-    ComputedRef,
-    defineComponent,
-    onMounted,
-    PropType,
-    reactive,
-    Ref,
-    ref,
-    watch,
-} from "vue";
+import { defineComponent, onMounted, Ref, ref, watch } from "vue";
 import { UploadInfo, UploadTypes } from "../types";
 import api from "../api";
 
@@ -64,74 +59,88 @@ interface MarkdownEditorProps {
 export default defineComponent({
     name: "MarkdownEditor",
     props: {
-        MarkdownContent: {
+        markdown: {
             type: String,
+            default: "",
         },
-        HtmlContent: {
+        html: {
             type: String,
             default: "",
         },
         height: {
-            type: String,
-            default: "300px",
+            type: Number,
+            default: 300,
         },
     },
     setup(props, { emit }) {
-        const md = new MarkdownIt();
-        const textareaRef = ref();
-
         const ImagePrependUrl = import.meta.env.VITE_REMOTE_API_ADDRESS;
 
-        let renderedHtml: Ref<string> = ref("");
+        const markdownIt = new MarkdownIt();
+        const textareaRef = ref();
 
-        let uploadedImgs: Ref<Array<string>> = ref([]);
+        const toolbarRef = ref<HTMLDivElement>();
 
-        let { MarkdownContent, HtmlContent, height } = props;
+        const previewRef = ref<HTMLIFrameElement>();
 
-        let editorHeight = height;
+        let { markdown, html, height } = props;
+
+        const editorHeight = ref<string>(`${height}px`);
 
         let markdownContent: Ref<string> = ref("");
 
-        console.log("input", MarkdownContent);
+        let htmlContent: Ref<string> = ref(html ?? "");
 
-        let mdEditor: CodeMirror.EditorFromTextArea =
+        let editor: CodeMirror.EditorFromTextArea =
             {} as CodeMirror.EditorFromTextArea;
 
+        let editorConfig: CodeMirror.EditorConfiguration = {
+            lineNumbers: true,
+            value: markdownContent.value,
+        };
+
+        // 加载时
         onMounted(() => {
             if (textareaRef.value != null) {
-                textareaRef.value.value = MarkdownContent;
+                console.log("初始化编辑器");
 
-                mdEditor = CodeMirror.fromTextArea(
+                textareaRef.value.value = markdown;
+
+                // 初始化
+                editor = CodeMirror.fromTextArea(
                     textareaRef.value as HTMLTextAreaElement,
                     {
                         lineNumbers: true,
                     }
                 );
 
-                mdEditor.on("change", (instance, changedObj) => {
+                editor.on("change", (instance, changeObj) => {
                     markdownContent.value = instance.getValue();
                 });
+
+                // 赋值
+                markdownContent.value = markdown;
+            }
+
+            // 编辑器高度
+            else {
+                console.log("没有加载textarea");
             }
         });
 
         watch(
             () => markdownContent.value,
             () => {
-                renderedHtml.value = md.render(markdownContent.value);
-                MarkdownContent = markdownContent.value;
-                HtmlContent = renderedHtml.value;
-                emit("update:HtmlContent", renderedHtml.value);
-                emit("update:MarkdownContent", MarkdownContent);
+                htmlContent.value = markdownIt.render(markdownContent.value);
+
+                if (previewRef.value?.contentWindow) {
+                    previewRef.value.contentWindow.document.body.innerHTML =
+                        htmlContent.value;
+                }
+
+                emit("update:html", htmlContent.value);
+                emit("update:markdown", markdownContent.value);
             }
         );
-
-        markdownContent.value = MarkdownContent ?? "";
-
-        const renderHtml = () => {
-            if (mdEditor != null) {
-                renderedHtml.value = md.render(mdEditor.getValue());
-            }
-        };
 
         const JoinUrl = (prepend: string, relativeUrl: string): string => {
             if (prepend.indexOf("/") === ImagePrependUrl.length - 1) {
@@ -175,8 +184,7 @@ export default defineComponent({
                 api.admin.file.upload(uploadInfo).then((res) => {
                     if (res.isSuccess) {
                         if (res.data.isFinish) {
-                            // 回调
-                            uploadedImgs.value.push(
+                            insertImageLink(
                                 JoinUrl(ImagePrependUrl, res.data.url)
                             );
                         }
@@ -189,44 +197,115 @@ export default defineComponent({
             uploadInput.click();
         };
 
-        return {
-            md,
-            textareaRef,
-            markdownContent,
-            renderedHtml,
-            renderHtml,
-            mdEditor,
-            editorHeight,
-            uploadImg,
-            uploadedImgs,
+        const insertLink = (url: string) => {
+            editor.execCommand("goLineEnd");
+
+            let currentCursorPos = editor.getCursor();
+
+            if (currentCursorPos.ch > 0) {
+                editor.execCommand("newlineAndIndent");
+
+                currentCursorPos = editor.getCursor();
+            }
+
+            editor.replaceRange(`[link description](${url})`, currentCursorPos);
         };
+
+        const insertImageLink = (url: string) => {
+            editor.execCommand("goLineEnd");
+
+            editor.execCommand("newlineAndIndent");
+
+            let currentCursorPos = editor.getCursor();
+
+            if (currentCursorPos.ch > 0) {
+                editor.execCommand("newlineAndIndent");
+                currentCursorPos = editor.getCursor();
+            }
+
+            editor.replaceRange(
+                `![link description](${url})`,
+                currentCursorPos
+            );
+        };
+
+        const reloadPreviewStyle = (styleCss: string) => {
+            if (previewRef.value?.contentWindow) {
+                let headerStyle =
+                    previewRef.value?.contentWindow.document.head.querySelector(
+                        "style"
+                    );
+
+                if (!headerStyle) {
+                    headerStyle =
+                        previewRef.value?.contentWindow.document.createElement(
+                            "style"
+                        );
+
+                    previewRef.value?.contentWindow.document.head.appendChild(
+                        headerStyle
+                    );
+                }
+
+                headerStyle.innerHTML = styleCss;
+            }
+        };
+
+        let halfEditorHeight = ref<string>(`${height / 2}px`);
+
+        let returnObj = {
+            uploadImg,
+            markdownIt,
+            toolbarRef,
+            previewRef,
+            editorHeight,
+            markdownContent,
+            htmlContent,
+            editor,
+            insertLink,
+            textareaRef,
+            reloadPreviewStyle,
+            halfEditorHeight,
+        };
+
+        return returnObj;
     },
 });
 </script>
 <style>
-.md-editor {
+.editor-container {
+    border: 1px solid gray;
+    /* width: 100%; */
     overflow: auto;
 }
 
-.md-editor-body {
+.editor-toolbar {
+    min-height: 3px;
+    border-bottom: 1px solid gray;
+}
+
+.editor-body {
     display: flex;
-    flex-direction: row;
-    min-height: 100%;
+    /* background-color: yellow; */
     overflow: auto;
 }
 
-.md-editor-origin {
-    flex: 1;
-    overflow: auto;
-    margin: 1px;
-}
-
-.md-editor-preview {
+.origin-content {
     flex: 1;
     height: v-bind(editorHeight);
-    background-color: white;
     overflow: auto;
-    margin: 1px;
+}
+
+.spliter {
+    width: 1px;
+    border: 0;
+    background-color: gray;
+}
+
+.markdown-content {
+    flex: 1;
+    height: v-bind(editorHeight);
+    overflow: auto;
 }
 
 .CodeMirror {
