@@ -40,7 +40,7 @@ namespace LittleBlog.Core.Services
         /// </summary>
         /// <typeparam name="TSetting"></typeparam>
         /// <returns></returns>
-        private async Task<TSetting> GetAsync<TSetting>() where TSetting : class, new()
+        internal async Task<TSetting> GetAsync<TSetting>() where TSetting : class, new()
         {
             var sectionName = GetSectionName<TSetting>();
             var settings = await _settings.GetOneAsync(sectionName);

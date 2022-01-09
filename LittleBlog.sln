@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LittleBlog.DbMigrations", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LittleBlog.Core", "LittleBlog.Core\LittleBlog.Core.csproj", "{246B5935-109E-457F-AD44-BE1B738A8098}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LittleBlog.Mocks", "LittleBlog.Mocks\LittleBlog.Mocks.csproj", "{91BF2C9E-6D6E-4EF2-A11D-32A786652880}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LittleBlog.Mocks", "LittleBlog.Mocks\LittleBlog.Mocks.csproj", "{91BF2C9E-6D6E-4EF2-A11D-32A786652880}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

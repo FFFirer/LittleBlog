@@ -1,4 +1,5 @@
 ﻿using LittleBlog.Core.Models;
+using LittleBlog.Core.Models.Domain;
 using LittleBlog.Web.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -69,6 +70,7 @@ namespace LittleBlog.Core
 
         public DbSet<SettingModel> SettingModels { get; set; }
 
+        public DbSet<MarkdownTheme> MarkdownThemes { get; set; }
         public DbSet<LogEntity> Logs { get; set; }
 
         #region 无键实体类

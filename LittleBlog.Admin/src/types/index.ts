@@ -138,6 +138,15 @@ interface FriendshipLink {
     group: string;
 }
 
+class MarkdownTheme {
+    name!: string;
+    url!: string;
+    physicalPath!: string;
+    id!: string;
+    content!: string;
+    remark!: string;
+}
+
 export {
     ArticleDto,
     ResultModel,
@@ -159,4 +168,5 @@ export {
     ListLogsQueryContext,
     ListLogResultModel,
     LogModel,
+    MarkdownTheme,
 };

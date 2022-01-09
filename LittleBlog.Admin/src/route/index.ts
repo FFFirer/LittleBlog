@@ -9,7 +9,8 @@ import Welcome from "../views/Welcome.vue";
 import ArticleEdit from "../views/Article/ArticleEdit.vue";
 import ArticleList from "../views/Article/ArticleList.vue";
 import MdEditorV2 from "../views/Article/MdEditorV2.vue";
-
+import MarkdownThemeManage from "../views/Article/MarkdownThemeManage.vue";
+import MarkdownThemeEditor from "../views/Article/MarkdownThemeEditor.vue";
 // Categories
 import CategoryList from "../views/Category/CategoryList.vue";
 
@@ -19,6 +20,7 @@ import Cookie from "js-cookie";
 // 系统配置
 import BaseSetting from "../views/System/BaseSetting.vue";
 import FriendshipLinksSetting from "../views/System/FriendshipLinksSetting.vue";
+import MarkdownBasicSetting from "../views/System/MarkdownBasicSetting.vue";
 
 // 日志
 import LogSummary from "../views/LogManage/LogSummary.vue";
@@ -54,6 +56,29 @@ const routes: RouteRecordRaw[] = [
                 name: "mdeditorv2",
                 path: "/articles/mdedit/",
                 component: MdEditorV2,
+            },
+            {
+                name: "mdThemeManage",
+                path: "/system/md-themes/",
+                component: MarkdownThemeManage,
+            },
+            {
+                name: "mdThemeCreate",
+                path: "/system/md-themes/create",
+                component: MarkdownThemeEditor,
+            },
+            {
+                name: "mdThemeEdit",
+                path: "/system/md-themes/edit/:id",
+                component: MarkdownThemeEditor,
+                props: (route) => ({
+                    id: route.params.id as string,
+                }),
+            },
+            {
+                name: "defaultMdTheme",
+                path: "/systems/md-themes/default",
+                component: MarkdownBasicSetting,
             },
             {
                 name: "categoryList",

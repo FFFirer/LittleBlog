@@ -71,6 +71,8 @@ const systemConfigKey = "system-config";
 const menuSysCfgBaseManageKey: string = "base-config-manage";
 const friendshipLinksManageKey: string = "friendship-links-manage";
 const logSummaryKey: string = "logs-summary";
+const mdThemeManageKey: string = "markdown-theme-manage";
+const defaultMdThemeSetting: string = "default-markdown-theme-setting";
 
 const menuOptions: Array<MenuOption | MenuGroupOption> = [
     {
@@ -92,6 +94,14 @@ const menuOptions: Array<MenuOption | MenuGroupOption> = [
             {
                 label: () => h("a", {}, "友情链接配置"),
                 key: friendshipLinksManageKey,
+            },
+            {
+                label: () => h("a", {}, "Markdown主题管理"),
+                key: mdThemeManageKey,
+            },
+            {
+                label: () => h("a", {}, "Markdown默认主题设置"),
+                key: defaultMdThemeSetting,
             },
         ],
     },
@@ -130,9 +140,19 @@ export default defineComponent({
                 name: "articleList",
             });
         };
+        const toMdThemeManage = () => {
+            router.push({
+                name: "mdThemeManage",
+            });
+        };
         const toCategoryList = () => {
             router.push({
                 name: "categoryList",
+            });
+        };
+        const toDefaultMdThemeSetting = () => {
+            router.push({
+                name: "defaultMdTheme",
             });
         };
         const handleUpdateValue = (key: string) => {
@@ -142,6 +162,14 @@ export default defineComponent({
 
             if (key == menuArticleManageKey) {
                 toArticleList();
+            }
+
+            if (key == mdThemeManageKey) {
+                toMdThemeManage();
+            }
+
+            if (key == defaultMdThemeSetting) {
+                toDefaultMdThemeSetting();
             }
 
             if (key == menuSysCfgBaseManageKey) {

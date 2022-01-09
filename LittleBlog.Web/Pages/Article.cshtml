@@ -4,6 +4,13 @@
     ViewData["Title"] = Model.Article.Title;
 }
 
+@section Styles {
+    @if(Model.Article.UseMarkdown){
+        <link rel="stylesheet" href="@Model.MdTheme.CodeBlockStyleUrl" />
+        <link rel="stylesheet" href="@Model.MdTheme.MarkdownStyleUrl" />
+    }    
+}
+
 <div>
     <p class="h1">
         @Model.Article.Title
@@ -19,7 +26,14 @@
     </p>
 </div>
 
-
+@if (Model.Article.UseMarkdown)
+{
+<div class="markdown-preview">
+    @Html.Raw(Model.Article.Content)
+</div>
+}
+else{
 <div>
     @Html.Raw(Model.Article.Content)
 </div>
+}

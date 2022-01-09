@@ -2,9 +2,12 @@
 using LittleBlog.Core.Common;
 using LittleBlog.Core.Extensions;
 using LittleBlog.Core.Models;
+using LittleBlog.Core.Models.MapProfile;
 using LittleBlog.Core.Options;
 using LittleBlog.Core.Repositories;
+using LittleBlog.Core.Repositories.Interfaces;
 using LittleBlog.Core.Services;
+using LittleBlog.Core.Services.Interfaces;
 using LittleBlog.Web.Authorization;
 using LittleBlog.Web.NLogConfig;
 using Microsoft.AspNetCore.Authorization;
@@ -95,6 +98,7 @@ namespace LittleBlog.Web
 
             // 文件上传
             var imageRule = new ImageUploadRule(HostEnvironment);
+            var mdThemeRule = new MarkdownThemeUploadRule(HostEnvironment);
 
             // Razor Pages
             services.AddRazorPages(options =>
@@ -102,6 +106,7 @@ namespace LittleBlog.Web
                 options.Conventions.AllowAnonymousToPage("/");
                 options.Conventions.AllowAnonymousToFolder("/");
                 options.Conventions.AllowAnonymousToFolder(imageRule.RequestPath);
+                options.Conventions.AllowAnonymousToFolder(mdThemeRule.RequestPath);
                 options.Conventions.AllowAnonymousToPage("/Error/");
             }).AddRazorRuntimeCompilation();
 
@@ -116,6 +121,9 @@ namespace LittleBlog.Web
             services.AddScoped<ISettingRepo, SettingRepo>();
             services.AddScoped<ILogRepo, LogRepo>();
             services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IMarkdownThemeRepo, MarkdownThemeRepo>();
+            services.AddScoped<IMarkdownThemeService, MarkdownThemeService>();
+            services.AddScoped<IMarkdownBasicSettingService, MarkdownBasicSettingService>();
 
             // Swagger OpenApi
             services.AddSwaggerDocument((settings) =>
@@ -141,12 +149,19 @@ namespace LittleBlog.Web
             // AutoMapper
             services.AddAutoMapper(typeof(ArticleProfile));
             services.AddAutoMapper(typeof(LogProfile));
+            services.AddAutoMapper(typeof(MarkdownThemeProfile));
 
             // 配置上传文件验证
             services.AddOptions<UploadOption>(UploadTypes.Image)
                 .Configure((o) =>
                 {
                     o.Rule = imageRule;
+                });
+
+            services.AddOptions<UploadOption>(UploadTypes.MarkdownTheme)
+                .Configure((o) =>
+                {
+                    o.Rule = mdThemeRule;
                 });
         }
 

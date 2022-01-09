@@ -3,13 +3,23 @@
         <div class="editor-toolbar" ref="toolbarRef">
             <button @click="uploadImg()">上传图片</button>
             <button @click="insertLink('')">添加链接</button>
+            <select name="mdTheme" id="mdTheme" v-model="selectedTheme">
+                <option
+                    v-for="(theme, index) in themes"
+                    :value="theme"
+                    :key="index"
+                >
+                    {{ theme.name }}
+                </option>
+            </select>
+            <button @click="loadImportMdStyle()">加载主题（已选择的）</button>
             <button @click="reloadPreviewStyle('img{max-width:100%}')">
                 加载主题
             </button>
             <button @click="">选择主题</button>
         </div>
         <div class="editor-body">
-            <div class="origin-content">
+            <div class="origin-content" id="mdEditor">
                 <textarea ref="textareaRef"></textarea>
             </div>
             <div class="spliter"></div>
@@ -48,8 +58,10 @@ import MarkdownIt from "markdown-it";
 import CodeMirror from "codemirror";
 
 import { defineComponent, onMounted, Ref, ref, watch } from "vue";
-import { UploadInfo, UploadTypes } from "../types";
+import { MarkdownTheme, UploadInfo, UploadTypes } from "../types";
 import api from "../api";
+import { useMessage } from "naive-ui";
+import { CodeBlockRender } from "../markdown-render/code-block-render";
 
 interface MarkdownEditorProps {
     markdown: Ref<string>;
@@ -73,16 +85,20 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
+        const message = useMessage();
         const ImagePrependUrl = import.meta.env.VITE_REMOTE_API_ADDRESS;
 
         const markdownIt = new MarkdownIt();
         const textareaRef = ref();
+        const selectedTheme = ref<MarkdownTheme>();
 
         const toolbarRef = ref<HTMLDivElement>();
 
         const previewRef = ref<HTMLIFrameElement>();
 
         let { markdown, html, height } = props;
+
+        height = height || 400;
 
         const editorHeight = ref<string>(`${height}px`);
 
@@ -99,7 +115,7 @@ export default defineComponent({
         };
 
         // 加载时
-        onMounted(() => {
+        onMounted(async () => {
             if (textareaRef.value != null) {
                 console.log("初始化编辑器");
 
@@ -110,8 +126,20 @@ export default defineComponent({
                     textareaRef.value as HTMLTextAreaElement,
                     {
                         lineNumbers: true,
+                        mode: { name: "text/markdown" },
+                        theme: "rubyblue",
+                        indentWithTabs: false,
                     }
                 );
+
+                editor.setOption("extraKeys", {
+                    Tab: (cm) => {
+                        let spaces = Array(
+                            (cm.getOption("indentUnit") || 0) + 1
+                        ).join(" ");
+                        cm.replaceSelection(spaces);
+                    },
+                });
 
                 editor.on("change", (instance, changeObj) => {
                     markdownContent.value = instance.getValue();
@@ -119,13 +147,34 @@ export default defineComponent({
 
                 // 赋值
                 markdownContent.value = markdown;
+
+                await loadStyleCssUrl();
             }
 
             // 编辑器高度
             else {
                 console.log("没有加载textarea");
             }
+
+            previewRef.value?.contentWindow?.document.body.classList.add(
+                "markdown-preview"
+            );
+            previewRef.value?.contentWindow?.document.body.classList.add(
+                "ready"
+            );
+
+            loadThemes();
         });
+
+        let themes: Ref<Array<MarkdownTheme>> = ref([]);
+
+        const loadThemes = async () => {
+            let result = await api.admin.markdownThemes.list();
+
+            if (result.isSuccess) {
+                themes.value = result.data;
+            }
+        };
 
         watch(
             () => markdownContent.value,
@@ -136,6 +185,11 @@ export default defineComponent({
                     previewRef.value.contentWindow.document.body.innerHTML =
                         htmlContent.value;
                 }
+
+                // 重新渲染
+                CodeBlockRender.RenderCode(
+                    previewRef.value?.contentWindow?.document
+                );
 
                 emit("update:html", htmlContent.value);
                 emit("update:markdown", markdownContent.value);
@@ -251,6 +305,114 @@ export default defineComponent({
             }
         };
 
+        const loadImportMdStyle = async () => {
+            if (!selectedTheme.value) {
+                message.warning("请选择主题！");
+                return;
+            }
+
+            let themeDto = (
+                await api.admin.markdownThemes.get(selectedTheme.value.id)
+            ).data;
+
+            if (!previewRef.value?.contentWindow) {
+                return;
+            }
+
+            let headerStyle =
+                previewRef.value?.contentWindow.document.head.querySelector(
+                    "style"
+                );
+
+            if (!headerStyle) {
+                headerStyle =
+                    previewRef.value?.contentWindow.document.createElement(
+                        "style"
+                    );
+
+                previewRef.value?.contentWindow.document.head.appendChild(
+                    headerStyle
+                );
+            }
+
+            headerStyle.innerHTML = themeDto.content;
+        };
+
+        const loadStyleCssUrl = async () => {
+            let result = await api.admin.markdownThemes.getDefault();
+
+            if (!result.isSuccess) {
+                return;
+            }
+
+            let info = result.data;
+
+            let remoteUrl =
+                import.meta.env.VITE_REMOTE_API_ADDRESS.indexOf("/") ==
+                import.meta.env.VITE_REMOTE_API_ADDRESS.length - 1
+                    ? import.meta.env.VITE_REMOTE_API_ADDRESS.substring(
+                          0,
+                          import.meta.env.VITE_REMOTE_API_ADDRESS.length - 1
+                      )
+                    : import.meta.env.VITE_REMOTE_API_ADDRESS;
+
+            info.codeBlockStyleUrl =
+                info.codeBlockStyleUrl.indexOf("/") == 0
+                    ? info.codeBlockStyleUrl.substring(1)
+                    : info.codeBlockStyleUrl;
+
+            info.markdownStyleUrl =
+                info.markdownStyleUrl.indexOf("/") == 0
+                    ? info.markdownStyleUrl.substring(1)
+                    : info.markdownStyleUrl;
+
+            if (!info.codeBlockStyleUrl.startsWith("http")) {
+                info.codeBlockStyleUrl = `${remoteUrl}/${info.codeBlockStyleUrl}`;
+            }
+
+            if (!info.markdownStyleUrl.startsWith("http")) {
+                info.markdownStyleUrl = `${remoteUrl}/${info.markdownStyleUrl}`;
+            }
+
+            if (info.codeBlockStyleUrl) {
+                const codeBlockStyleLink =
+                    previewRef?.value?.contentWindow?.document.createElement(
+                        "link"
+                    );
+
+                if (!codeBlockStyleLink) {
+                    return;
+                }
+
+                codeBlockStyleLink.id = "codeBlockStyle";
+                codeBlockStyleLink.rel = "stylesheet";
+                codeBlockStyleLink.href = info.codeBlockStyleUrl;
+
+                previewRef.value?.contentWindow?.document.head.appendChild(
+                    codeBlockStyleLink
+                );
+            }
+
+            if (info.markdownStyleUrl) {
+                const mdThemeStyleLink =
+                    previewRef.value?.contentWindow?.document.createElement(
+                        "link"
+                    );
+
+                if (!mdThemeStyleLink) {
+                    return;
+                }
+
+                mdThemeStyleLink.id = "mdThemeStyle";
+                mdThemeStyleLink.rel = "styleSheet";
+                mdThemeStyleLink.href = info.markdownStyleUrl;
+
+                previewRef.value?.contentWindow?.document.head.appendChild(
+                    mdThemeStyleLink
+                );
+            }
+        };
+
         let halfEditorHeight = ref<string>(`${height / 2}px`);
 
         let returnObj = {
@@ -266,6 +428,10 @@ export default defineComponent({
             textareaRef,
             reloadPreviewStyle,
             halfEditorHeight,
+            themes,
+            loadImportMdStyle,
+            message,
+            selectedTheme,
         };
 
         return returnObj;
@@ -308,7 +474,7 @@ export default defineComponent({
     overflow: auto;
 }
 
-.CodeMirror {
+#mdEditor .CodeMirror {
     height: v-bind(editorHeight);
 }
 </style>

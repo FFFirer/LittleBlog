@@ -3,6 +3,7 @@ using System;
 using LittleBlog.DbMigrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LittleBlog.DbMigrations.DevPgsql
 {
     [DbContext(typeof(DevPgsqlContext))]
-    partial class DevPgsqlContextModelSnapshot : ModelSnapshot
+    [Migration("20220106153710_Add_MarkdownTheme_Content")]
+    partial class Add_MarkdownTheme_Content
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,16 +140,13 @@ namespace LittleBlog.DbMigrations.DevPgsql
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime?>("LastEditTime")
+                    b.Property<DateTime>("LastEditTime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("PhysicalPath")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Remark")
                         .HasColumnType("text");
 
                     b.Property<string>("Url")

@@ -9,6 +9,7 @@ import {
     ListLogResultModel,
     ListLogsQueryContext,
     LoginModel,
+    MarkdownTheme,
     ResultModel,
     SystemConfig,
     TResultModel,
@@ -19,6 +20,11 @@ import {
 import helper from "./helper";
 import querystring from "querystring";
 import { routerKey } from "vue-router";
+import {
+    ListAllThemesResultModel,
+    DefaultMarkdownThemeInfo,
+    MarkdownThemeDetailResultModel,
+} from "../types/markdownThemes";
 
 // 携带cookie
 axios.defaults.withCredentials = true;
@@ -109,6 +115,13 @@ const urls = {
         },
         Logs: {
             list: "/api/Admin/Logs/List",
+        },
+        MarkdownThemes: {
+            all: "/api/Admin/MarkdownThemes/All",
+            save: "/api/Admin/MarkdownThemes/Save",
+            get: "/api/Admin/MarkdownThemes/:id",
+            getDefault: "/api/Admin/MarkdownThemes/GetDefault",
+            saveDefault: "/api/Admin/MarkdownThemes/SaveDefault",
         },
     },
 };
@@ -327,6 +340,51 @@ const api = {
                     .post(urls.admin.Logs.list, queryContext)
                     .then((resp) => {
                         return handleResponse(resp, "查询日志失败！");
+                    });
+            },
+        },
+        markdownThemes: {
+            list: async (): Promise<ListAllThemesResultModel> => {
+                return await axios
+                    .get(urls.admin.MarkdownThemes.all)
+                    .then((resp) => {
+                        return handleResponse(resp, "查询所有主题失败");
+                    });
+            },
+            save: async (theme: MarkdownTheme): Promise<ResultModel> => {
+                return await axios
+                    .post(urls.admin.MarkdownThemes.save, theme)
+                    .then((resp) => {
+                        return handleResponse(resp, "主题保存失败");
+                    });
+            },
+            get: async (
+                id: string
+            ): Promise<MarkdownThemeDetailResultModel> => {
+                let targetUrl = helper.fillUrlParams(
+                    urls.admin.MarkdownThemes.get,
+                    { id: id }
+                );
+                return await axios.get(targetUrl).then((resp) => {
+                    return handleResponse(resp, "获取主题信息失败");
+                });
+            },
+            getDefault: async (): Promise<
+                TResultModel<DefaultMarkdownThemeInfo>
+            > => {
+                return await axios
+                    .get(urls.admin.MarkdownThemes.getDefault)
+                    .then((resp) => {
+                        return handleResponse(resp, "获取默认Markdown主题失败");
+                    });
+            },
+            saveDefault: async (
+                setting: DefaultMarkdownThemeInfo
+            ): Promise<ResultModel> => {
+                return await axios
+                    .post(urls.admin.MarkdownThemes.saveDefault, setting)
+                    .then((resp) => {
+                        return handleResponse(resp, "保存默认Markdown主题失败");
                     });
             },
         },

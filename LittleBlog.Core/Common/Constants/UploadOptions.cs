@@ -10,6 +10,7 @@ namespace LittleBlog.Core.Common
         {
             { nameof(UploadTypes.Default), UploadTypes.Default },
             { nameof(UploadTypes.Image), UploadTypes.Image },
+            { nameof(UploadTypes.MarkdownTheme), UploadTypes.MarkdownTheme },
         };
     }
 
@@ -18,6 +19,7 @@ namespace LittleBlog.Core.Common
         public const string Default = "default";
         public const string Image = "image";
         public const string Pdf = "pdf";
+        public const string MarkdownTheme = "md_theme";
     }
 
     /// <summary>

@@ -3,6 +3,7 @@ using System;
 using LittleBlog.DbMigrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LittleBlog.DbMigrations.DevPgsql
 {
     [DbContext(typeof(DevPgsqlContext))]
-    partial class DevPgsqlContextModelSnapshot : ModelSnapshot
+    [Migration("20220109044134_Add_MdTheme_Remark")]
+    partial class Add_MdTheme_Remark
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
