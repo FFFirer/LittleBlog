@@ -3,16 +3,6 @@
         <div class="editor-toolbar" ref="toolbarRef">
             <button @click="uploadImg()">上传图片</button>
             <button @click="insertLink('')">添加链接</button>
-            <select name="mdTheme" id="mdTheme" v-model="selectedTheme">
-                <option
-                    v-for="(theme, index) in themes"
-                    :value="theme"
-                    :key="index"
-                >
-                    {{ theme.name }}
-                </option>
-            </select>
-            <button @click="loadImportMdStyle()">加载主题（已选择的）</button>
             <button @click="reloadPreviewStyle('img{max-width:100%}')">
                 加载主题
             </button>
@@ -90,7 +80,6 @@ export default defineComponent({
 
         const markdownIt = new MarkdownIt();
         const textareaRef = ref();
-        const selectedTheme = ref<MarkdownTheme>();
 
         const toolbarRef = ref<HTMLDivElement>();
 
@@ -305,38 +294,38 @@ export default defineComponent({
             }
         };
 
-        const loadImportMdStyle = async () => {
-            if (!selectedTheme.value) {
-                message.warning("请选择主题！");
-                return;
-            }
+        // const loadImportMdStyle = async () => {
+        //     if (!selectedTheme.value) {
+        //         message.warning("请选择主题！");
+        //         return;
+        //     }
 
-            let themeDto = (
-                await api.admin.markdownThemes.get(selectedTheme.value.id)
-            ).data;
+        //     let themeDto = (
+        //         await api.admin.markdownThemes.get(selectedTheme.value.id)
+        //     ).data;
 
-            if (!previewRef.value?.contentWindow) {
-                return;
-            }
+        //     if (!previewRef.value?.contentWindow) {
+        //         return;
+        //     }
 
-            let headerStyle =
-                previewRef.value?.contentWindow.document.head.querySelector(
-                    "style"
-                );
+        //     let headerStyle =
+        //         previewRef.value?.contentWindow.document.head.querySelector(
+        //             "style"
+        //         );
 
-            if (!headerStyle) {
-                headerStyle =
-                    previewRef.value?.contentWindow.document.createElement(
-                        "style"
-                    );
+        //     if (!headerStyle) {
+        //         headerStyle =
+        //             previewRef.value?.contentWindow.document.createElement(
+        //                 "style"
+        //             );
 
-                previewRef.value?.contentWindow.document.head.appendChild(
-                    headerStyle
-                );
-            }
+        //         previewRef.value?.contentWindow.document.head.appendChild(
+        //             headerStyle
+        //         );
+        //     }
 
-            headerStyle.innerHTML = themeDto.content;
-        };
+        //     headerStyle.innerHTML = themeDto.content;
+        // };
 
         const loadStyleCssUrl = async () => {
             let result = await api.admin.markdownThemes.getDefault();
@@ -429,9 +418,9 @@ export default defineComponent({
             reloadPreviewStyle,
             halfEditorHeight,
             themes,
-            loadImportMdStyle,
+            // loadImportMdStyle,
             message,
-            selectedTheme,
+            // selectedTheme,
         };
 
         return returnObj;

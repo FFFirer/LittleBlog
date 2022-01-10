@@ -8,7 +8,7 @@ import Welcome from "../views/Welcome.vue";
 // article
 import ArticleEdit from "../views/Article/ArticleEdit.vue";
 import ArticleList from "../views/Article/ArticleList.vue";
-import MdEditorV2 from "../views/Article/MdEditorV2.vue";
+
 import MarkdownThemeManage from "../views/Article/MarkdownThemeManage.vue";
 import MarkdownThemeEditor from "../views/Article/MarkdownThemeEditor.vue";
 // Categories
@@ -51,11 +51,6 @@ const routes: RouteRecordRaw[] = [
                 props: (route) => ({
                     id: parseInt(route.params.id as string), // 函数模式，{id: route.params.id}作为props传递给组件
                 }),
-            },
-            {
-                name: "mdeditorv2",
-                path: "/articles/mdedit/",
-                component: MdEditorV2,
             },
             {
                 name: "mdThemeManage",

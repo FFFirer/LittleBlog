@@ -252,16 +252,9 @@ export default defineComponent({
             });
         };
 
-        const gotoMdEdit = () => {
-            router.push({
-                name: "mdeditorv2",
-            });
-        };
-
         return {
             message,
             gotoEdit,
-            gotoMdEdit,
         };
     },
 });

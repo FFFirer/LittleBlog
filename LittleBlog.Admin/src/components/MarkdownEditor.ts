@@ -1,21 +1,18 @@
-
-
-type PreviewConfig {
-    StyleUri: string
-}
-class MarkPreviewHelper{
-    config: PreviewConfig
+type PreviewConfig = {
+    StyleUri: string;
+};
+class MarkPreviewHelper {
+    config: PreviewConfig;
 
     constructor(cfg: PreviewConfig) {
-        this.config = cfg
+        this.config = cfg;
     }
 
-    getStyleCSS(): string{
-
+    getStyleCSS(): string {
+        return "";
     }
 
     renderHtmlPage(content: string): string {
-
         return `
         <!DOCTYPE html>
         <html lang="zh-hans">
@@ -35,5 +32,5 @@ class MarkPreviewHelper{
 
         </html>
         `;
-    };
+    }
 }
