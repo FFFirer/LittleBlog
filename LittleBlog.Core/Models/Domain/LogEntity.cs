@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace LittleBlog.Core.Models
@@ -19,7 +21,7 @@ namespace LittleBlog.Core.Models
         public string Callsite { get; set; }
         public string Exception { get; set; }
 
-        [Timestamp]
+        [Column(TypeName = "timestamptz")]
         public DateTime Logged { get; set; }
     }
 }

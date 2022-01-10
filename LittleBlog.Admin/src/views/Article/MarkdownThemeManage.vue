@@ -4,7 +4,7 @@
             <n-grid x-gap="12" y-gap="3" cols="1 640:4">
                 <n-grid-item>
                     <n-space>
-                        <n-button> 查询 </n-button>
+                        <n-button @click="list()"> 查询 </n-button>
                         <n-button type="info" @click="add()"> 新增 </n-button>
                     </n-space>
                 </n-grid-item>

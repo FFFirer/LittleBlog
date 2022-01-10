@@ -55,7 +55,7 @@ namespace LittleBlog.Core.Repositories
 
         public async Task<IList<MarkdownTheme>> GetAllAsync()
         {
-            return await _db.MarkdownThemes.ToListAsync();
+            return await _db.MarkdownThemes.OrderBy(a=>a.Name).ToListAsync();
         }
 
         public async Task<MarkdownTheme> GetOneAsync(Guid id)

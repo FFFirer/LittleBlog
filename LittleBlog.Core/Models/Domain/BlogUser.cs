@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LittleBlog.Core.Models
 {
@@ -13,7 +15,7 @@ namespace LittleBlog.Core.Models
         /// </summary>
         /// <value></value>
         [Key]
-        [Display(Name="ID")]
+        [Display(Name = "ID")]
         public int Id { get; set; }
 
         /// <summary>
@@ -22,16 +24,17 @@ namespace LittleBlog.Core.Models
         /// <value></value>
         [Required]
         [MaxLength(255)]
-        [Display(Name="用户名称")]
-        public string UserName{ get; set; }
+        [Display(Name = "用户名称")]
+        public string UserName { get; set; }
 
         /// <summary>
         /// 注册时间
         /// </summary>
         /// <value></value>
         [Required]
-        [Display(Name="注册时间")]
-        public DateTime ResigterTime{ get; set; }
+        [Display(Name = "注册时间")]
+        [Column(TypeName = "timestamptz")]
+        public DateTime ResigterTime { get; set; }
 
         /// <summary>
         /// 密码
@@ -39,8 +42,8 @@ namespace LittleBlog.Core.Models
         /// <value></value>
         [Required]
         [MaxLength(255)]
-        [Display(Name="密码")]
-        public string Password{ get; set; }
+        [Display(Name = "密码")]
+        public string Password { get; set; }
     }
 
 

@@ -46,7 +46,8 @@ namespace LittleBlog.Core.Services
                 Url = a.Url,
                 PhysicalPath = a.PhysicalPath,
                 Remark = a.Remark,
-            }).ToListAsync();
+                LastEditTime = a.LastEditTime,
+            }).OrderBy(a=>a.Name).ToListAsync();
 
             return dtos;
         }
