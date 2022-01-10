@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LittleBlog.Core.Migrations
 {
     [DbContext(typeof(LittleBlogContext))]
-    [Migration("20211212175133_Update_Article")]
-    partial class Update_Article
+    [Migration("20220110172759_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -59,13 +59,13 @@ namespace LittleBlog.Core.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreateTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastEditTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("MarkdownContent")
                         .HasColumnType("text");
@@ -120,11 +120,44 @@ namespace LittleBlog.Core.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("CreateTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.HasKey("Name");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("LittleBlog.Core.Models.Domain.MarkdownTheme", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamptz");
+
+                    b.Property<DateTime?>("LastEditTime")
+                        .HasColumnType("timestamptz");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhysicalPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Remark")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MarkdownThemes");
                 });
 
             modelBuilder.Entity("LittleBlog.Core.Models.LogEntity", b =>
@@ -148,9 +181,7 @@ namespace LittleBlog.Core.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Logged")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("Logger")
                         .HasColumnType("text");
@@ -202,7 +233,7 @@ namespace LittleBlog.Core.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("CreateTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.HasKey("Name");
 
