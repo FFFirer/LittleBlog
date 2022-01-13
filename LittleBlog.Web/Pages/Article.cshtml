@@ -6,8 +6,8 @@
 
 @section Styles {
     @if(Model.Article.UseMarkdown){
-        <link rel="stylesheet" href="@Model.MdTheme.CodeBlockStyleUrl" />
         <link rel="stylesheet" href="@Model.MdTheme.MarkdownStyleUrl" />
+        <link rel="stylesheet" href="@Model.MdTheme.CodeBlockStyleUrl" />
     }    
 }
 
@@ -26,14 +26,6 @@
     </p>
 </div>
 
-@if (Model.Article.UseMarkdown)
-{
-<div class="markdown-preview">
-    @Html.Raw(Model.Article.Content)
-</div>
-}
-else{
 <div>
     @Html.Raw(Model.Article.Content)
 </div>
-}

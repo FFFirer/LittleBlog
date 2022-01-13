@@ -100,7 +100,10 @@ export default defineComponent({
 
         let editorConfig: CodeMirror.EditorConfiguration = {
             lineNumbers: true,
-            value: markdownContent.value,
+            mode: { name: "text/markdown" },
+            theme: "rubyblue",
+            indentWithTabs: false,
+            scrollbarStyle: "native",
         };
 
         // 加载时
@@ -113,12 +116,7 @@ export default defineComponent({
                 // 初始化
                 editor = CodeMirror.fromTextArea(
                     textareaRef.value as HTMLTextAreaElement,
-                    {
-                        lineNumbers: true,
-                        mode: { name: "text/markdown" },
-                        theme: "rubyblue",
-                        indentWithTabs: false,
-                    }
+                    editorConfig
                 );
 
                 editor.setOption("extraKeys", {
@@ -137,6 +135,10 @@ export default defineComponent({
                 // 赋值
                 markdownContent.value = markdown;
 
+                // 触发一次window resize
+                let e = new Event("resize");
+                window.dispatchEvent(e);
+
                 await loadStyleCssUrl();
             }
 
@@ -147,9 +149,6 @@ export default defineComponent({
 
             previewRef.value?.contentWindow?.document.body.classList.add(
                 "markdown-preview"
-            );
-            previewRef.value?.contentWindow?.document.body.classList.add(
-                "ready"
             );
 
             loadThemes();
@@ -168,7 +167,9 @@ export default defineComponent({
         watch(
             () => markdownContent.value,
             () => {
-                htmlContent.value = markdownIt.render(markdownContent.value);
+                htmlContent.value = `<div class="markdown-preview">${markdownIt.render(
+                    markdownContent.value
+                )}</div>`;
 
                 if (previewRef.value?.contentWindow) {
                     previewRef.value.contentWindow.document.body.innerHTML =
@@ -294,39 +295,6 @@ export default defineComponent({
             }
         };
 
-        // const loadImportMdStyle = async () => {
-        //     if (!selectedTheme.value) {
-        //         message.warning("请选择主题！");
-        //         return;
-        //     }
-
-        //     let themeDto = (
-        //         await api.admin.markdownThemes.get(selectedTheme.value.id)
-        //     ).data;
-
-        //     if (!previewRef.value?.contentWindow) {
-        //         return;
-        //     }
-
-        //     let headerStyle =
-        //         previewRef.value?.contentWindow.document.head.querySelector(
-        //             "style"
-        //         );
-
-        //     if (!headerStyle) {
-        //         headerStyle =
-        //             previewRef.value?.contentWindow.document.createElement(
-        //                 "style"
-        //             );
-
-        //         previewRef.value?.contentWindow.document.head.appendChild(
-        //             headerStyle
-        //         );
-        //     }
-
-        //     headerStyle.innerHTML = themeDto.content;
-        // };
-
         const loadStyleCssUrl = async () => {
             let result = await api.admin.markdownThemes.getDefault();
 
@@ -363,6 +331,25 @@ export default defineComponent({
                 info.markdownStyleUrl = `${remoteUrl}/${info.markdownStyleUrl}`;
             }
 
+            if (info.markdownStyleUrl) {
+                const mdThemeStyleLink =
+                    previewRef.value?.contentWindow?.document.createElement(
+                        "link"
+                    );
+
+                if (!mdThemeStyleLink) {
+                    return;
+                }
+
+                mdThemeStyleLink.id = "mdThemeStyle";
+                mdThemeStyleLink.rel = "stylesheet";
+                mdThemeStyleLink.href = info.markdownStyleUrl;
+
+                previewRef.value?.contentWindow?.document.head.appendChild(
+                    mdThemeStyleLink
+                );
+            }
+
             if (info.codeBlockStyleUrl) {
                 const codeBlockStyleLink =
                     previewRef?.value?.contentWindow?.document.createElement(
@@ -379,25 +366,6 @@ export default defineComponent({
 
                 previewRef.value?.contentWindow?.document.head.appendChild(
                     codeBlockStyleLink
-                );
-            }
-
-            if (info.markdownStyleUrl) {
-                const mdThemeStyleLink =
-                    previewRef.value?.contentWindow?.document.createElement(
-                        "link"
-                    );
-
-                if (!mdThemeStyleLink) {
-                    return;
-                }
-
-                mdThemeStyleLink.id = "mdThemeStyle";
-                mdThemeStyleLink.rel = "styleSheet";
-                mdThemeStyleLink.href = info.markdownStyleUrl;
-
-                previewRef.value?.contentWindow?.document.head.appendChild(
-                    mdThemeStyleLink
                 );
             }
         };
