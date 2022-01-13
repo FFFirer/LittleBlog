@@ -3,17 +3,28 @@
         <div class="editor-toolbar" ref="toolbarRef">
             <button @click="uploadImg()">上传图片</button>
             <button @click="insertLink('')">添加链接</button>
-            <button @click="reloadPreviewStyle('img{max-width:100%}')">
-                加载主题
-            </button>
-            <button @click="">选择主题</button>
+            <input
+                type="checkbox"
+                name="showMarkdown"
+                id="showMarkdown"
+                v-model="showMarkdown"
+            />
+            <span> Markdown </span>
+            <input
+                type="checkbox"
+                name="showHtml"
+                id="showHtml"
+                v-model="showHtml"
+            />
+            <span> Html </span>
         </div>
         <div class="editor-body">
-            <div class="origin-content" id="mdEditor">
+            <div v-show="showMarkdown" class="origin-content" id="mdEditor">
                 <textarea ref="textareaRef"></textarea>
             </div>
             <div class="spliter"></div>
             <iframe
+                v-show="showHtml"
                 class="markdown-content"
                 ref="previewRef"
                 frameborder="0"
@@ -60,6 +71,17 @@ interface MarkdownEditorProps {
 
 export default defineComponent({
     name: "MarkdownEditor",
+    data() {
+        return {
+            showMarkdown: true,
+            showHtml: true,
+        };
+    },
+    watch: {
+        showHtml(value) {
+            console.log("show html", value);
+        },
+    },
     props: {
         markdown: {
             type: String,
