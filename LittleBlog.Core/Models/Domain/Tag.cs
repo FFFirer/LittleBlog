@@ -26,7 +26,6 @@ namespace LittleBlog.Core.Models
         /// <value></value>
         [Required]
         [Display(Name = "创建时间")]
-        [Column(TypeName = "timestamptz")]
         public DateTime CreateTime { get; set; }
     }
 }

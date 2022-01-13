@@ -21,10 +21,8 @@ namespace LittleBlog.Core.Models.Domain
         public string Content { get; set; }
         public string Remark { get; set; }
 
-        [Column(TypeName = "timestamptz")]
         public DateTime CreatedTime { get; set; }
 
-        [Column(TypeName = "timestamptz")]
         public DateTime? LastEditTime { get; set; }
     }
 }

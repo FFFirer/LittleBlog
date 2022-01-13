@@ -21,7 +21,6 @@ namespace LittleBlog.Core.Models
         public string Callsite { get; set; }
         public string Exception { get; set; }
 
-        [Column(TypeName = "timestamptz")]
         public DateTime Logged { get; set; }
     }
 }

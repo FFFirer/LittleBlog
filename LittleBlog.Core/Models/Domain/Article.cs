@@ -62,7 +62,6 @@ namespace LittleBlog.Core.Models
         /// </summary>
         /// <value></value>
         [Display(Name = "创建时间")]
-        [Column(TypeName = "timestamptz")]
         public DateTime CreateTime { get; set; }
 
         /// <summary>
@@ -70,7 +69,6 @@ namespace LittleBlog.Core.Models
         /// </summary>
         /// <value></value>
         [Display(Name = "最后一次编辑的时间")]
-        [Column(TypeName = "timestamptz")]
         public DateTime LastEditTime { get; set; }
 
         /// <summary>

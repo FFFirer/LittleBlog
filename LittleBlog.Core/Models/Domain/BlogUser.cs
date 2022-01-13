@@ -33,7 +33,6 @@ namespace LittleBlog.Core.Models
         /// <value></value>
         [Required]
         [Display(Name = "注册时间")]
-        [Column(TypeName = "timestamptz")]
         public DateTime ResigterTime { get; set; }
 
         /// <summary>
