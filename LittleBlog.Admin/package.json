@@ -18,7 +18,7 @@
     "js-cookie": "^3.0.1",
     "markdown-it": "^12.3.0",
     "moment": "^2.29.1",
-    "naive-ui": "^2.20.1",
+    "naive-ui": "^2.24.0",
     "path-to-regexp": "^6.2.0",
     "prismjs": "^1.26.0",
     "querystring": "^0.2.1",

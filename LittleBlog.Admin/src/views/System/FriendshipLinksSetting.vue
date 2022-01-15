@@ -3,76 +3,64 @@
         <n-gi>
             <n-space>
                 <span class="form-title"> 友情链接设置 </span>
-                <n-button type="primary" dashed @click="addGroup"
-                    >添加分组</n-button
-                >
+
                 <n-button type="info" @click="save">保存</n-button>
                 <n-button @click="load">取消</n-button>
             </n-space>
         </n-gi>
-        <n-gi
-            class="link-group"
-            v-for="(linkGroup, groupIndex) in linkGroups"
-            :key="groupIndex"
-        >
-            <n-grid cols="1" y-gap="3">
-                <n-input-group class="link-group-header">
-                    <n-input
-                        placeholder="请输入分组名称"
-                        v-model:value="linkGroup.groupName"
+    </n-grid>
+    <n-dynamic-input v-model:value="linkGroups" :on-create="onCreateGroup">
+        <template #="group">
+            <div style="width: 100%">
+                <n-input-group>
+                    <n-input-group-label :style="{ width: '120px' }"
+                        >分组名称</n-input-group-label
                     >
-                        <template #prefix> 分组： </template>
+                    <n-input
+                        v-model:value="group.value.groupName"
+                        placeholder="请输入分组名称"
+                    >
                     </n-input>
                 </n-input-group>
-                <n-space>
-                    <n-button type="error" @click="removeGroup(groupIndex)">
-                        删除分组
-                    </n-button>
-                    <n-button
-                        type="primary"
-                        dashed
-                        @click="addLinkToGroup(groupIndex)"
-                    >
-                        添加链接
-                    </n-button>
-                </n-space>
-                <n-grid cols="1 800:2" x-gap="6" y-gap="3">
-                    <n-gi
-                        v-for="(linkItem, linkIndex) in linkGroup.links"
-                        :key="linkIndex"
-                    >
-                        <n-input-group>
-                            <n-input
-                                :style="{ width: '35%' }"
-                                placeholder="请输入链接名称"
-                                v-model:value="linkItem.description"
-                            >
-                                <template #prefix>链接：</template>
-                            </n-input>
-                            <n-input
-                                placeholder="请输入链接地址"
-                                v-model:value="linkItem.link"
-                            >
-                            </n-input>
-                            <n-button
-                                type="error"
-                                @click="
-                                    removeLinkFromGroup(groupIndex, linkIndex)
-                                "
-                            >
-                                删除链接
-                            </n-button>
-                        </n-input-group>
-                    </n-gi>
-                </n-grid>
-            </n-grid>
-        </n-gi>
-    </n-grid>
+
+                <n-dynamic-input
+                    v-model:value="group.value.links"
+                    :on-create="onCreateLink"
+                    item-style="margin-bottom:0"
+                >
+                    <template #="link">
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                width: 100%;
+                            "
+                        >
+                            <n-input-group>
+                                <n-input
+                                    style="width: 50%"
+                                    v-model:value="link.value.link"
+                                    placeholder="请输入链接地址"
+                                >
+                                </n-input>
+                                <n-input
+                                    style="width: 50%"
+                                    v-model:value="link.value.description"
+                                    placeholder="请输入链接描述"
+                                >
+                                </n-input>
+                            </n-input-group>
+                        </div>
+                    </template>
+                </n-dynamic-input>
+            </div>
+        </template>
+    </n-dynamic-input>
 </template>
 
 <script lang="ts">
 import { useMessage } from "naive-ui";
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import api from "../../api";
 import { FriendshipLink } from "../../types";
 
@@ -86,14 +74,29 @@ export default defineComponent({
     data() {
         return {
             linkGroups: [] as linksGroup[],
+            linkGroupsDict: {} as { [key: string]: FriendshipLink[] },
+            itemStyle: {
+                "margin-bottom": 0,
+            },
         };
+    },
+    computed: {
+        groups(): string[] {
+            return Object.keys(this.linkGroupsDict);
+        },
+        groupsDict(): { [key: string]: FriendshipLink[] } {
+            return this.linkGroups.reduce((prev, curr) => {
+                prev[curr.groupName] = curr.links;
+                return prev;
+            }, {} as { [key: string]: FriendshipLink[] });
+        },
     },
     methods: {
         load() {
             let links = api.admin.syscfg.friendshipLinks.list().then((resp) => {
                 if (resp.isSuccess) {
                     console.log("resp data", resp.data);
-                    let groups = resp.data.reduce(function (
+                    this.linkGroupsDict = resp.data.reduce(function (
                         prev: any,
                         curr: FriendshipLink
                     ) {
@@ -105,14 +108,11 @@ export default defineComponent({
                     },
                     {});
 
-                    console.log("groups", groups);
-
                     this.linkGroups = [];
-
-                    Object.keys(groups).map((g) => {
+                    Object.keys(this.linkGroupsDict).map((g) => {
                         this.linkGroups.push({
                             groupName: g,
-                            links: groups[g],
+                            links: this.linkGroupsDict[g],
                         });
                     });
                 } else {
@@ -191,8 +191,31 @@ export default defineComponent({
     setup() {
         const message = useMessage();
 
+        const onCreateGroup = () => {
+            return {
+                groupName: "",
+                links: [
+                    {
+                        group: "",
+                        link: "",
+                        description: "",
+                    },
+                ],
+            } as linksGroup;
+        };
+
+        const onCreateLink = () => {
+            return {
+                group: "",
+                link: "",
+                description: "",
+            } as FriendshipLink;
+        };
+
         return {
             message,
+            onCreateGroup,
+            onCreateLink,
         };
     },
 });
