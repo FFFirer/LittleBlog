@@ -12,35 +12,23 @@ export class CodeBlockRender {
                 try {
                     let codeElement = element as HTMLElement;
                     let code = codeElement.innerText;
-                    codeElement.innerText = escapeString(code); // 特殊符号格式化
 
                     let container = codeElement.parentElement;
-                    console.log("check parent", container?.tagName);
-
-                    container?.classList.add("language-text");
-                } catch (error) {}
-            });
-
-        // 挨个渲染
-        document
-            .querySelectorAll('[data-role="codeBlock"]')
-            .forEach((element, index, parents) => {
-                try {
-                    const codeElement = element as HTMLElement;
-                    const code = codeElement.innerText;
-                    const language = getLanguage(element as HTMLElement);
-                    const container = codeElement.parentElement;
-
-                    console.log("highlight parent", container?.tagName);
 
                     if (container) {
+                        container?.classList.add("language-text");
+                        container?.classList.add("line-numbers");
+
+                        const language = getLanguage(element as HTMLElement);
                         container.innerHTML = Prism.highlight(
                             code,
                             Prism.languages[language],
                             language
                         );
                     }
-                } catch (error) {}
+                } catch (error) {
+                    console.error("highlight error", error);
+                }
             });
     }
 }

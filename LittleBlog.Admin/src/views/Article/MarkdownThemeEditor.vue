@@ -28,6 +28,27 @@
         <n-form-item label="">
             <n-button> 导入 </n-button>
         </n-form-item>
+        <n-form-item label="附加样式">
+            <n-select
+                v-model:value="appendStyleCssUrls"
+                multiple
+                :options="allThemes"
+            ></n-select>
+            <n-button type="info" @click="getUrls()">
+                查看当前已加载样式
+            </n-button>
+        </n-form-item>
+        <n-form-item label="预览效果">
+            <div class="markdown-box">
+                <markdown-editor
+                    :height="300"
+                    :useDefaultTheme="false"
+                    v-model:appendStyleCssUrls="appendStyleCssUrls"
+                    v-model:append-style-css="appendStyleCss"
+                >
+                </markdown-editor>
+            </div>
+        </n-form-item>
         <n-form-item label="编辑主题">
             <textarea ref="styleCssRef"> </textarea>
         </n-form-item>
@@ -40,11 +61,12 @@
 
 <script lang="ts">
 import CodeMirror from "codemirror";
-import { useMessage } from "naive-ui";
+import { SelectOption, useMessage } from "naive-ui";
 import { defineComponent, onMounted, Ref, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "../../api";
 import { MarkdownTheme } from "../../types";
+import MarkdownEditor from "../../components/MarkdownEditor.vue";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/css/css";
@@ -71,10 +93,14 @@ import "codemirror/addon/fold/comment-fold.js";
 
 export default defineComponent({
     name: "MarkdownThemeEditor",
-    data() {
-        return {};
+    components: {
+        MarkdownEditor,
     },
-    methods: {},
+    methods: {
+        getUrls() {
+            alert(this.appendStyleCssUrls);
+        },
+    },
     props: {
         id: {
             type: String,
@@ -86,6 +112,9 @@ export default defineComponent({
         const router = useRouter();
 
         const styleCssRef = ref();
+        const appendStyleCss = ref("");
+
+        const appendStyleCssUrls = ref([]);
 
         let { id } = props;
 
@@ -120,11 +149,24 @@ export default defineComponent({
                 theme.value.content = "";
                 theme.value.name = "";
             }
+            await loadAllThemes();
         };
 
         const backToList = () => {
             router.push({
                 name: "mdThemeManage",
+            });
+        };
+
+        const allThemes = ref<Array<SelectOption>>([]);
+        const loadAllThemes = () => {
+            api.admin.markdownThemes.list().then((result) => {
+                allThemes.value = result.data.map((d) => {
+                    return {
+                        label: d.name,
+                        value: d.url,
+                    } as SelectOption;
+                });
             });
         };
 
@@ -145,6 +187,8 @@ export default defineComponent({
 
                 editor.on("change", (instance, changeObj) => {
                     theme.value.content = instance.getValue();
+
+                    appendStyleCss.value = theme.value.content;
                 });
             }
         });
@@ -159,6 +203,9 @@ export default defineComponent({
             load,
             cancelEdit,
             id,
+            appendStyleCss,
+            allThemes,
+            appendStyleCssUrls,
         };
 
         return setupOption;
@@ -170,5 +217,9 @@ export default defineComponent({
 .CodeMirror {
     width: 100%;
     height: 400px;
+}
+
+.markdown-box {
+    width: 100%;
 }
 </style>
