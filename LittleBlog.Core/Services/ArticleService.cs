@@ -16,7 +16,7 @@ namespace LittleBlog.Core.Services
             db = context;
         }
 
-        public async Task<List<ArticleDto>> ListAllArticlesAsync()
+        public async Task<List<ArticleDto>> ListAllAsync()
         {
             return await db.Articles.AsNoTracking()
                 .Select(a => new ArticleDto()
@@ -33,7 +33,7 @@ namespace LittleBlog.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<Paging<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext)
+        public async Task<Paging<Article>> PageAsync(ListArticlesQueryContext queryContext)
         {
             queryContext.CheckPermissions();
 
@@ -58,17 +58,6 @@ namespace LittleBlog.Core.Services
 
             Query = Query.Paging(queryContext);
 
-            //result.Rows = await Query.Select(a => new ArticleDto()
-            //{
-            //    Id = a.Id,
-            //    Abstract = a.Abstract,
-            //    Title = a.Title,
-            //    Author = a.Author,
-            //    Content = a.Content,
-            //    SavePath = a.SavePath,
-            //    LastEditTime = a.LastEditTime
-            //}).ToListAsync();
-
             result.Rows = await Query.ToListAsync();
 
             return result;
@@ -88,7 +77,7 @@ namespace LittleBlog.Core.Services
             await db.SaveChangesAsync();
         }
 
-        public async Task<Article> GetArticleAsync(int Id)
+        public async Task<Article> GetAsync(int Id)
         {
             return await db.Articles
                 .AsNoTracking()
@@ -96,7 +85,7 @@ namespace LittleBlog.Core.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task SaveArticleAsync(Article article)
+        public async Task SaveAsync(Article article)
         {
             if (article.Id == 0)
             {
@@ -107,28 +96,29 @@ namespace LittleBlog.Core.Services
             else
             {
                 // update
-                Article oldArticle = await db.Articles
+                Article old = await db.Articles
                     .Where(a => a.Id.Equals(article.Id))
                     .FirstOrDefaultAsync();
-                if (oldArticle == null)
+
+                if (old == null)
                 {
                     throw new BlogException("更新的文章不存在");
                 }
-                oldArticle.Title = article.Title;
-                oldArticle.Author = article.Author;
-                oldArticle.Abstract = article.Abstract;
-                oldArticle.Content = article.Content;
-                oldArticle.SavePath = article.SavePath;
-                oldArticle.LastEditTime = DateTime.Now;
-                oldArticle.IsPublished = article.IsPublished;
-                oldArticle.Category = article.Category;
-                oldArticle.UseMarkDown = article.UseMarkDown;
-                oldArticle.MarkdownContent = article.MarkdownContent;
+                old.Title = article.Title;
+                old.Author = article.Author;
+                old.Abstract = article.Abstract;
+                old.Content = article.Content;
+                old.SavePath = article.SavePath;
+                old.LastEditTime = DateTime.Now;
+                old.IsPublished = article.IsPublished;
+                old.Category = article.Category;
+                old.UseMarkDown = article.UseMarkDown;
+                old.MarkdownContent = article.MarkdownContent;
             }
             await db.SaveChangesAsync();
         }
 
-        public async Task<Paging<ArticleDto>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext)
+        public async Task<Paging<ArticleDto>> PageArchivedAsync(ListArchiveArticlesQueryContext queryContext)
         {
             var result = new Paging<ArticleDto>();
 
@@ -167,9 +157,8 @@ namespace LittleBlog.Core.Services
             return result;
         }
 
-        public async Task<List<ArticleDto>> ListAllArticlesByCategoryAsync(int categoryId)
+        public async Task<List<ArticleDto>> ListByCategoryAsync(int categoryId)
         {
-            //var CategoryId = new MySqlParameter("categoryId", categoryId);
             var sqlParameters = new
             {
                 categoryId = categoryId
@@ -191,9 +180,8 @@ namespace LittleBlog.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<List<ArticleDto>> ListAllArticlesByTagAsync(int tagId)
+        public async Task<List<ArticleDto>> ListByTagAsync(int tagId)
         {
-            //var TagId = new MySqlParameter("tagId", tagId);
             var sqlParameters = new
             {
                 tagId = tagId
@@ -220,7 +208,7 @@ namespace LittleBlog.Core.Services
         /// 获取文章归档情况
         /// </summary>
         /// <returns></returns> 
-        public async Task<List<ArchivedArticlesSummary>> GetArchivedArticlesSummariesAsync()
+        public async Task<List<ArchivedArticlesSummary>> GetArchiveSummariesAsync()
         {
 
             List<ArchivedArticlesSummary> archivedArticlesSummaries = await db.ArchivedArticlesSummaries
@@ -241,7 +229,7 @@ namespace LittleBlog.Core.Services
         /// </summary>
         /// <param name="archiveDate"></param>
         /// <returns></returns>
-        public async Task<List<ArticleDto>> ListAllArticlesByArchiveDateAsync(string archiveDate)
+        public async Task<List<ArticleDto>> ListByArchiveDateAsync(string archiveDate)
         {
             //var ArchiveDate = new MySqlParameter("archiveDate", archiveDate);
             var sqlParameters = new
@@ -265,7 +253,7 @@ namespace LittleBlog.Core.Services
                 .ToListAsync();
         }
 
-        public async Task DeleteArticleAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             var article = await db.Articles.FirstOrDefaultAsync(a => a.Id.Equals(id));
             if (article != null)

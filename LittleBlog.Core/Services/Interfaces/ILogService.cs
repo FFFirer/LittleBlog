@@ -9,6 +9,6 @@ namespace LittleBlog.Core.Services
 {
     public interface ILogService
     {
-        Task<Paging<LogDto>> QueryAsync(ListLogQueryContext queryContext);
+        Task<Paging<LogDto>> PageAsync(ListLogQueryContext queryContext);
     }
 }

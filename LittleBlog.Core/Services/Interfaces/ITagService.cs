@@ -12,8 +12,18 @@ namespace LittleBlog.Core.Services
         /// <returns></returns>
         Task<List<Tag>> ListAllAsync();
 
+        /// <summary>
+        /// 保存
+        /// </summary>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         Task SaveAsync(string tagName);
 
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         Task DeleteAsync(string tagName);
     }
 }

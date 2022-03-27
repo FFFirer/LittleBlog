@@ -10,35 +10,35 @@ namespace LittleBlog.Core.Services
         /// 获取所有的文章
         /// </summary>
         /// <returns></returns>
-        Task<List<ArticleDto>> ListAllArticlesAsync();
+        Task<List<ArticleDto>> ListAllAsync();
 
         /// <summary>
         /// 根据分类获取文章
         /// </summary>
         /// <param name="categoryId"></param>
         /// <returns></returns>
-        Task<List<ArticleDto>> ListAllArticlesByCategoryAsync(int categoryId);
+        Task<List<ArticleDto>> ListByCategoryAsync(int categoryId);
 
         /// <summary>
         /// 根据标签获取文章
         /// </summary>
         /// <param name="tagId"></param>
         /// <returns></returns>
-        Task<List<ArticleDto>> ListAllArticlesByTagAsync(int tagId);
+        Task<List<ArticleDto>> ListByTagAsync(int tagId);
 
         /// <summary>
         /// 根据归档日期获取文章
         /// </summary>
         /// <param name="archiveDate"></param>
         /// <returns></returns>
-        Task<List<ArticleDto>> ListAllArticlesByArchiveDateAsync(string archiveDate);
+        Task<List<ArticleDto>> ListByArchiveDateAsync(string archiveDate);
 
         /// <summary>
         /// 分页获取文章列表
         /// </summary>
         /// <param name="queryContext">查询参数</param>
         /// <returns></returns>
-        Task<Paging<Article>> ListArticlesAsync(ListArticlesQueryContext queryContext);
+        Task<Paging<Article>> PageAsync(ListArticlesQueryContext queryContext);
 
         /// <summary>
         /// 保存文章内容变化
@@ -52,33 +52,33 @@ namespace LittleBlog.Core.Services
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        Task<Article> GetArticleAsync(int Id);
+        Task<Article> GetAsync(int Id);
 
         /// <summary>
         /// 保存文章
         /// </summary>
         /// <param name="article">要保存的文章</param>
         /// <returns></returns>
-        Task SaveArticleAsync(Article article);
+        Task SaveAsync(Article article);
 
         /// <summary>
         /// 获取归档的文章列表
         /// </summary>
         /// <param name="queryContext">查询上下文</param>
         /// <returns></returns>
-        Task<Paging<ArticleDto>> ListArchiveArticlesAsync(ListArchiveArticlesQueryContext queryContext);
+        Task<Paging<ArticleDto>> PageArchivedAsync(ListArchiveArticlesQueryContext queryContext);
 
         /// <summary>
         /// 获取文章归档情况
         /// </summary>
         /// <returns></returns>
-        Task<List<ArchivedArticlesSummary>> GetArchivedArticlesSummariesAsync();
+        Task<List<ArchivedArticlesSummary>> GetArchiveSummariesAsync();
 
         /// <summary>
         /// 删除文章
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task DeleteArticleAsync(int id);
+        Task DeleteAsync(int id);
     }
 }

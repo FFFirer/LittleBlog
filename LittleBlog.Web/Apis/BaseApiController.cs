@@ -8,11 +8,13 @@ using LittleBlog.Web.Models;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using LittleBlog.Core.Models;
+using LittleBlog.Web.Filters;
 
 namespace LittleBlog.Web.Apis
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(ApiExceptionFilter))]
     public class BaseApiController : ControllerBase
     {
 

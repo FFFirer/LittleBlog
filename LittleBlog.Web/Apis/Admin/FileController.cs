@@ -32,7 +32,7 @@ namespace LittleBlog.Web.Apis.Admin
         {
             try
             {
-                var result = await _fileService.SaveFileAsync(upload, data);
+                var result = await _fileService.SaveAsync(upload, data);
                 
                 return Success(result);
             }

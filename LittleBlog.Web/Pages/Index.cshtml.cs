@@ -44,7 +44,7 @@ namespace LittleBlog.Web.Pages
             queryContext.PageSize = 20;
             queryContext.OnlyPublished = true;
 
-            var rows = (await _service.ListArticlesAsync(queryContext)).Rows;
+            var rows = (await _service.PageAsync(queryContext)).Rows;
 
             Articles = _mapper.Map<List<ArticleDto>>(rows);
         }

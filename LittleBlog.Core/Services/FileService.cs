@@ -28,7 +28,7 @@ namespace LittleBlog.Core.Services
         /// <param name="info"></param>
         /// <param name="fileStream"></param>
         /// <returns></returns>
-        public async Task<UploadResult> SaveFileAsync(UploadInfo info, IFormFile file)
+        public async Task<UploadResult> SaveAsync(UploadInfo info, IFormFile file)
         {
             var uploadOption = _namedOptionsAccesser.Get(info.Type);
 

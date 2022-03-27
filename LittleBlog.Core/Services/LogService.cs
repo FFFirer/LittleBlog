@@ -22,7 +22,7 @@ namespace LittleBlog.Core.Services
             this._mapper = mapper;
         }
 
-        public async Task<Paging<LogDto>> QueryAsync(ListLogQueryContext queryContext)
+        public async Task<Paging<LogDto>> PageAsync(ListLogQueryContext queryContext)
         {
             var pagingLogEntities = await _logRepo.ListAsync(queryContext);
 

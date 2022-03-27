@@ -6,6 +6,6 @@ namespace LittleBlog.Core.Services
 {
     public interface IFileService
     {
-        Task<UploadResult> SaveFileAsync(UploadInfo info, IFormFile file);
+        Task<UploadResult> SaveAsync(UploadInfo info, IFormFile file);
     }
 }

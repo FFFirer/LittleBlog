@@ -1,0 +1,13 @@
+﻿@page "{code?}"
+@model LittleBlog.Web.Pages.ErrorCodeModel
+@{
+}
+
+
+@if (Model.HasHttpStatusCode)
+{
+    <h1>
+        @Model.HttpStatusCode
+    </h1>
+
+}

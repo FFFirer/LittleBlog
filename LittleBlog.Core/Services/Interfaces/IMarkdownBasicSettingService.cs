@@ -9,7 +9,17 @@ namespace LittleBlog.Core.Services.Interfaces
 {
     public interface IMarkdownBasicSettingService
     {
+        /// <summary>
+        /// 获取主题
+        /// </summary>
+        /// <returns></returns>
         Task<MarkdownThemeInfo> GetMarkdownThemeInfo();
+
+        /// <summary>
+        /// 保存主题信息
+        /// </summary>
+        /// <param name="themeInfo"></param>
+        /// <returns></returns>
         Task SaveMarkdownThemeInfo(MarkdownThemeInfo themeInfo);
     }
 }

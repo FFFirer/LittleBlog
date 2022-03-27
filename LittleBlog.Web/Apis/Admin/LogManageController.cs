@@ -33,7 +33,7 @@ namespace LittleBlog.Web.Apis.Admin
         {
             try
             {
-                var paging = await _logService.QueryAsync(queryContext);
+                var paging = await _logService.PageAsync(queryContext);
                 return Success(paging);
             }
             catch (System.Exception ex)

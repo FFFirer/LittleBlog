@@ -9,6 +9,7 @@ using LittleBlog.Core.Repositories.Interfaces;
 using LittleBlog.Core.Services;
 using LittleBlog.Core.Services.Interfaces;
 using LittleBlog.Web.Authorization;
+using LittleBlog.Web.Filters;
 using LittleBlog.Web.NLogConfig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -107,8 +108,9 @@ namespace LittleBlog.Web
                 options.Conventions.AllowAnonymousToFolder("/");
                 options.Conventions.AllowAnonymousToFolder(imageRule.RequestPath);
                 options.Conventions.AllowAnonymousToFolder(mdThemeRule.RequestPath);
-                options.Conventions.AllowAnonymousToPage("/Error/");
-            }).AddRazorRuntimeCompilation();
+                options.Conventions.AllowAnonymousToPage("/Error");
+                options.Conventions.AllowAnonymousToPage("/ErrorCode/{code?}");
+            });
 
             // 依赖注入
             services.AddScoped<IArticleService, ArticleService>();
@@ -124,6 +126,7 @@ namespace LittleBlog.Web
             services.AddScoped<IMarkdownThemeRepo, MarkdownThemeRepo>();
             services.AddScoped<IMarkdownThemeService, MarkdownThemeService>();
             services.AddScoped<IMarkdownBasicSettingService, MarkdownBasicSettingService>();
+            services.AddScoped<ApiExceptionFilter>();
 
             // Swagger OpenApi
             services.AddSwaggerDocument((settings) =>
@@ -163,23 +166,30 @@ namespace LittleBlog.Web
                 {
                     o.Rule = mdThemeRule;
                 });
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+
+            //}
+
+            //app.UseExceptionHandler("/Home/Error");
+            app.UseExceptionHandler("/Error");
+
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             var adminDirectory = Path.Join(env.ContentRootPath, "wwwroot", "admin");
@@ -208,12 +218,13 @@ namespace LittleBlog.Web
                 app.UseSwaggerUi3();
             }
 
+            app.UseStatusCodePagesWithReExecute("/ErrorCode/{0}");
 
             app.UseRouting();
 
             app.UseCors(DefaultCorsPolicyName);
 
-            app.UseStatusCodePagesWithRedirects("/Error/{0}");
+            //app.UseStatusCodePagesWithReExecute("/ErrorCode/{0}");
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

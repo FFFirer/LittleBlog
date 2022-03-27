@@ -1,15 +1,20 @@
-﻿@page "{errorCode?}"
+﻿@page 
 @model LittleBlog.Web.Pages.ErrorModel
 @{
+    Layout = "_ErrorLayout";
+    ViewData["Title"] = "出现错误！";
 }
 
+<h1 class="text-danger">出错了。</h1>
+<h2 class="text-danger">处理您的请求时出现一个错误。</h2>
 
-
-<div>
-    <h1>
-        错误码：@Model.CurrentErrorCode
-    </h1>
+@if (Model.ShowRequestId)
+{
     <p>
-        <a class="link-default" asp-area="" asp-page="/Index">返回首页</a>  
+        <strong>请求 ID:</strong> <code>@Model.RequestId</code>
     </p>
-</div>
+}
+
+<p>
+    <strong>更多信息:</strong> <span>@Model.ExceptionMessage</span>
+</p>

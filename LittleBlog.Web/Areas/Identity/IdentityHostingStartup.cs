@@ -14,8 +14,6 @@ namespace LittleBlog.Web.Areas.Identity
     {
         public void Configure(IWebHostBuilder builder)
         {
-
-
             builder.ConfigureServices((context, services) => {
 
                 var DbType = context.Configuration.GetValue<string>("DbType");

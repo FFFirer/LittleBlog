@@ -44,7 +44,7 @@ namespace LittleBlog.Web.Apis.Admin
         {
             try
             {
-                await _articleService.DeleteArticleAsync(id);
+                await _articleService.DeleteAsync(id);
                 return Success();
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace LittleBlog.Web.Apis.Admin
             try
             {
                 var article = _mapper.Map<Article>(dto);
-                await _articleService.SaveArticleAsync(article);
+                await _articleService.SaveAsync(article);
 
                 return Success();
             }
@@ -90,7 +90,7 @@ namespace LittleBlog.Web.Apis.Admin
         {
             try
             {
-                var article = await _articleService.GetArticleAsync(id);
+                var article = await _articleService.GetAsync(id);
                 if (article == null) return Fail<ArticleDto>("未找到该文章！");
 
                 var articleDto = _mapper.Map<ArticleDto>(article);
@@ -114,7 +114,7 @@ namespace LittleBlog.Web.Apis.Admin
             try
             {
                 queryContext.Source = QuerySource.Admin;
-                var Articles = await _articleService.ListArticlesAsync(queryContext);
+                var Articles = await _articleService.PageAsync(queryContext);
                 var ArticleDtos = _mapper.MapPaging<Article, ArticleDto>(Articles);
                 return Success<Paging<ArticleDto>>(ArticleDtos);
             }

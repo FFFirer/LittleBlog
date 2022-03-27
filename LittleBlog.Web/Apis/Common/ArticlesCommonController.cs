@@ -37,7 +37,7 @@ namespace LittleBlog.Web.Apis.Common
             try
             {
                 queryContext.Source = QuerySource.Common;
-                var articles = await _articleService.ListArticlesAsync(queryContext);
+                var articles = await _articleService.PageAsync(queryContext);
                 Paging<ArticleDto> articleDtos = articles.MapTo<ArticleDto>(_mapper);
                 return Success(articleDtos);
             }
@@ -53,7 +53,7 @@ namespace LittleBlog.Web.Apis.Common
         {
             try
             {
-                var article = await _articleService.GetArticleAsync(id);
+                var article = await _articleService.GetAsync(id);
                 if (!article.IsPublished)
                 {
                     return Fail<ArticleDto>("未找到文章");
