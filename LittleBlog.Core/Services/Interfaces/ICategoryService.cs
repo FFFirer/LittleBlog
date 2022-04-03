@@ -1,4 +1,5 @@
 ﻿using LittleBlog.Core.Models;
+using LittleBlog.Core.Models.QueryContext.Category;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,5 +25,11 @@ namespace LittleBlog.Core.Services
         /// </summary>
         /// <param name="id"></param>
         Task DeleteAsync(string categoryName);
+
+        /// <summary>
+        /// 分页查询列表
+        /// </summary>
+        /// <returns></returns>
+        Task<Paging<Category>> ListAsync(ListCategoriesQueryContext query);
     }
 }

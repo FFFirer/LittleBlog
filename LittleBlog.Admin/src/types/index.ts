@@ -138,6 +138,10 @@ interface FriendshipLink {
     group: string;
 }
 
+interface ListPagingCategoriesQueryContext extends BasePagingQueryContext {}
+interface ListPagingCategoriesResultModel
+    extends BaseResultModel<PagingModel<Category>> {}
+
 class MarkdownTheme {
     name!: string;
     url!: string;
@@ -169,4 +173,6 @@ export {
     ListLogResultModel,
     LogModel,
     MarkdownTheme,
+    ListPagingCategoriesQueryContext,
+    ListPagingCategoriesResultModel,
 };

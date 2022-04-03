@@ -64,6 +64,9 @@ namespace LittleBlog.Web.Apis.Admin
             try
             {
                 await _mdThemeService.SaveAsync(theme);
+
+                // 判断是否是默认的
+                // 如果是默认的更新默认主题设置
                 return Success();
             }
             catch (Exception ex)
@@ -100,6 +103,21 @@ namespace LittleBlog.Web.Apis.Admin
             {
 
                 _logger.LogError(ex, $"保存Markdown主题默认配置失败");
+                return FailWithMessage(ex.Message);
+            }
+        }
+
+        [HttpPost("[action]/{id}")]
+        public async Task<ResultModel> Remove(Guid id)
+        {
+            try
+            {
+                await _mdThemeService.RemoveAsnyc(id);
+                return Success();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "删除失败");
                 return FailWithMessage(ex.Message);
             }
         }

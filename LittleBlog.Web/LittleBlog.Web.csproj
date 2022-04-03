@@ -38,6 +38,14 @@
     <None Remove="Models\MapProfiles\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="NLog.config.sample" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="NLog.config.sample" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />

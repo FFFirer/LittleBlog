@@ -1,4 +1,5 @@
 ﻿using LittleBlog.Core.Models;
+using LittleBlog.Core.Models.QueryContext.Category;
 using LittleBlog.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,22 @@ namespace LittleBlog.Web.Apis.Admin
             {
                 _logger.LogError(ex, "加载所有分类出错");
                 return Fail<List<Category>>(ex);
+            }
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ResultModel<Paging<Category>>> ListSummaries(ListCategoriesQueryContext query)
+        {
+            try
+            {
+                var pagedCategories = await _categoryService.ListAsync(query);
+
+                return Success(pagedCategories);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "分页加载所有分类出错");
+                return Fail<Paging<Category>>(ex);
             }
         }
 

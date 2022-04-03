@@ -23,11 +23,14 @@ import CodeMirror from "codemirror";
 import {
     DataTableColumn,
     NButton,
-    NPopconfirm,
+    NDialogProvider,
+    NDropdown,
     NSpace,
+    useDialog,
     useMessage,
 } from "naive-ui";
 import { InternalRowData } from "naive-ui/lib/data-table/src/interface";
+import { DialogApiInjection } from "naive-ui/lib/dialog/src/DialogProvider";
 import { defineComponent, h, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import api from "../../api";
@@ -35,7 +38,8 @@ import { MarkdownTheme } from "../../types";
 
 function createColumns(
     editRow: (id: string) => void,
-    deleteRow: (id: string) => void
+    deleteRow: (id: string) => void,
+    dialog: DialogApiInjection
 ): Array<DataTableColumn> {
     return [
         {
@@ -71,41 +75,71 @@ function createColumns(
                     {
                         default: () => [
                             h(
-                                NButton,
+                                NDropdown,
                                 {
-                                    onClick: () => {
-                                        editRow(row["id"] as string);
+                                    options: [
+                                        {
+                                            label: "设为默认主题",
+                                            key: "setDefaultStyle",
+                                        },
+                                        {
+                                            label: "设为默认代码主题",
+                                            key: "setDefaultCodeStyle",
+                                        },
+                                        {
+                                            label: "编辑",
+                                            key: "edit",
+                                        },
+                                        {
+                                            label: "删除",
+                                            key: "remove",
+                                        },
+                                    ],
+                                    trigger: "hover",
+                                    onSelect: (key) => {
+                                        if (key == "edit") {
+                                            console.log("edit");
+                                            editRow(row["id"] as string);
+                                            return;
+                                        }
+
+                                        if (key == "setDefaultStyle") {
+                                            console.log("set default");
+                                            return;
+                                        }
+
+                                        if (key == "setDefaultCodeStyle") {
+                                            return;
+                                        }
+
+                                        if (key == "remove") {
+                                            console.log("remove");
+                                            dialog.warning({
+                                                title: "警告",
+                                                content: `确定要删除吗？`,
+                                                positiveText: "确定",
+                                                negativeText: "取消",
+                                                onPositiveClick: () => {
+                                                    deleteRow(
+                                                        row["id"] as string
+                                                    );
+                                                },
+                                            });
+                                            return;
+                                        }
                                     },
-                                    type: "info",
-                                    size: "small",
-                                },
-                                { default: () => "编辑" }
-                            ),
-                            h(
-                                NPopconfirm,
-                                {
-                                    onPositiveClick: () => {
-                                        deleteRow(row["id"] as string);
-                                    },
-                                    negativeText: "取消",
-                                    positiveText: "确认",
-                                    flip: true,
-                                    placement: "top-start",
                                 },
                                 {
-                                    trigger: () => {
+                                    default: () =>
                                         h(
                                             NButton,
                                             {
                                                 size: "small",
-                                                type: "warning",
                                             },
                                             {
-                                                default: () => "删除",
+                                                default: () => "操作",
                                             }
-                                        );
-                                    },
-                                    default: () => "确认要删除这个吗？",
+                                        ),
                                 }
                             ),
                         ],
@@ -136,13 +170,23 @@ export default defineComponent({
         edit(id: string) {
             this.gotoEdit(id);
         },
-        delete(id: string) {},
+        delete(id: string) {
+            api.admin.markdownThemes.remove(id).then((result) => {
+                if (result.isSuccess) {
+                    this.message.success("删除成功！");
+                    this.list();
+                } else {
+                    this.message.error(result.message);
+                }
+            });
+        },
         add() {
             this.gotoCreate();
         },
     },
     mounted() {
         let _this = this;
+
         const editRow: (id: string) => void = (id) => {
             _this.edit(id);
         };
@@ -150,13 +194,14 @@ export default defineComponent({
             _this.delete(id);
         };
 
-        this.columns = createColumns(editRow, deleteRow);
+        this.columns = createColumns(editRow, deleteRow, _this.dialog);
 
         this.list();
     },
     setup() {
         const message = useMessage();
         const router = useRouter();
+        const dialog = useDialog();
 
         const StyleCssRef = ref();
         let editor: CodeMirror.EditorFromTextArea =
@@ -182,6 +227,7 @@ export default defineComponent({
             editor,
             gotoEdit,
             gotoCreate,
+            dialog,
         };
     },
 });

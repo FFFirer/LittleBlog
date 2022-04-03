@@ -8,6 +8,8 @@ import {
     ListCategoriesResultModel,
     ListLogResultModel,
     ListLogsQueryContext,
+    ListPagingCategoriesQueryContext,
+    ListPagingCategoriesResultModel,
     LoginModel,
     MarkdownTheme,
     ResultModel,
@@ -103,6 +105,7 @@ const urls = {
             listAll: "/api/Admin/Categories/ListAll",
             delete: "/api/Admin/Categories/Delete/:categoryName",
             save: "/api/Admin/Categories/Save/:categoryName",
+            listSummaries: "/api/admin/Categories/ListSummaries",
         },
         login: "/api/user/login",
         logout: "/api/user/logout",
@@ -122,6 +125,7 @@ const urls = {
             get: "/api/Admin/MarkdownThemes/:id",
             getDefault: "/api/Admin/MarkdownThemes/GetDefault",
             saveDefault: "/api/Admin/MarkdownThemes/SaveDefault",
+            remove: "/api/Admin/MarkdownThemes/Remove/:id",
         },
     },
 };
@@ -288,7 +292,15 @@ const api = {
                     }
                 );
                 return await axios.post(targetUrl).then((resp) => {
-                    return handleResponse(resp, "baocu");
+                    return handleResponse(resp, "保存出错");
+                });
+            },
+            listSummaries: async (
+                query: ListPagingCategoriesQueryContext
+            ): Promise<ListPagingCategoriesResultModel> => {
+                let targetUrl = urls.admin.Categories.listSummaries;
+                return await axios.post(targetUrl, query).then((resp) => {
+                    return handleResponse(resp, "查询失败");
                 });
             },
         },
@@ -386,6 +398,17 @@ const api = {
                     .then((resp) => {
                         return handleResponse(resp, "保存默认Markdown主题失败");
                     });
+            },
+            remove: async (id: string): Promise<ResultModel> => {
+                let target = helper.fillUrlParams(
+                    urls.admin.MarkdownThemes.remove,
+                    {
+                        id: id,
+                    }
+                );
+                return await axios.post(target).then((resp) => {
+                    return handleResponse(resp, "删除失败");
+                });
             },
         },
     },

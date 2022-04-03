@@ -125,11 +125,21 @@ namespace LittleBlog.Core.Services
             theme.PhysicalPath = saveFilePath;
         }
 
-        public Task SaveToDisk(MarkdownThemeDto themeDto)
+        public Task SaveToDiskAsync(MarkdownThemeDto themeDto)
         {
             var themeEntity = _mapper.Map<MarkdownTheme>(themeDto);
 
             return this.SaveToDisk(themeEntity);
+        }
+
+        public async Task RemoveAsnyc(Guid id)
+        {
+            var effected = await _mdThemeRepo.DeleteAsync(id);
+
+            if(effected <= 0)
+            {
+                throw new Exception("没有找到这个主题");
+            }
         }
     }
 }

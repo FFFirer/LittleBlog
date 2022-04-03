@@ -41,6 +41,13 @@ namespace LittleBlog.Core.Services.Interfaces
         /// </summary>
         /// <param name="themeDto"></param>
         /// <returns></returns>
-        Task SaveToDisk(MarkdownThemeDto themeDto);
+        Task SaveToDiskAsync(MarkdownThemeDto themeDto);
+
+        /// <summary>
+        /// 移除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task RemoveAsnyc(Guid id);
     }
 }

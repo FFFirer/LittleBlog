@@ -11,7 +11,13 @@
         </n-grid-item>
         <n-grid-item :cols="1">
             <n-spin :show="isLoading">
-                <n-data-table :data="data" :columns="columns"> </n-data-table>
+                <n-data-table
+                    :data="data"
+                    :columns="columns"
+                    :paging="false"
+                    :pagination="pagination"
+                >
+                </n-data-table>
             </n-spin>
         </n-grid-item>
     </n-grid>
@@ -24,12 +30,13 @@ import {
     NPopconfirm,
     useMessage,
     NSpace,
+    PaginationProps,
 } from "naive-ui";
 import { InternalRowData } from "naive-ui/lib/data-table/src/interface";
 import { defineComponent, h } from "vue";
 import { createRouter, useRouter } from "vue-router";
 import api from "../../api";
-import { Category } from "../../types";
+import { Category, ListPagingCategoriesQueryContext } from "../../types";
 
 function CreateColumns(
     deleteCategory: (categoryName: string) => void
@@ -100,16 +107,26 @@ export default defineComponent({
             columns: [] as DataTableColumn[],
             data: [] as Category[],
             isLoading: false,
+            pagination: {
+                page: 1,
+                pageSize: 20,
+                itemCount: 0,
+            } as PaginationProps,
         };
     },
     methods: {
         list() {
             this.isLoading = true;
+            let query: ListPagingCategoriesQueryContext = {
+                page: this.pagination.page ?? 1,
+                pageSize: this.pagination.pageSize ?? 20,
+            };
             api.admin.categories
-                .listAll()
+                .listSummaries(query)
                 .then((res) => {
                     if (res.isSuccess) {
-                        this.data = res.data;
+                        this.data = res.data.rows;
+                        this.pagination.itemCount = res.data.total;
                     } else {
                         this.message.warning(res.message);
                     }

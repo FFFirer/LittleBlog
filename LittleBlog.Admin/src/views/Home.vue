@@ -37,7 +37,8 @@
             </n-layout-sider>
             <n-layout-content id="app-content" style="background-color: #eee">
                 <div style="padding: 10px">
-                    <router-view> </router-view>
+                        <router-view> </router-view>
+
                 </div>
             </n-layout-content>
         </n-layout>

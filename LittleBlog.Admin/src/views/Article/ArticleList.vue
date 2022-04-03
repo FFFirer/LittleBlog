@@ -159,7 +159,7 @@ export default defineComponent({
                 page: 1,
                 pageSize: 20,
                 itemCount: 0,
-            },
+            } as PaginationProps,
             isLoading: false,
         };
     },

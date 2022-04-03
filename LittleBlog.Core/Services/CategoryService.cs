@@ -1,4 +1,6 @@
-﻿using LittleBlog.Core.Models;
+﻿using LittleBlog.Core.Extensions;
+using LittleBlog.Core.Models;
+using LittleBlog.Core.Models.QueryContext.Category;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,6 +32,19 @@ namespace LittleBlog.Core.Services
         public async Task<List<Category>> ListAllAsync()
         {
             return await _db.Categories.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Paging<Category>> ListAsync(ListCategoriesQueryContext query)
+        {
+            var dataQuery = this._db.Categories.AsNoTracking();
+            var result = new Paging<Category>();
+            
+            result.Total =  await dataQuery.CountAsync();
+            
+            dataQuery = dataQuery.Paging(query);
+            result.Rows = await dataQuery.ToListAsync();
+            
+            return result;
         }
 
         public async Task SaveAsync(string categoryName)
