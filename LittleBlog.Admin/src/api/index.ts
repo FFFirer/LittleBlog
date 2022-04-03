@@ -126,6 +126,9 @@ const urls = {
             getDefault: "/api/Admin/MarkdownThemes/GetDefault",
             saveDefault: "/api/Admin/MarkdownThemes/SaveDefault",
             remove: "/api/Admin/MarkdownThemes/Remove/:id",
+            setDefaultTheme: "/api/Admin/MarkdownThemes/SetDefaultTheme/:id",
+            setCodeBlockDefaultTheme:
+                "/api/Admin/MarkdownThemes/SetCodeBlockDefaultTheme/:id",
         },
     },
 };
@@ -408,6 +411,30 @@ const api = {
                 );
                 return await axios.post(target).then((resp) => {
                     return handleResponse(resp, "删除失败");
+                });
+            },
+            setDefaultTheme: async (id: string): Promise<ResultModel> => {
+                let targetUrl = helper.fillUrlParams(
+                    urls.admin.MarkdownThemes.setDefaultTheme,
+                    {
+                        id: id,
+                    }
+                );
+                return await axios.post(targetUrl).then((resp) => {
+                    return handleResponse(resp, "设置默认主题失败");
+                });
+            },
+            setCodeBlockDefaultTheme: async (
+                id: string
+            ): Promise<ResultModel> => {
+                let targetUrl = helper.fillUrlParams(
+                    urls.admin.MarkdownThemes.setCodeBlockDefaultTheme,
+                    {
+                        id: id,
+                    }
+                );
+                return await axios.post(targetUrl).then((resp) => {
+                    return handleResponse(resp, "设置代码块默认主题失败");
                 });
             },
         },

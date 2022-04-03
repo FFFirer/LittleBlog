@@ -11,6 +11,8 @@ interface MarkdownThemeDetailResultModel extends ResultModel {
 class DefaultMarkdownThemeInfo {
     markdownStyleUrl!: string;
     codeBlockStyleUrl!: string;
+    defaultThemeId!: string;
+    defaultCodeBlockThemeId!: string;
 }
 
 export {

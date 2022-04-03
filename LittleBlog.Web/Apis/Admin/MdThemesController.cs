@@ -19,11 +19,13 @@ namespace LittleBlog.Web.Apis.Admin
     public class MdThemesController : BaseApiController
     {
         private readonly IMarkdownThemeService _mdThemeService;
+        private readonly IMarkdownBasicSettingService _mdBasicService;
 
-        public MdThemesController(ILoggerFactory loggerFactory, IMarkdownThemeService markdownThemeService)
+        public MdThemesController(ILoggerFactory loggerFactory, IMarkdownThemeService markdownThemeService, IMarkdownBasicSettingService markdownBasicSettingService)
         {
             _logger = loggerFactory.CreateLogger<MdThemesController>();
             _mdThemeService = markdownThemeService;
+            _mdBasicService = markdownBasicSettingService;
         }
 
         [HttpGet("All")]
@@ -67,6 +69,20 @@ namespace LittleBlog.Web.Apis.Admin
 
                 // 判断是否是默认的
                 // 如果是默认的更新默认主题设置
+                var currentTheme = await _mdThemeService.GetByIdAsync(theme.Id);
+                var basicInfo = await _mdBasicService.GetMarkdownThemeInfo();
+                if(basicInfo.DefaultThemeId == currentTheme.Id.ToString())
+                {
+                    basicInfo.MarkdownStyleUrl = currentTheme.Url;
+                }
+
+                if(basicInfo.DefaultCodeBlockThemeId == currentTheme.Id.ToString())
+                {
+                    basicInfo.CodeBlockStyleUrl = currentTheme.Url;
+                }
+
+                await _mdBasicService.SaveMarkdownThemeInfo(basicInfo);
+
                 return Success();
             }
             catch (Exception ex)
@@ -77,7 +93,7 @@ namespace LittleBlog.Web.Apis.Admin
         }
 
         [HttpGet("[action]")]
-        public async Task<ResultModel<MarkdownThemeInfo>> GetDefault([FromServices]IMarkdownBasicSettingService _mdBasicService) 
+        public async Task<ResultModel<MarkdownThemeInfo>> GetDefault() 
         {
             try
             {
@@ -92,7 +108,7 @@ namespace LittleBlog.Web.Apis.Admin
         }
 
         [HttpPost("[action]")]
-        public async Task<ResultModel> SaveDefault([FromServices] IMarkdownBasicSettingService _mdBasicService, MarkdownThemeInfo themeInfo)
+        public async Task<ResultModel> SaveDefault(MarkdownThemeInfo themeInfo)
         {
             try
             {
@@ -120,6 +136,42 @@ namespace LittleBlog.Web.Apis.Admin
                 _logger.LogError(ex, "删除失败");
                 return FailWithMessage(ex.Message);
             }
+        }
+
+        [HttpPost("[action]/{id}")]
+        public async Task<ResultModel> SetDefaultTheme(Guid id)
+        {
+            var themeInfo = await _mdThemeService.GetByIdAsync(id);
+            if(themeInfo == null)
+            {
+                return FailWithMessage("没有找到这个主题的信息");
+            }
+
+            var basicSetting = await _mdBasicService.GetMarkdownThemeInfo();
+            basicSetting.DefaultThemeId = themeInfo.Id.ToString();
+            basicSetting.MarkdownStyleUrl = themeInfo.Url;
+
+            await _mdBasicService.SaveMarkdownThemeInfo(basicSetting);
+
+            return Success();
+        }
+
+        [HttpPost("[action]/{id}")]
+        public async Task<ResultModel> SetCodeBlockDefaultTheme(Guid id)
+        {
+            var themeInfo = await _mdThemeService.GetByIdAsync(id);
+            if (themeInfo == null)
+            {
+                return FailWithMessage("没有找到这个主题的信息");
+            }
+
+            var basicSetting = await _mdBasicService.GetMarkdownThemeInfo();
+            basicSetting.DefaultCodeBlockThemeId = themeInfo.Id.ToString();
+            basicSetting.CodeBlockStyleUrl = themeInfo.Url;
+
+            await _mdBasicService.SaveMarkdownThemeInfo(basicSetting);
+
+            return Success();
         }
     }
 }

@@ -4,6 +4,7 @@
             <n-input
                 v-model:value="setting.markdownStyleUrl"
                 placeholder="请输入主题文件路径"
+                disabled="true"
             >
             </n-input>
         </n-form-item>
@@ -11,12 +12,11 @@
             <n-input
                 v-model:value="setting.codeBlockStyleUrl"
                 placeholder="请输入代码块主题文件路径"
+                disabled="true"
             >
             </n-input>
         </n-form-item>
-        <n-form-item label="">
-            <n-button type="info" @click="saveCurrent()"> 保存 </n-button>
-        </n-form-item>
+        <n-form-item label=""> </n-form-item>
     </n-form>
 </template>
 
@@ -34,6 +34,8 @@ export default defineComponent({
         const setting = ref<DefaultMarkdownThemeInfo>({
             codeBlockStyleUrl: "",
             markdownStyleUrl: "",
+            defaultCodeBlockThemeId: "",
+            defaultThemeId: "",
         });
 
         const loadCurrent = async (): Promise<DefaultMarkdownThemeInfo> => {

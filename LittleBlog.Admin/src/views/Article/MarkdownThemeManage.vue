@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import CodeMirror from "codemirror";
+import { result } from "lodash";
 import {
     DataTableColumn,
     NButton,
@@ -35,24 +36,52 @@ import { defineComponent, h, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import api from "../../api";
 import { MarkdownTheme } from "../../types";
+import { DefaultMarkdownThemeInfo } from "../../types/markdownThemes";
 
 function createColumns(
     editRow: (id: string) => void,
     deleteRow: (id: string) => void,
-    dialog: DialogApiInjection
+    dialog: DialogApiInjection,
+    onDropDownSelected: (key: string, row: any) => void,
+    isDefaultTheme: (id: string) => boolean,
+    isCodeBlockDefaultTheme: (id: string) => boolean
 ): Array<DataTableColumn> {
     return [
         {
             title: "名称",
             key: "name",
-        },
-        {
-            title: "URL",
-            key: "url",
-        },
-        {
-            title: "路径",
-            key: "physicalPath",
+            render(row: InternalRowData) {
+                let badges = [];
+                if (isDefaultTheme(row["id"] as string)) {
+                    let defautlThemeBadge = h(
+                        "span",
+                        {
+                            class: ["badge", "badge-primary"],
+                            style: "margin-right: 5px",
+                        },
+                        {
+                            default: () => "默认主题",
+                        }
+                    );
+                    badges.push(defautlThemeBadge);
+                }
+                if (isCodeBlockDefaultTheme(row["id"] as string)) {
+                    let codeBlockDefaultThemeBadge = h(
+                        "span",
+                        {
+                            class: ["badge", "badge-secondary"],
+                            style: "margin-right: 5px",
+                        },
+                        {
+                            default: () => "代码块默认主题",
+                        }
+                    );
+
+                    badges.push(codeBlockDefaultThemeBadge);
+                }
+                badges.push(row["name"] as string);
+                return badges;
+            },
         },
         {
             title: "最后修改日期",
@@ -80,11 +109,11 @@ function createColumns(
                                     options: [
                                         {
                                             label: "设为默认主题",
-                                            key: "setDefaultStyle",
+                                            key: "setDefaultTheme",
                                         },
                                         {
                                             label: "设为默认代码主题",
-                                            key: "setDefaultCodeStyle",
+                                            key: "setCodeBlockDefaultTheme",
                                         },
                                         {
                                             label: "编辑",
@@ -97,36 +126,7 @@ function createColumns(
                                     ],
                                     trigger: "hover",
                                     onSelect: (key) => {
-                                        if (key == "edit") {
-                                            console.log("edit");
-                                            editRow(row["id"] as string);
-                                            return;
-                                        }
-
-                                        if (key == "setDefaultStyle") {
-                                            console.log("set default");
-                                            return;
-                                        }
-
-                                        if (key == "setDefaultCodeStyle") {
-                                            return;
-                                        }
-
-                                        if (key == "remove") {
-                                            console.log("remove");
-                                            dialog.warning({
-                                                title: "警告",
-                                                content: `确定要删除吗？`,
-                                                positiveText: "确定",
-                                                negativeText: "取消",
-                                                onPositiveClick: () => {
-                                                    deleteRow(
-                                                        row["id"] as string
-                                                    );
-                                                },
-                                            });
-                                            return;
-                                        }
+                                        onDropDownSelected(key, row);
                                     },
                                 },
                                 {
@@ -157,10 +157,15 @@ export default defineComponent({
             isLoading: false,
             columns: [] as DataTableColumn[],
             data: [] as any[],
+            basicInfo: {} as DefaultMarkdownThemeInfo,
+            isLoadedBasic: false,
         };
     },
     methods: {
         list() {
+            if (!this.isLoadedBasic) {
+                this.loadBasic();
+            }
             api.admin.markdownThemes.list().then((result) => {
                 if (result.isSuccess) {
                     this.data = result.data;
@@ -183,6 +188,79 @@ export default defineComponent({
         add() {
             this.gotoCreate();
         },
+        loadBasic() {
+            api.admin.markdownThemes.getDefault().then((result) => {
+                if (result.isSuccess) {
+                    this.basicInfo = result.data;
+                    this.isLoadedBasic = true;
+                } else {
+                    this.message.error(result.message);
+                }
+            });
+        },
+        setDefaultTheme(id: string) {
+            api.admin.markdownThemes.setDefaultTheme(id).then((result) => {
+                if (result.isSuccess) {
+                    this.message.success("设置成功");
+                    this.isLoadedBasic = false;
+                    this.list();
+                } else {
+                    this.message.error(result.message);
+                }
+            });
+        },
+        setCodeBlockDefaultTheme(id: string) {
+            api.admin.markdownThemes
+                .setCodeBlockDefaultTheme(id)
+                .then((result) => {
+                    if (result.isSuccess) {
+                        this.message.success("设置成功");
+                        this.isLoadedBasic = false;
+                        this.list();
+                    } else {
+                        this.message.error(result.message);
+                    }
+                });
+        },
+        handleDropDownSelected(key: string, row: MarkdownTheme) {
+            const self = this;
+            if (key == "edit") {
+                console.log("edit");
+                this.edit(row.id);
+                return;
+            }
+
+            if (key == "setDefaultTheme") {
+                console.log("set default");
+                this.setDefaultTheme(row.id);
+                return;
+            }
+
+            if (key == "setCodeBlockDefaultTheme") {
+                this.setCodeBlockDefaultTheme(row.id);
+                return;
+            }
+
+            if (key == "remove") {
+                console.log("remove");
+                this.dialog.warning({
+                    title: "警告",
+                    content: `确定要删除吗？`,
+                    positiveText: "确定",
+                    negativeText: "取消",
+                    onPositiveClick: () => {
+                        this.delete(row.id);
+                    },
+                });
+                return;
+            }
+        },
+        isDefaultTheme(id: string): boolean {
+            return id == this.basicInfo.defaultThemeId;
+        },
+        isCodeBlockDefaultTheme(id: string): boolean {
+            return id == this.basicInfo.defaultCodeBlockThemeId;
+        },
     },
     mounted() {
         let _this = this;
@@ -194,8 +272,16 @@ export default defineComponent({
             _this.delete(id);
         };
 
-        this.columns = createColumns(editRow, deleteRow, _this.dialog);
+        this.columns = createColumns(
+            editRow,
+            deleteRow,
+            _this.dialog,
+            _this.handleDropDownSelected,
+            _this.isDefaultTheme,
+            _this.isCodeBlockDefaultTheme
+        );
 
+        this.loadBasic();
         this.list();
     },
     setup() {

@@ -132,7 +132,14 @@ namespace LittleBlog.Core.Services
 
                 var setting = settings.FirstOrDefault(x => x.Key.Equals(keyName))?.Value ?? string.Empty;
 
-                prop.SetValue(targetObject, setting);
+                if (prop.PropertyType == typeof(string))
+                {
+                    prop.SetValue(targetObject, setting);
+                }
+                else
+                {
+                    prop.SetValue(targetObject, Activator.CreateInstance(prop.PropertyType));
+                }
             }
 
             return targetObject;
@@ -270,6 +277,11 @@ namespace LittleBlog.Core.Services
                 SubSection = a.Group,
                 Section = section
             }).ToList();
+        }
+
+        private bool IsBuiltInType(Type type)
+        {
+            return (type == typeof(object) || Type.GetTypeCode(type) != TypeCode.Object); 
         }
         #endregion
     }

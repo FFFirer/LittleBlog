@@ -6,6 +6,8 @@ import router from "./route/index";
 
 import hljs from "highlight.js";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+
 const app = createApp(App);
 app.use(naive);
 app.use(router);
