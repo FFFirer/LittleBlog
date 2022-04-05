@@ -28,6 +28,8 @@ interface BaseResultModel<T> extends ResultModel {
 interface PagingModel<TEntity> {
     total: number;
     rows: Array<TEntity>;
+    pageCount: number;
+    pageSize: number;
 }
 
 interface ListArticlesQueryContext {

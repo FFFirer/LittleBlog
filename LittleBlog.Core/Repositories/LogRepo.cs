@@ -20,7 +20,7 @@ namespace LittleBlog.Core.Repositories
         }
         public async Task<Paging<LogEntity>> ListAsync(ListLogQueryContext queryContext)
         {
-            var paging = new Paging<LogEntity>();
+            var paging = new Paging<LogEntity>(queryContext.PageSize);
 
             var query = _db.Logs.AsNoTracking();
 

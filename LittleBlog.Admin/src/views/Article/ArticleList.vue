@@ -22,21 +22,31 @@
         </n-grid-item>
         <n-grid-item :cols="1">
             <n-spin :show="isLoading">
-                <n-data-table
-                    :data="data"
-                    :columns="columns"
-                    :paging="false"
-                    :pagination="pagination"
-                    :row-class-name="checkRowClass"
-                >
-                </n-data-table>
+                <n-space vertical>
+                    <n-data-table
+                        :data="data"
+                        :columns="columns"
+                        :paging="false"
+                        :pagination="false"
+                        :row-class-name="checkRowClass"
+                    >
+                    </n-data-table>
+                    <n-pagination
+                        v-show="moreThanOnePage"
+                        :page="pagination.page"
+                        :page-size="pagination.pageSize"
+                        :item-count="pagination.itemCount"
+                        @update:page="onPageChangd"
+                    >
+                    </n-pagination
+                ></n-space>
             </n-spin>
         </n-grid-item>
     </n-grid>
 </template>
 
 <script lang="ts">
-import { defineComponent, h, VNode } from "vue";
+import { computed, defineComponent, h, reactive, VNode } from "vue";
 import { useRouter } from "vue-router";
 
 import api from "../../api/index";
@@ -155,11 +165,6 @@ export default defineComponent({
             columns: [] as DataTableColumn[], // 返回数据类型注释
             keyword: "" as string,
             data: [] as any[],
-            pagination: {
-                page: 1,
-                pageSize: 20,
-                itemCount: 0,
-            } as PaginationProps,
             isLoading: false,
         };
     },
@@ -216,7 +221,10 @@ export default defineComponent({
                     console.log(err);
                 });
         },
-        onPageChangd(page: number) {},
+        onPageChangd(page: number) {
+            this.pagination.page = page;
+            this.list();
+        },
         checkRowClass(row: InternalRowData, index: number) {
             if (row["isPublished"]) {
                 return "article-published";
@@ -252,9 +260,24 @@ export default defineComponent({
             });
         };
 
+        const paginationReactive = reactive<PaginationProps>({
+            page: 1,
+            pageSize: 20,
+            itemCount: 0,
+        });
+
+        const moreThanOnePage = computed(() => {
+            return (
+                (paginationReactive.itemCount ?? 0) >
+                (paginationReactive.pageSize ?? 1)
+            );
+        });
+
         return {
             message,
             gotoEdit,
+            pagination: paginationReactive,
+            moreThanOnePage,
         };
     },
 });

@@ -10,7 +10,7 @@ namespace LittleBlog.Core.Extensions
     {
         public static Paging<TDestination> MapPaging<TSource, TDestination>(this IMapper mapper, Paging<TSource> paging)
         {
-            var DestinationPaging = new Paging<TDestination>()
+            var DestinationPaging = new Paging<TDestination>(paging.PageSize)
             {
                 Rows = mapper.Map<IList<TDestination>>(paging.Rows),
                 Total = paging.Total

@@ -11,13 +11,27 @@
         </n-grid-item>
         <n-grid-item :cols="1">
             <n-spin :show="isLoading">
-                <n-data-table
-                    :data="data"
-                    :columns="columns"
-                    :paging="false"
-                    :pagination="pagination"
-                >
-                </n-data-table>
+                <n-space vertical>
+                    <n-data-table
+                        :data="data"
+                        :columns="columns"
+                        :pagination="false"
+                    >
+                    </n-data-table>
+                    <n-pagination
+                        v-show="moreThanOnePage"
+                        :default-page="1"
+                        :default-page-size="20"
+                        :page-sizes="pagination.pageSizes"
+                        :page="pagination.page"
+                        :page-size="pagination.pageSize"
+                        :show-size-Picker="true"
+                        :item-count="pagination.itemCount"
+                        @update:page="handlePaginationPageUpdated"
+                        @update:page-size="handlePaginationPageSizeUpdated"
+                    >
+                    </n-pagination>
+                </n-space>
             </n-spin>
         </n-grid-item>
     </n-grid>
@@ -33,7 +47,7 @@ import {
     PaginationProps,
 } from "naive-ui";
 import { InternalRowData } from "naive-ui/lib/data-table/src/interface";
-import { defineComponent, h } from "vue";
+import { computed, defineComponent, h, reactive, ref } from "vue";
 import { createRouter, useRouter } from "vue-router";
 import api from "../../api";
 import { Category, ListPagingCategoriesQueryContext } from "../../types";
@@ -42,6 +56,14 @@ function CreateColumns(
     deleteCategory: (categoryName: string) => void
 ): Array<DataTableColumn> {
     return [
+        {
+            title: "No.",
+            key: "rowIndex",
+            render(row: InternalRowData, index: number) {
+                return index + 1;
+            },
+            width: 50,
+        },
         {
             title: "分类",
             key: "name",
@@ -107,11 +129,6 @@ export default defineComponent({
             columns: [] as DataTableColumn[],
             data: [] as Category[],
             isLoading: false,
-            pagination: {
-                page: 1,
-                pageSize: 20,
-                itemCount: 0,
-            } as PaginationProps,
         };
     },
     methods: {
@@ -164,10 +181,18 @@ export default defineComponent({
                     this.isLoading = false;
                 });
         },
+        handlePaginationPageUpdated(page: number) {
+            this.pagination.page = page;
+            this.list();
+        },
+        handlePaginationPageSizeUpdated(pageSize: number) {
+            this.pagination.pageSize = pageSize;
+            this.pagination.page = 1;
+
+            this.list();
+        },
     },
     mounted() {
-        let _this = this;
-
         const deleteCategory: (categoryName: string) => void = (
             categoryName
         ) => {
@@ -182,8 +207,25 @@ export default defineComponent({
         const router = useRouter();
         const message = useMessage();
 
+        const paginationReactive = reactive<PaginationProps>({
+            page: 1,
+            pageSize: 20,
+            pageSizes: [20, 50, 100],
+            showSizePicker: true,
+        });
+
+        const moreThanOnePage = computed(() => {
+            console.log("computed", paginationReactive.pageCount);
+            return (
+                (paginationReactive.itemCount ?? 0) >
+                (paginationReactive.pageSize ?? 1)
+            );
+        });
+
         return {
             message,
+            pagination: paginationReactive,
+            moreThanOnePage,
         };
     },
 });

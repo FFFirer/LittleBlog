@@ -37,7 +37,7 @@ namespace LittleBlog.Core.Services
         {
             queryContext.CheckPermissions();
 
-            var result = new Paging<Article>();
+            var result = new Paging<Article>(queryContext.PageSize);
 
             var Query = db.Articles.AsNoTracking();
 
@@ -120,7 +120,7 @@ namespace LittleBlog.Core.Services
 
         public async Task<Paging<ArticleDto>> PageArchivedAsync(ListArchiveArticlesQueryContext queryContext)
         {
-            var result = new Paging<ArticleDto>();
+            var result = new Paging<ArticleDto>(queryContext.PageSize);
 
             IQueryable<Article> Query;
 

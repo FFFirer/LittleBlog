@@ -37,7 +37,7 @@ namespace LittleBlog.Core.Services
         public async Task<Paging<Category>> ListAsync(ListCategoriesQueryContext query)
         {
             var dataQuery = this._db.Categories.AsNoTracking();
-            var result = new Paging<Category>();
+            var result = new Paging<Category>(query.PageSize);
             
             result.Total =  await dataQuery.CountAsync();
             
