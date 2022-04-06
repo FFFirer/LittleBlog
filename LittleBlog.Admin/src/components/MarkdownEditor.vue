@@ -1,11 +1,26 @@
 <template>
     <div class="editor-container" ref="editorRef">
-        <div class="editor-toolbar" ref="toolbarRef">
-            <button @click="uploadImg()">上传图片</button>
-            <button @click="insertLink('')">添加链接</button>
-            <input type="text" v-model="language" />
-            <button @click="insertCodeBlock()">插入代码片段</button>
+        <div class="editor-toolbar mb-1" ref="toolbarRef">
+            <button class="btn btn-sm btn-light mr-1" @click="uploadImg()">
+                上传图片
+            </button>
+            <button class="btn btn-sm btn-light mr-1" @click="insertLink('')">
+                添加链接
+            </button>
             <input
+                class="mr-1"
+                type="text"
+                v-model="language"
+                placeholder="请输入语言名称"
+            />
+            <button
+                class="btn btn-sm btn-light mr-1"
+                @click="insertCodeBlock()"
+            >
+                插入代码片段
+            </button>
+            <input
+                class="mr-1"
                 type="checkbox"
                 name="showMarkdown"
                 id="showMarkdown"
@@ -13,6 +28,7 @@
             />
             <span> Markdown </span>
             <input
+                class="mr-1"
                 type="checkbox"
                 name="showHtml"
                 id="showHtml"
@@ -236,15 +252,23 @@ export default defineComponent({
                 )}</div>`;
 
                 if (previewRef.value?.contentWindow) {
+                    previewRef.value.contentWindow.document.body.style.visibility =
+                        "hidden";
                     previewRef.value.contentWindow.document.body.innerHTML =
                         htmlContent.value;
+                    previewRef.value.contentWindow.document.body.style.visibility =
+                        "visible";
                 }
 
-                console.log("render code block");
                 // 重新渲染
+                // 当页面没有使用缓存的时候，图片等资源的加载会导致屏幕的闪烁
                 CodeBlockRender.RenderCode(
                     previewRef.value?.contentWindow?.document
                 );
+
+                htmlContent.value =
+                    previewRef?.value?.contentWindow?.document.body.innerHTML ??
+                    "";
 
                 emit("update:html", htmlContent.value);
                 emit("update:markdown", markdownContent.value);
@@ -556,14 +580,14 @@ export default defineComponent({
 </script>
 <style>
 .editor-container {
-    border: 1px solid gray;
+    border: 0px solid gray;
     /* width: 100%; */
     overflow: auto;
 }
 
 .editor-toolbar {
     min-height: 3px;
-    border-bottom: 1px solid gray;
+    border-bottom: 0px solid gray;
 }
 
 .editor-body {

@@ -1,14 +1,15 @@
 import * as Prism from "prismjs";
 
 export class CodeBlockRender {
-    public static RenderCode(document: Document | undefined) {
-        if (!document) {
+    public static RenderCode(htmlDoc: Document | undefined) {
+        if (!htmlDoc) {
             return;
         }
         // 找到所有pre>code
-        document
-            .querySelectorAll("pre>code")
-            .forEach((element, index, parents) => {
+        let codeContainers = htmlDoc.querySelectorAll("pre>code");
+
+        if (codeContainers.length > 0) {
+            codeContainers.forEach((element, index, parents) => {
                 try {
                     let codeElement = element as HTMLElement;
                     let code = codeElement.innerText;
@@ -20,6 +21,7 @@ export class CodeBlockRender {
                         container?.classList.add("line-numbers");
 
                         const language = getLanguage(element as HTMLElement);
+
                         container.innerHTML = Prism.highlight(
                             code,
                             Prism.languages[language],
@@ -30,6 +32,7 @@ export class CodeBlockRender {
                     console.error("highlight error", error);
                 }
             });
+        }
     }
 }
 
@@ -65,6 +68,11 @@ export function unescapeString(str: string = ""): string {
     );
 }
 
+/**
+ * 获取指定的语言
+ * @param codeElement <code></code>
+ * @returns
+ */
 export function getLanguage(codeElement: HTMLElement): string {
     let languages: string[] = [];
     codeElement.classList.forEach((classItem, index) => {
@@ -73,5 +81,9 @@ export function getLanguage(codeElement: HTMLElement): string {
         }
     });
 
+    console.log("get language", languages[0] || "text");
     return languages[0] || "text";
 }
+
+const PLUGIN_NAME = "line-numbers";
+const NEW_LINE_EXP = /\n(?!$)/g;
