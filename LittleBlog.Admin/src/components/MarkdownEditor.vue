@@ -41,12 +41,20 @@
                 <textarea ref="textareaRef"></textarea>
             </div>
             <div class="spliter"></div>
-            <iframe
+            <html-preview
+                class="markdown-content"
+                v-show="showHtml"
+                :html="htmlContent"
+                :innerStyles="previewInnerStyles"
+                :outerStyles="previewOuterStyles"
+            >
+            </html-preview>
+            <!-- <iframe
                 v-show="showHtml"
                 class="markdown-content"
                 ref="previewRef"
                 frameborder="0"
-            ></iframe>
+            ></iframe> -->
         </div>
         <div class="editor-foot"></div>
     </div>
@@ -77,6 +85,8 @@ import MarkdownIt from "markdown-it";
 import CodeMirror from "codemirror";
 
 import {
+    computed,
+    ComputedRef,
     defineComponent,
     onMounted,
     reactive,
@@ -88,8 +98,7 @@ import {
 import { MarkdownTheme, UploadInfo, UploadTypes } from "../types";
 import api from "../api";
 import { useMessage } from "naive-ui";
-import { CodeBlockRender } from "../markdown-render/code-block-render";
-import { languages } from "prismjs";
+import HtmlPreview from "./HtmlPreview.vue";
 
 interface MarkdownEditorProps {
     markdown: Ref<string>;
@@ -98,6 +107,9 @@ interface MarkdownEditorProps {
 
 export default defineComponent({
     name: "MarkdownEditor",
+    components: {
+        HtmlPreview,
+    },
     data() {
         return {
             showMarkdown: true,
@@ -152,7 +164,6 @@ export default defineComponent({
         // 工具栏
         const toolbarRef = ref<HTMLDivElement>();
         // 预览iframe
-        const previewRef = ref<HTMLIFrameElement>();
 
         let { markdown, html, height, useDefaultTheme, appendStyleCssUrls } =
             props;
@@ -220,10 +231,6 @@ export default defineComponent({
             else {
                 console.log("没有加载textarea");
             }
-            // 渲染后包裹
-            // previewRef.value?.contentWindow?.document.body.classList.add(
-            //     "markdown-preview"
-            // );
 
             loadThemes();
 
@@ -250,25 +257,6 @@ export default defineComponent({
                 htmlContent.value = `<div class="markdown-preview">${markdownIt.render(
                     markdownContent.value
                 )}</div>`;
-
-                if (previewRef.value?.contentWindow) {
-                    previewRef.value.contentWindow.document.body.style.visibility =
-                        "hidden";
-                    previewRef.value.contentWindow.document.body.innerHTML =
-                        htmlContent.value;
-                    previewRef.value.contentWindow.document.body.style.visibility =
-                        "visible";
-                }
-
-                // 重新渲染
-                // 当页面没有使用缓存的时候，图片等资源的加载会导致屏幕的闪烁
-                CodeBlockRender.RenderCode(
-                    previewRef.value?.contentWindow?.document
-                );
-
-                htmlContent.value =
-                    previewRef?.value?.contentWindow?.document.body.innerHTML ??
-                    "";
 
                 emit("update:html", htmlContent.value);
                 emit("update:markdown", markdownContent.value);
@@ -407,27 +395,7 @@ export default defineComponent({
         };
 
         // 记载css内容
-        const reloadPreviewStyle = (styleCss: string) => {
-            if (previewRef.value?.contentWindow) {
-                let headerStyle =
-                    previewRef.value?.contentWindow.document.head.querySelector(
-                        "style"
-                    );
-
-                if (!headerStyle) {
-                    headerStyle =
-                        previewRef.value?.contentWindow.document.createElement(
-                            "style"
-                        );
-
-                    previewRef.value?.contentWindow.document.head.appendChild(
-                        headerStyle
-                    );
-                }
-
-                headerStyle.innerHTML = styleCss;
-            }
-        };
+        const reloadPreviewStyle = (styleCss: string) => {};
 
         // 服务器远程地址
         let remoteUrl =
@@ -438,6 +406,8 @@ export default defineComponent({
                       import.meta.env.VITE_REMOTE_API_ADDRESS.length - 1
                   )
                 : import.meta.env.VITE_REMOTE_API_ADDRESS;
+
+        const defaultStyleUrls: Ref<Array<string>> = ref([]);
 
         // 加载默认渲染主题
         const loadStyleCssUrl = async () => {
@@ -468,93 +438,52 @@ export default defineComponent({
             }
 
             if (info.markdownStyleUrl) {
-                const mdThemeStyleLink =
-                    previewRef.value?.contentWindow?.document.createElement(
-                        "link"
-                    );
-
-                if (!mdThemeStyleLink) {
-                    return;
-                }
-
-                mdThemeStyleLink.id = "mdThemeStyle";
-                mdThemeStyleLink.rel = "stylesheet";
-                mdThemeStyleLink.href = info.markdownStyleUrl;
-
-                previewRef.value?.contentWindow?.document.head.appendChild(
-                    mdThemeStyleLink
-                );
+                defaultStyleUrls.value.push(info.markdownStyleUrl);
             }
 
             if (info.codeBlockStyleUrl) {
-                const codeBlockStyleLink =
-                    previewRef?.value?.contentWindow?.document.createElement(
-                        "link"
-                    );
-
-                if (!codeBlockStyleLink) {
-                    return;
-                }
-
-                codeBlockStyleLink.id = "codeBlockStyle";
-                codeBlockStyleLink.rel = "stylesheet";
-                codeBlockStyleLink.href = info.codeBlockStyleUrl;
-
-                previewRef.value?.contentWindow?.document.head.appendChild(
-                    codeBlockStyleLink
-                );
+                defaultStyleUrls.value.push(info.codeBlockStyleUrl);
             }
         };
 
-        const loadAppendStyleUrls = (urls: Array<string>): void => {
-            // 首先清除之前加载的css
-            let appendStyleUrls =
-                previewRef?.value?.contentWindow?.document?.head.querySelectorAll(
-                    "head link[name='append-style']"
-                );
-            if (appendStyleUrls && appendStyleUrls.length > 0) {
-                appendStyleUrls.forEach((item) => {
-                    previewRef?.value?.contentWindow?.document?.head.removeChild(
-                        item
-                    );
-                });
-            }
+        const loadAppendStyleUrls = (urls: Array<string>): void => {};
 
-            urls.forEach((url) => {
-                const appendStyleLink =
-                    previewRef?.value?.contentWindow?.document.createElement(
-                        "link"
-                    );
-
-                if (appendStyleLink) {
-                    url = url.indexOf("/") == 0 ? url.substring(1) : url;
-
-                    if (!url.startsWith("http")) {
-                        url = `${remoteUrl}/${url}`;
-                    }
-
-                    appendStyleLink.setAttribute("name", "append-style");
-                    appendStyleLink.rel = "stylesheet";
-                    appendStyleLink.href = url;
-
-                    console.log("append style css url", url);
-
-                    previewRef?.value?.contentWindow?.document?.head?.appendChild(
-                        appendStyleLink
-                    );
-                }
-            });
-        };
         const showAppendStyleCssUrls = () => {
             alert(appendStyleCssUrls);
         };
+
         let halfEditorHeight = ref<string>(`${height / 2}px`);
+
+        const previewInnerStyles: ComputedRef<
+            Array<{ id: string; style: string }>
+        > = computed(() => {
+            return [{ id: "inner", style: state.appendedStyle }];
+        });
+
+        const previewOuterStyles: ComputedRef<
+            Array<{ id: string; url: string }>
+        > = computed(() => {
+            let appendedUrls = state.appendedUrls.map((item, index) => {
+                return {
+                    id: index.toString(),
+                    url: item,
+                };
+            });
+
+            let defaultUrls = defaultStyleUrls.value.map((item, index) => {
+                return {
+                    id: `default-${index}`,
+                    url: item,
+                };
+            });
+
+            return [...appendedUrls, ...defaultUrls];
+        });
 
         let returnObj = {
             uploadImg,
             markdownIt,
             toolbarRef,
-            previewRef,
             editorHeight,
             markdownContent,
             htmlContent,
@@ -564,14 +493,14 @@ export default defineComponent({
             reloadPreviewStyle,
             halfEditorHeight,
             themes,
-            // loadImportMdStyle,
             message,
-            // selectedTheme,
             loadAppendStyleUrls,
             appendStyleCss,
             showAppendStyleCssUrls,
             language,
             insertCodeBlock,
+            previewInnerStyles,
+            previewOuterStyles,
         };
 
         return returnObj;

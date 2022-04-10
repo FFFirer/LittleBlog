@@ -38,6 +38,9 @@
                 查看当前已加载样式
             </n-button>
         </n-form-item>
+        <n-form-item label="编辑主题">
+            <textarea ref="styleCssRef"> </textarea>
+        </n-form-item>
         <n-form-item label="预览效果">
             <div class="markdown-box">
                 <markdown-editor
@@ -48,9 +51,6 @@
                 >
                 </markdown-editor>
             </div>
-        </n-form-item>
-        <n-form-item label="编辑主题">
-            <textarea ref="styleCssRef"> </textarea>
         </n-form-item>
         <n-form-item label="">
             <n-button @click="cancelEdit()"> 取消 </n-button>
@@ -190,6 +190,11 @@ export default defineComponent({
 
                     appendStyleCss.value = theme.value.content;
                 });
+
+                // appendStyleCss.value = theme.value.content.replaceAll(
+                //     "<br>",
+                //     "\n"
+                // );
             }
         });
 

@@ -15,6 +15,7 @@ namespace LittleBlog.Web.Apis
     [Route("api/[controller]")]
     [ApiController]
     [ServiceFilter(typeof(ApiExceptionFilter))]
+    [TypeFilter(typeof(AuditActionFilter))]
     public class BaseApiController : ControllerBase
     {
 

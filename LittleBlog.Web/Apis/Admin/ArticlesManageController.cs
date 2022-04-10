@@ -2,6 +2,7 @@
 using LittleBlog.Core.Extensions;
 using LittleBlog.Core.Models;
 using LittleBlog.Core.Services;
+using LittleBlog.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,6 @@ namespace LittleBlog.Web.Apis.Admin
     [Description("文章管理相关端口（Admin）")]
     [ApiExplorerSettings(GroupName = "Admin")]
     [OpenApiTags("Admin Articles")]
-    //[AllowAnonymous]
     [Authorize]
     public class ArticlesManageController : BaseApiController
     {
