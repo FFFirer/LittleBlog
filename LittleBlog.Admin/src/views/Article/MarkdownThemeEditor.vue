@@ -46,8 +46,8 @@
                 <markdown-editor
                     :height="300"
                     :useDefaultTheme="false"
-                    v-model:appendStyleCssUrls="appendStyleCssUrls"
-                    v-model:append-style-css="appendStyleCss"
+                    v-model:appendStyleUrls="appendStyleCssUrls"
+                    v-model:appendStyleCss="appendStyleCss"
                 >
                 </markdown-editor>
             </div>
@@ -122,7 +122,7 @@ export default defineComponent({
         let editor: CodeMirror.EditorFromTextArea =
             {} as CodeMirror.EditorFromTextArea;
 
-        // methoeds
+        /**保存 */
         const save = () => {
             api.admin.markdownThemes.save(theme.value).then((result) => {
                 if (result.isSuccess) {
@@ -133,10 +133,12 @@ export default defineComponent({
             });
         };
 
+        /**取消 */
         const cancelEdit = () => {
             backToList();
         };
 
+        /**加载 */
         const load = async () => {
             if (id) {
                 let result = await api.admin.markdownThemes.get(id);
@@ -190,13 +192,10 @@ export default defineComponent({
 
                     appendStyleCss.value = theme.value.content;
                 });
-
-                // appendStyleCss.value = theme.value.content.replaceAll(
-                //     "<br>",
-                //     "\n"
-                // );
             }
         });
+
+        const markdown = ref("");
 
         const setupOption = {
             message,
@@ -211,6 +210,7 @@ export default defineComponent({
             appendStyleCss,
             allThemes,
             appendStyleCssUrls,
+            markdown,
         };
 
         return setupOption;

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, onMounted, ref } from "vue";
+import { defineComponent, PropType, onMounted, ref, watch } from "vue";
 
 const INNER_STYLE_TAG = "inner-style";
 const OUTER_STYLE_TAG = "outer-style";
@@ -27,19 +27,14 @@ const HtmlPreviewProps = {
 export default defineComponent({
     name: "HtmlPreview",
     watch: {
-        html(v, o) {
-            this.reloadHtml();
-        },
         innerStyles: {
             handler(v, o) {
-                console.log("inner styles updated");
                 this.reloadInnerStyles();
             },
             deep: true,
         },
         outerStyles: {
             handler(v, o) {
-                console.log("outer styles updated");
                 this.reloadOuterStyles();
             },
             deep: true,
@@ -47,18 +42,6 @@ export default defineComponent({
     },
     props: HtmlPreviewProps,
     methods: {
-        reloadHtml() {
-            if (this.shadowRoot == undefined) {
-                return;
-            }
-
-            let htmlContaienr = this.getHtmlContainer();
-
-            if (htmlContaienr != undefined && this.html.length > 0) {
-                // htmlContaienr.innerHTML = "";
-                htmlContaienr.innerHTML = this.html;
-            }
-        },
         reloadInnerStyles() {
             let allStyles = this.getInnerStyles();
             let allStyleEls = allStyles
@@ -145,15 +128,10 @@ export default defineComponent({
                 `style.${INNER_STYLE_TAG}`
             );
 
-            console.log("get inner styles", results);
-
             results.forEach((a) => {
-                console.log(a);
-                console.log(a as HTMLStyleElement);
                 styles.push(a as HTMLStyleElement);
             });
 
-            console.log("get inner styles", styles);
             return styles;
         },
         getOuterStyleLinks(): Array<HTMLLinkElement> {
@@ -170,23 +148,7 @@ export default defineComponent({
 
             return links;
         },
-        getHtmlContainer(): HTMLDivElement | undefined {
-            if (this.shadowRoot == undefined) {
-                return;
-            }
 
-            let container = this.shadowRoot.querySelector("div#html-container");
-            if (container != undefined) {
-                return container as HTMLDivElement;
-            }
-
-            container = document.createElement("div");
-            container.id = "html-container";
-
-            this.shadowRoot.appendChild(container);
-
-            return container as HTMLDivElement;
-        },
         insertOuterStyle(id: string, url: string) {
             if (this.shadowRoot == undefined) {
                 return;
@@ -217,15 +179,58 @@ export default defineComponent({
         const shadowRootRef = ref<HTMLDivElement>();
         let shadowRoot = ref<ShadowRoot>();
 
+        const getHtmlContainer = (): HTMLDivElement | undefined => {
+            if (shadowRoot == undefined) {
+                return;
+            }
+
+            let container =
+                shadowRoot.value?.querySelector("div#html-container");
+
+            if (container != undefined) {
+                return container as HTMLDivElement;
+            }
+
+            container = document.createElement("div");
+            container.id = "html-container";
+
+            shadowRoot.value?.appendChild(container);
+
+            return container as HTMLDivElement;
+        };
+
+        const reloadHtml = () => {
+            if (shadowRoot == undefined) {
+                return;
+            }
+
+            let htmlContaienr = getHtmlContainer();
+
+            if (htmlContaienr != undefined) {
+                htmlContaienr.innerHTML = props.html;
+            }
+        };
+
+        watch(
+            () => props.html,
+            (v, o) => {
+                reloadHtml();
+            }
+        );
+
         onMounted(() => {
             shadowRoot.value = shadowRootRef.value?.attachShadow({
                 mode: "open",
             });
+
+            reloadHtml();
         });
 
         return {
             shadowRootRef,
             shadowRoot,
+            getHtmlContainer,
+            reloadHtml,
         };
     },
 });

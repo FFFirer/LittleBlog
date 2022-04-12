@@ -44,17 +44,11 @@
             <html-preview
                 class="markdown-content"
                 v-show="showHtml"
-                :html="htmlContent"
+                :html="previewHtml"
                 :innerStyles="previewInnerStyles"
                 :outerStyles="previewOuterStyles"
             >
             </html-preview>
-            <!-- <iframe
-                v-show="showHtml"
-                class="markdown-content"
-                ref="previewRef"
-                frameborder="0"
-            ></iframe> -->
         </div>
         <div class="editor-foot"></div>
     </div>
@@ -89,9 +83,11 @@ import {
     ComputedRef,
     defineComponent,
     onMounted,
+    PropType,
     reactive,
     Ref,
     ref,
+    toRefs,
     watch,
     watchEffect,
 } from "vue";
@@ -99,11 +95,34 @@ import { MarkdownTheme, UploadInfo, UploadTypes } from "../types";
 import api from "../api";
 import { useMessage } from "naive-ui";
 import HtmlPreview from "./HtmlPreview.vue";
+import { CodeBlockRender } from "../markdown-render/code-block-render";
 
-interface MarkdownEditorProps {
-    markdown: Ref<string>;
-    html: Ref<string>;
-}
+const MarkdownEditorProps = {
+    markdown: {
+        type: String,
+        default: "",
+    },
+    html: {
+        type: String,
+        default: "",
+    },
+    height: {
+        type: Number,
+        default: 300,
+    },
+    useDefaultTheme: {
+        type: Boolean,
+        default: true,
+    },
+    appendStyleUrls: {
+        type: Array as PropType<Array<string>>,
+        default: [],
+    },
+    appendStyleCss: {
+        type: String,
+        default: "",
+    },
+};
 
 export default defineComponent({
     name: "MarkdownEditor",
@@ -116,70 +135,33 @@ export default defineComponent({
             showHtml: true,
         };
     },
-    watch: {
-        showHtml(value) {
-            console.log("show html", value);
-        },
-    },
-    props: {
-        markdown: {
-            type: String,
-            default: "",
-        },
-        html: {
-            type: String,
-            default: "",
-        },
-        height: {
-            type: Number,
-            default: 300,
-        },
-        useDefaultTheme: {
-            type: Boolean,
-            default: true,
-        },
-        appendStyleCssUrls: {
-            type: Array,
-            default: [],
-        },
-        appendStyleCss: {
-            type: String,
-            default: "",
-        },
-    },
+    props: MarkdownEditorProps,
     setup(props, { emit }) {
-        const message = useMessage();
         const ImagePrependUrl = import.meta.env.VITE_REMOTE_API_ADDRESS;
 
-        const markdownIt = new MarkdownIt();
+        const message = useMessage();
         const textareaRef = ref();
-        const appendStyleCss = ref<string>("");
+
+        /**解构 */
+        const previewHtml = ref("");
+        const markdownContent = ref("");
+
+        /**要插入的语言名称 */
         const language = ref("");
 
-        const state = reactive({
-            appendedUrls: [] as string[],
-            appendedStyle: "" as string,
-        });
+        /**Markdown渲染 */
+        const markdownIt = new MarkdownIt();
 
-        // 工具栏
+        /**工具栏 */
         const toolbarRef = ref<HTMLDivElement>();
-        // 预览iframe
 
-        let { markdown, html, height, useDefaultTheme, appendStyleCssUrls } =
-            props;
+        /**编辑器高度 */
+        const editorHeight = ref<string>(`${props.height || 400}px`);
 
-        const appendedStyleCssUrls = ref(appendStyleCssUrls);
-        // 高度
-        height = height || 400;
-        // 编辑器高度
-        const editorHeight = ref<string>(`${height}px`);
-        // markdown原文
-        let markdownContent: Ref<string> = ref("");
-        // 渲染后Html
-        let htmlContent: Ref<string> = ref(html ?? "");
         // 编辑器CodeMirror
         let editor: CodeMirror.EditorFromTextArea =
             {} as CodeMirror.EditorFromTextArea;
+
         // 编辑器配置
         let editorConfig: CodeMirror.EditorConfiguration = {
             lineNumbers: true,
@@ -192,9 +174,8 @@ export default defineComponent({
         // 加载时
         onMounted(async () => {
             if (textareaRef.value != null) {
-                console.log("初始化编辑器");
-
-                textareaRef.value.value = markdown;
+                markdownContent.value = props.markdown || "";
+                textareaRef.value.value = markdownContent.value;
 
                 // 初始化
                 editor = CodeMirror.fromTextArea(
@@ -212,36 +193,37 @@ export default defineComponent({
                 });
 
                 editor.on("change", (instance, changeObj) => {
-                    markdownContent.value = instance.getValue();
-                });
+                    let editorContent = instance.getValue();
 
-                // 赋值
-                markdownContent.value = markdown;
+                    // 从编辑器取数据
+                    markdownContent.value = editorContent;
+                });
 
                 // 触发一次window resize
                 let e = new Event("resize");
+
                 window.dispatchEvent(e);
 
-                if (useDefaultTheme) {
+                if (props.useDefaultTheme) {
                     await loadStyleCssUrl();
                 }
-            }
-
-            // 编辑器高度
-            else {
+            } else {
                 console.log("没有加载textarea");
             }
+
+            updatePreview(markdownContent.value);
 
             loadThemes();
 
             // 加载附加样式
-            loadAppendStyleUrls(state.appendedUrls);
-            reloadPreviewStyle(state.appendedStyle);
+            loadAppendStyleUrls(props.appendStyleUrls);
+            reloadPreviewStyle(props.appendStyleCss);
         });
 
-        // 所有主题
+        /**所有主题 */
         let themes: Ref<Array<MarkdownTheme>> = ref([]);
 
+        /**加载所有主题 */
         const loadThemes = async () => {
             let result = await api.admin.markdownThemes.list();
 
@@ -253,39 +235,44 @@ export default defineComponent({
         // markdown内容监控变化
         watch(
             () => markdownContent.value,
-            () => {
-                htmlContent.value = `<div class="markdown-preview">${markdownIt.render(
-                    markdownContent.value
-                )}</div>`;
-
-                emit("update:html", htmlContent.value);
-                emit("update:markdown", markdownContent.value);
+            (v, o) => {
+                updatePreview(markdownContent.value);
             }
         );
 
-        watchEffect(() => {
-            state.appendedUrls = props.appendStyleCssUrls as string[];
-            state.appendedStyle = props.appendStyleCss as string;
-        });
+        const updatePreview = (markdown: string) => {
+            const renderedHtml = markdownIt.render(markdown);
 
-        // 附加样式链接
+            const renrededCodeHtml =
+                CodeBlockRender.RenderCodeText(renderedHtml);
+
+            const result = `<div class="markdown-preview">${renrededCodeHtml}</div>`;
+
+            previewHtml.value = result;
+            emit("update:html", result);
+        };
+
+        /**附加样式链接, 当外部改变时重新加载 */
         watch(
-            () => state.appendedUrls,
+            () => props.appendStyleUrls,
             () => {
-                console.log("update urls", state.appendedUrls);
-                loadAppendStyleUrls(state.appendedUrls);
+                loadAppendStyleUrls(props.appendStyleUrls);
             }
         );
 
-        // 附加样式内容
+        /**附加样式内容，当外部样式改变时重新加载 */
         watch(
-            () => state.appendedStyle,
+            () => props.appendStyleCss,
             () => {
-                console.log("update styles", state.appendedStyle);
-                reloadPreviewStyle(state.appendedStyle);
+                reloadPreviewStyle(props.appendStyleCss);
             }
         );
 
+        /**
+         * 拼接地址
+         * @param prepend 前缀
+         * @param relativeUrl 相对url
+         */
         const JoinUrl = (prepend: string, relativeUrl: string): string => {
             if (prepend.indexOf("/") === ImagePrependUrl.length - 1) {
                 prepend = prepend.substring(0, ImagePrependUrl.length - 1);
@@ -298,9 +285,8 @@ export default defineComponent({
             return `${prepend}/${relativeUrl}`;
         };
 
+        /**上传图片 */
         const uploadImg = () => {
-            console.log("click upload image");
-
             let uploadInput = document.createElement("input");
 
             uploadInput.setAttribute("type", "file");
@@ -341,7 +327,10 @@ export default defineComponent({
             uploadInput.click();
         };
 
-        // 插入普通链接
+        /**
+         * 插入普通链接
+         * @param url
+         */
         const insertLink = (url: string) => {
             editor.execCommand("goLineEnd");
 
@@ -356,7 +345,10 @@ export default defineComponent({
             editor.replaceRange(`[link description](${url})`, currentCursorPos);
         };
 
-        // 插入图片链接
+        /**
+         * 插入图片链接
+         * @param url
+         */
         const insertImageLink = (url: string) => {
             editor.execCommand("goLineEnd");
 
@@ -375,7 +367,7 @@ export default defineComponent({
             );
         };
 
-        // 插入代码块
+        /**插入代码块 */
         const insertCodeBlock = () => {
             editor.execCommand("goLineEnd");
 
@@ -394,10 +386,13 @@ export default defineComponent({
             );
         };
 
-        // 记载css内容
+        /**
+         * 重新加载css内容
+         * @param styleCss
+         */
         const reloadPreviewStyle = (styleCss: string) => {};
 
-        // 服务器远程地址
+        /**服务器远程地址 */
         let remoteUrl =
             import.meta.env.VITE_REMOTE_API_ADDRESS.indexOf("/") ==
             import.meta.env.VITE_REMOTE_API_ADDRESS.length - 1
@@ -409,7 +404,7 @@ export default defineComponent({
 
         const defaultStyleUrls: Ref<Array<string>> = ref([]);
 
-        // 加载默认渲染主题
+        /**加载默认渲染主题 */
         const loadStyleCssUrl = async () => {
             let result = await api.admin.markdownThemes.getDefault();
 
@@ -446,24 +441,31 @@ export default defineComponent({
             }
         };
 
+        /**
+         * 加载附加样式（链接）
+         * @param urls 样式链接
+         */
         const loadAppendStyleUrls = (urls: Array<string>): void => {};
 
         const showAppendStyleCssUrls = () => {
-            alert(appendStyleCssUrls);
+            alert(props.appendStyleUrls);
         };
 
-        let halfEditorHeight = ref<string>(`${height / 2}px`);
+        /**半个编辑器高度 */
+        let halfEditorHeight = ref<string>(`${props.height / 2}px`);
 
+        /**预览内部样式链接 */
         const previewInnerStyles: ComputedRef<
             Array<{ id: string; style: string }>
         > = computed(() => {
-            return [{ id: "inner", style: state.appendedStyle }];
+            return [{ id: "inner", style: props.appendStyleCss }];
         });
 
+        /**预览外部样式链接 */
         const previewOuterStyles: ComputedRef<
             Array<{ id: string; url: string }>
         > = computed(() => {
-            let appendedUrls = state.appendedUrls.map((item, index) => {
+            let appendedUrls = props.appendStyleUrls.map((item, index) => {
                 return {
                     id: index.toString(),
                     url: item,
@@ -485,8 +487,6 @@ export default defineComponent({
             markdownIt,
             toolbarRef,
             editorHeight,
-            markdownContent,
-            htmlContent,
             editor,
             insertLink,
             textareaRef,
@@ -495,18 +495,20 @@ export default defineComponent({
             themes,
             message,
             loadAppendStyleUrls,
-            appendStyleCss,
             showAppendStyleCssUrls,
             language,
             insertCodeBlock,
             previewInnerStyles,
             previewOuterStyles,
+            previewHtml,
+            markdownContent,
         };
 
         return returnObj;
     },
 });
 </script>
+
 <style>
 .editor-container {
     border: 0px solid gray;

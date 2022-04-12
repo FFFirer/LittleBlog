@@ -34,7 +34,60 @@ export class CodeBlockRender {
             });
         }
     }
+
+    /**
+     * 渲染代码
+     * @param html Html内容 字符串
+     * @returns 渲染代码块后的
+     */
+    public static RenderCodeText(html: string): string {
+        if (!html) {
+            return "";
+        }
+
+        if (html.length <= 0) {
+            return "";
+        }
+
+        let container = document.createElement("div");
+        container.innerHTML = html;
+
+        let codeElements: Array<HTMLElement> = [];
+        container.querySelectorAll("pre>code").forEach((a) => {
+            codeElements.push(a as HTMLElement);
+        });
+
+        if (codeElements.length <= 0) {
+            return container.innerHTML;
+        }
+
+        codeElements.forEach((el) => {
+            try {
+                let code = el.innerText;
+                let pre = el.parentElement;
+
+                if (pre) {
+                    pre.classList.add("language-text");
+                    pre.classList.add("line-numbers");
+
+                    const language = getLanguage(el);
+
+                    pre.innerHTML = Prism.highlight(
+                        code,
+                        Prism.languages[language],
+                        language
+                    );
+                }
+            } catch {
+                console.error("primejs render error");
+            }
+        });
+
+        return container.innerHTML;
+    }
 }
+
+const codePattern = /<pre><code.*?class="">(.*?)<\/code><\/pre>/g;
 
 const TAGS_TO_REPLACE: { [key: string]: string } = {
     "&": "&amp;",
