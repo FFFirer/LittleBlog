@@ -91,7 +91,7 @@ $TARGET_ENV_EXAMPLE_FILE_PATH = Join-Path -Path $ADMIN_DIR -ChildPath $TARGET_EN
 $ENV_EXAMPLE_CONTENT = Get-Content $ENV_EXAMPLE_FILE_PATH
 
 # 替换内容
-$ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@apiAddress", $apiAddress
+$ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@API_ADDRESS", $apiAddress
 $ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@APP_NAME", $adminPrefix
 
 Write-Output "API Address: $apiAddress"
