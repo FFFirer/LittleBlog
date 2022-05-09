@@ -207,15 +207,21 @@ export default defineComponent({
         const router = useRouter();
         const message = useMessage();
 
-        const paginationReactive = reactive<PaginationProps>({
+        const paginationReactive = reactive<{
+            page: number;
+            pageSize: number;
+            pageSizes: Array<number>;
+            showSizePicker: boolean;
+            itemCount: number;
+        }>({
             page: 1,
             pageSize: 20,
             pageSizes: [20, 50, 100],
             showSizePicker: true,
+            itemCount: 0,
         });
 
         const moreThanOnePage = computed(() => {
-            console.log("computed", paginationReactive.pageCount);
             return (
                 (paginationReactive.itemCount ?? 0) >
                 (paginationReactive.pageSize ?? 1)

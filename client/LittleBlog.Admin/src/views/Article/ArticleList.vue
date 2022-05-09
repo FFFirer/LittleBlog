@@ -260,7 +260,11 @@ export default defineComponent({
             });
         };
 
-        const paginationReactive = reactive<PaginationProps>({
+        const paginationReactive = reactive<{
+            page: number;
+            pageSize: number;
+            itemCount: number;
+        }>({
             page: 1,
             pageSize: 20,
             itemCount: 0,

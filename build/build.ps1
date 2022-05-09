@@ -7,28 +7,29 @@ param (
 
     # 是否构建Docker
     [Parameter()]
+    [switch]
     [bool]
-    $build_docker,
+    $buildDocker,
 
     # API地址
     [Parameter()]
     [string]
-    $api_address,
+    $apiAddress,
 
     # admin路径前缀
     [Parameter()]
     [string]
-    $admin_prefix
+    $adminPrefix
 )
 
 $NPM_BUILD_CMD = "build";
 
-if ($api_address -eq "") {
-    $api_address = "/"
+if ($apiAddress -eq "") {
+    $apiAddress = "/"
 }
 
-if ($admin_prefix -eq "" ) {
-    $admin_prefix = "/"
+if ($adminPrefix -eq "" ) {
+    $adminPrefix = "/"
 }
 
 $TARGET_ENV_FILENAME = ".env.staging.local"
@@ -47,16 +48,39 @@ if ($mode -eq "dev") {
     $TARGET_ENV_FILENAME = "env.dev.local"
 }
 
-$CURRENT_DIR = ($PWD).Path
-$WWWROOT_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Web/wwwroot/" 
-$WEB_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Web/LittleBlog.Web.csproj"
-$PUBLISHED_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/published"
-$ADMIN_APP_NAME = "/admin"
-$ADMIN_APP_DIR = Join-Path -Path $WWWROOT_DIR -ChildPath $ADMIN_APP_NAME
-$ADMIN_APP_DIST_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Admin/dist/"
-$ADMIN_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "/LittleBlog.Admin"
+$OUTPUTS_FOLDER_NAME = "outputs"
 
-# 进入后端admin的目录，准备将其发布到web的wwwroot下
+$CURRENT_DIR = ($PWD).Path
+
+$SLN_FOLDER = Join-Path -Path $CURRENT_DIR -ChildPath "../server/"
+$PROJ = Join-Path $SLN_FOLDER "LittleBlog.Web/LittleBlog.Web.csproj"
+
+$ADMIN_APP_DIST_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "../client/LittleBlog.Admin/dist/"
+$ADMIN_DIR = Join-Path -Path $CURRENT_DIR -ChildPath "../client/LittleBlog.Admin"
+
+# 构建输出目录
+$OUTPUTS_FOLDER = Join-Path $CURRENT_DIR $OUTPUTS_FOLDER_NAME
+
+Remove-Item -Path $OUTPUTS_FOLDER -Force -Recurse -ErrorAction Ignore
+New-Item -Path $OUTPUTS_FOLDER -ItemType Directory
+
+# =======
+# 发布后端
+# =======
+Set-Location $SLN_FOLDER
+
+# 发布站点到发布目录
+$BuildWebCommand = "dotnet publish {0} -c Release -o {1}" -f $PROJ, $OUTPUTS_FOLDER
+Invoke-Expression -Command $BuildWebCommand -ErrorAction "Stop"
+
+# 清理wwwroot/admin
+$outputAdminFolder = Join-Path $OUTPUTS_FOLDER "wwwroot/admin"
+Remove-Item -Path $outputAdminFolder -Force -Recurse -ErrorAction Ignore
+New-Item -ItemType Directory -Path $outputAdminFolder
+
+# ============================================
+# 进入前端admin的目录，准备将其发布到web的wwwroot下
+# ============================================
 Set-Location $ADMIN_DIR
 Write-Output "IN: $ADMIN_DIR"
 
@@ -67,53 +91,35 @@ $TARGET_ENV_EXAMPLE_FILE_PATH = Join-Path -Path $ADMIN_DIR -ChildPath $TARGET_EN
 $ENV_EXAMPLE_CONTENT = Get-Content $ENV_EXAMPLE_FILE_PATH
 
 # 替换内容
-$ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@API_ADDRESS", $api_address
-$ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@APP_NAME", $admin_prefix
+$ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@apiAddress", $apiAddress
+$ENV_EXAMPLE_CONTENT = $ENV_EXAMPLE_CONTENT -replace "@APP_NAME", $adminPrefix
 
-Write-Output "API Address: $api_address"
-Write-Output "Admin Prefix: $admin_prefix"
+Write-Output "API Address: $apiAddress"
+Write-Output "Admin Prefix: $adminPrefix"
 
 Set-Content -Path $TARGET_ENV_EXAMPLE_FILE_PATH -Value $ENV_EXAMPLE_CONTENT
 Write-Output "Generated: $TARGET_ENV_EXAMPLE_FILE_PATH"
 
-npm install     # 拉取最新的库
+yarn     # 拉取最新的库
 
-$BuildVueCommand = "npm run " + $NPM_BUILD_CMD
+$BuildVueCommand = "yarn run " + $NPM_BUILD_CMD
 Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
 
-$HAS_DIR = (Test-Path $ADMIN_APP_DIR)
-if (-not $HAS_DIR) {
-    New-Item -Path $ADMIN_APP_DIR -ItemType Directory
-    Write-Output "Create: $ADMIN_APP_DIR"
-}
-
-Write-Output "REMOVE IN: $ADMIN_APP_DIR"
-Remove-Item -Path $ADMIN_APP_DIR -Recurse
-
-Write-Output "COPY TO: $ADMIN_APP_DIR"
-
 # 拷贝dist的内容到
-Copy-Item $ADMIN_APP_DIST_DIR $ADMIN_APP_DIR -Recurse
+Copy-Item (Join-Path $ADMIN_APP_DIST_DIR "*") $outputAdminFolder -Recurse
+Write-Output "[复制LittleBlog.Admin]"
 
 Set-Location $CURRENT_DIR
 . ./base.ps1
 
-$HAS_PUBLISH_DIR = Test-Path $PUBLISHED_DIR
+if ($buildDocker) {
+    Write-Output "[构建Docker]"
 
-if ($HAS_PUBLISH_DIR) {
-    Write-Output "EMPTY Publish Directory"
-    Remove-Item -LiteralPath $PUBLISHED_DIR -Force -Recurse
-}
+    Set-Location $OUTPUTS_FOLDER
 
-# 发布站点到发布目录
-$BuildWebCommand = "dotnet publish {0} -c Release -o {1}" -f $WEB_DIR, $PUBLISHED_DIR
-Invoke-Expression -Command $BuildWebCommand -ErrorAction "Stop"
-
-if ($build_docker) {
     Write-Output "START TO BUILD <docker>"
 
-    # 获取GIT版本信息
-    $BranchName = Get-GitBranchName
+    $gitPath = (Get-Item -Path "../" -Verbose).FullName
 
     Write-Output "Branch: $BranchName"
 
@@ -122,9 +128,11 @@ if ($build_docker) {
     Write-Output "Tag: $TagName"
 
     # 构建镜像
-    Set-Location $PUBLISHED_DIR
+    Set-Location $OUTPUTS_FOLDER
 
-    $BuildDockerCmd = ".\BuildDocker.ps1 -Branch " + $BranchName + " -Tag " + $TagName
+    $imageName = "littleblog:$($TagName)"
+
+    $BuildDockerCmd = "docker build -t $($imageName) ."
 
     Write-Output "Build docker command:  $BuildDockerCmd"
 
