@@ -1,15 +1,18 @@
 <template>
-    <n-form label-placement="left" label-align="right" label-width="60">
+    <n-form label-placement="left" label-align="right" label-width="120">
         <n-form-item label="名称">
             <n-input v-model:value="theme.name" placeholder="请输入主题名称">
             </n-input>
         </n-form-item>
         <n-form-item label="URL">
             <n-input
-                :disabled="true"
+                :disabled="!theme.useOuterLink"
                 v-model:value="theme.url"
                 placeholder="请输入URL"
             ></n-input>
+        </n-form-item>
+        <n-form-item label="使用外部样式">
+            <n-checkbox v-model:checked="theme.useOuterLink"> </n-checkbox>
         </n-form-item>
         <n-form-item label="存储路径">
             <n-input
@@ -25,12 +28,12 @@
                 placeholder="请输入备注"
             ></n-input>
         </n-form-item>
-        <n-form-item label="">
-            <n-button> 导入 </n-button>
+        <n-form-item label="导入样式">
+            <n-button> 打开文件 </n-button>
         </n-form-item>
         <n-form-item label="附加样式">
             <n-select
-                v-model:value="appendStyleCssUrls"
+                v-model:value="selectedToAppendThemes"
                 multiple
                 :options="allThemes"
             ></n-select>
@@ -38,7 +41,7 @@
                 查看当前已加载样式
             </n-button>
         </n-form-item>
-        <n-form-item label="编辑主题">
+        <n-form-item label="编辑主题" v-show="!theme.useOuterLink">
             <textarea ref="styleCssRef"> </textarea>
         </n-form-item>
         <n-form-item label="预览效果">
@@ -62,7 +65,7 @@
 <script lang="ts">
 import CodeMirror from "codemirror";
 import { SelectOption, useMessage } from "naive-ui";
-import { defineComponent, onMounted, Ref, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, Ref, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "../../api";
 import { MarkdownTheme } from "../../types";
@@ -91,6 +94,15 @@ import "codemirror/addon/fold/indent-fold.js";
 import "codemirror/addon/fold/markdown-fold.js";
 import "codemirror/addon/fold/comment-fold.js";
 
+let remoteUrl =
+    import.meta.env.VITE_REMOTE_API_ADDRESS.indexOf("/") ==
+    import.meta.env.VITE_REMOTE_API_ADDRESS.length - 1
+        ? import.meta.env.VITE_REMOTE_API_ADDRESS.substring(
+              0,
+              import.meta.env.VITE_REMOTE_API_ADDRESS.length - 1
+          )
+        : import.meta.env.VITE_REMOTE_API_ADDRESS;
+
 export default defineComponent({
     name: "MarkdownThemeEditor",
     components: {
@@ -114,7 +126,13 @@ export default defineComponent({
         const styleCssRef = ref();
         const appendStyleCss = ref("");
 
-        const appendStyleCssUrls = ref([]);
+        const appendStyleCssUrls = computed(() => {
+            if (theme.value.useOuterLink) {
+                return [...selectedToAppendThemes.value, theme.value.url];
+            } else {
+                return [...selectedToAppendThemes.value];
+            }
+        });
 
         let { id } = props;
 
@@ -161,16 +179,50 @@ export default defineComponent({
         };
 
         const allThemes = ref<Array<SelectOption>>([]);
+
         const loadAllThemes = () => {
             api.admin.markdownThemes.list().then((result) => {
                 allThemes.value = result.data.map((d) => {
-                    return {
-                        label: d.name,
-                        value: d.url,
-                    } as SelectOption;
+                    if (d.url.indexOf("/") == 0) {
+                        const url = `${remoteUrl}/${d.url.substring(1)}`;
+                        return {
+                            label: d.name,
+                            value: url,
+                        };
+                    } else {
+                        return {
+                            label: d.name,
+                            value: d.url,
+                        } as SelectOption;
+                    }
                 });
             });
         };
+
+        const selectedToAppendThemes: Ref<Array<SelectOption>> = ref([]);
+
+        watch(
+            () => theme.value.useOuterLink,
+            (nv, ov) => {
+                if (nv == true) {
+                    // 重新加载外部样式
+                    appendStyleCss.value = "";
+                    appendStyleCssUrls.value.push(theme.value.url);
+                } else {
+                    // 重新加载内联样式
+                    appendStyleCss.value = theme.value.content;
+                }
+            }
+        );
+
+        watch(
+            () => theme.value.url,
+            () => {
+                if (theme.value.useOuterLink) {
+                    appendStyleCssUrls.value = [theme.value.url];
+                }
+            }
+        );
 
         // mounted
         onMounted(async () => {
@@ -188,10 +240,17 @@ export default defineComponent({
                 editor.setValue(theme.value.content);
 
                 editor.on("change", (instance, changeObj) => {
-                    theme.value.content = instance.getValue();
+                    // 使用外部样式时不使用内联样式
+                    if (!theme.value.useOuterLink) {
+                        theme.value.content = instance.getValue();
 
-                    appendStyleCss.value = theme.value.content;
+                        appendStyleCss.value = theme.value.content;
+                    }
                 });
+
+                if (!theme.value.useOuterLink) {
+                    appendStyleCss.value = theme.value.content;
+                }
             }
         });
 
@@ -211,6 +270,7 @@ export default defineComponent({
             allThemes,
             appendStyleCssUrls,
             markdown,
+            selectedToAppendThemes,
         };
 
         return setupOption;

@@ -21,6 +21,11 @@ namespace LittleBlog.Core.Models.Domain
         public string Content { get; set; }
         public string Remark { get; set; }
 
+        /// <summary>
+        /// 使用外部链接
+        /// </summary>
+        public bool UseOuterLink { get; set; }
+
         public DateTime CreatedTime { get; set; }
 
         public DateTime? LastEditTime { get; set; }

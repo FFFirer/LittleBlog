@@ -151,6 +151,7 @@ class MarkdownTheme {
     id!: string;
     content!: string;
     remark!: string;
+    useOuterLink!: boolean;
 }
 
 export {

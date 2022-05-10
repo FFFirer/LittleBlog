@@ -14,7 +14,7 @@ namespace LittleBlog.Core.Models.Dto
         public string Url { get; set; }
         public string PhysicalPath { get; set; }
         public string Remark { get; set; }
-
+        public bool UseOuterLink { get; set; }
         public string Content { get; set; }
     }
 }

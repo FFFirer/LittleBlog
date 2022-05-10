@@ -1,4 +1,4 @@
-import * as Prism from "prismjs";
+import Prism from "prismjs";
 
 export class CodeBlockRender {
     public static RenderCode(htmlDoc: Document | undefined) {
@@ -71,15 +71,17 @@ export class CodeBlockRender {
                     pre.classList.add("line-numbers");
 
                     const language = getLanguage(el);
+                    const prismLanguage =
+                        Prism.languages[language] || Prism.languages["text"];
 
                     pre.innerHTML = Prism.highlight(
                         code,
-                        Prism.languages[language],
+                        prismLanguage,
                         language
                     );
                 }
-            } catch {
-                console.error("primejs render error");
+            } catch (error) {
+                console.error("primejs render error", error);
             }
         });
 
@@ -134,7 +136,6 @@ export function getLanguage(codeElement: HTMLElement): string {
         }
     });
 
-    console.log("get language", languages[0] || "text");
     return languages[0] || "text";
 }
 

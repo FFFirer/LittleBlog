@@ -84,12 +84,9 @@ import {
     defineComponent,
     onMounted,
     PropType,
-    reactive,
     Ref,
     ref,
-    toRefs,
     watch,
-    watchEffect,
 } from "vue";
 import { MarkdownTheme, UploadInfo, UploadTypes } from "../types";
 import api from "../api";
@@ -236,6 +233,7 @@ export default defineComponent({
         watch(
             () => markdownContent.value,
             (v, o) => {
+                emit("update:markdown", markdownContent.value);
                 updatePreview(markdownContent.value);
             }
         );

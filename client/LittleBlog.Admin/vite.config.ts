@@ -1,11 +1,18 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { loadEnv } from "vite";
-import { def } from "@vue/shared";
+import prismjsPlugin from "vite-plugin-prismjs";
+
+const prismjsPluginOption = {
+    languages: ["javascript", "css", "markup", "csharp"],
+    plugins: ["line-numbers"],
+    theme: "twilight",
+    css: true,
+};
 
 export default ({ mode }) => {
     return defineConfig({
-        plugins: [vue()],
+        plugins: [vue(), prismjsPlugin(prismjsPluginOption)],
         base: loadEnv(mode, process.cwd()).VITE_APP_NAME,
         server: {
             https: true,
