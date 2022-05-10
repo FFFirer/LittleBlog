@@ -100,9 +100,9 @@ Write-Output "Admin Prefix: $adminPrefix"
 Set-Content -Path $TARGET_ENV_EXAMPLE_FILE_PATH -Value $ENV_EXAMPLE_CONTENT
 Write-Output "Generated: $TARGET_ENV_EXAMPLE_FILE_PATH"
 
-npm install     # 拉取最新的库
+yarn     # 拉取最新的库
 
-$BuildVueCommand = "npm run " + $NPM_BUILD_CMD
+$BuildVueCommand = "yarn run " + $NPM_BUILD_CMD
 Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
 
 # 拷贝dist的内容到
