@@ -199,7 +199,7 @@ export default defineComponent({
             });
         };
 
-        const selectedToAppendThemes: Ref<Array<SelectOption>> = ref([]);
+        const selectedToAppendThemes: Ref<Array<string>> = ref([]);
 
         watch(
             () => theme.value.useOuterLink,
@@ -207,19 +207,9 @@ export default defineComponent({
                 if (nv == true) {
                     // 重新加载外部样式
                     appendStyleCss.value = "";
-                    appendStyleCssUrls.value.push(theme.value.url);
                 } else {
                     // 重新加载内联样式
                     appendStyleCss.value = theme.value.content;
-                }
-            }
-        );
-
-        watch(
-            () => theme.value.url,
-            () => {
-                if (theme.value.useOuterLink) {
-                    appendStyleCssUrls.value = [theme.value.url];
                 }
             }
         );
