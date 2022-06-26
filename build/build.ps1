@@ -107,7 +107,8 @@ yarn     # 拉取最新的库
 yarn run $NPM_BUILD_CMD -ErrorAction "Stop"
 
 if (-not($LASTEXITCODE -eq 0)) {
-    throw "客户端构建失败"
+    Write-Output "客户端构建失败: ($LASTEXITCODE)"
+    Exit
 }
 
 # 拷贝dist的内容到
