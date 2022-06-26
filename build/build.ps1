@@ -107,7 +107,7 @@ Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错�
 
 if (-not($LASTEXITCODE -eq 0)) {
     Write-Output "客户端构建失败: ($LASTEXITCODE)"
-    Exit
+    Exit $LASTEXITCODE
 }
 
 # 拷贝dist的内容到
