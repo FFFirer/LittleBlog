@@ -106,6 +106,10 @@ yarn     # 拉取最新的库
 # Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
 yarn run $NPM_BUILD_CMD -ErrorAction "Stop"
 
+if (-not($LASTEXITCODE -eq 0)) {
+    throw "客户端构建失败"
+}
+
 # 拷贝dist的内容到
 Copy-Item (Join-Path $ADMIN_APP_DIST_DIR "*") $outputAdminFolder -Recurse
 Write-Output "[复制LittleBlog.Admin]"
