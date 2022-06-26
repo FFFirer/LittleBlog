@@ -102,9 +102,8 @@ Write-Output "Generated: $TARGET_ENV_EXAMPLE_FILE_PATH"
 
 yarn     # 拉取最新的库
 
-# $BuildVueCommand = "yarn run " + $NPM_BUILD_CMD + " -ErrorAction Stop"
-# Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
-yarn run $NPM_BUILD_CMD -ErrorAction "Stop"
+$BuildVueCommand = "yarn run " + $NPM_BUILD_CMD + " -ErrorAction Stop"
+Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
 
 if (-not($LASTEXITCODE -eq 0)) {
     Write-Output "客户端构建失败: ($LASTEXITCODE)"
