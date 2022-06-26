@@ -102,8 +102,9 @@ Write-Output "Generated: $TARGET_ENV_EXAMPLE_FILE_PATH"
 
 yarn     # 拉取最新的库
 
-$BuildVueCommand = "yarn run " + $NPM_BUILD_CMD + " -ErrorAction Stop"
-Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
+# $BuildVueCommand = "yarn run " + $NPM_BUILD_CMD + " -ErrorAction Stop"
+# Invoke-Expression -Command $BuildVueCommand -ErrorAction "Stop"     # 发生错误时退出
+yarn run $NPM_BUILD_CMD -ErrorAction "Stop"
 
 # 拷贝dist的内容到
 Copy-Item (Join-Path $ADMIN_APP_DIST_DIR "*") $outputAdminFolder -Recurse
