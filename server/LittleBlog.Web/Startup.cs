@@ -129,10 +129,11 @@ namespace LittleBlog.Web
             services.AddScoped<ApiExceptionFilter>();
 
             // Swagger OpenApi
-            services.AddSwaggerDocument((settings) =>
+            services.AddOpenApiDocument((settings) =>
             {
                 settings.Version = "v1.0.0";
                 settings.Title = "LittleBlog Web API";
+                settings.SchemaType = NJsonSchema.SchemaType.OpenApi3;
             });
 
             // 跨域配置

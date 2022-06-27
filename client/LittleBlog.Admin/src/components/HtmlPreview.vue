@@ -148,7 +148,11 @@ export default defineComponent({
 
             return links;
         },
-
+        insertScript() {
+            if (this.shadowRoot == undefined) {
+                return;
+            }
+        },
         insertOuterStyle(id: string, url: string) {
             if (this.shadowRoot == undefined) {
                 return;

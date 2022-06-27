@@ -1,5 +1,7 @@
 import Prism from "prismjs";
 
+const LINE_NUMBERS = "line-numbers";
+
 export class CodeBlockRender {
     public static RenderCode(htmlDoc: Document | undefined) {
         if (!htmlDoc) {
@@ -17,12 +19,12 @@ export class CodeBlockRender {
                     let container = codeElement.parentElement;
 
                     if (container) {
-                        container?.classList.add("language-text");
+                        codeElement?.classList.add("language-text");
                         container?.classList.add("line-numbers");
 
                         const language = getLanguage(element as HTMLElement);
 
-                        container.innerHTML = Prism.highlight(
+                        codeElement.innerHTML = Prism.highlight(
                             code,
                             Prism.languages[language],
                             language

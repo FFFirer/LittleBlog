@@ -1,0 +1,1694 @@
+{
+  "x-generator": "NSwag v13.14.0.0 (NJsonSchema v10.5.2.0 (Newtonsoft.Json v13.0.0.0))",
+  "swagger": "2.0",
+  "info": {
+    "title": "LittleBlog Web API",
+    "version": "v1.0.0"
+  },
+  "host": "127.0.0.1:65001",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/api/ExceptionTest": {
+      "get": {
+        "tags": [
+          "ExceptionTest"
+        ],
+        "operationId": "ExceptionTest_TestGet",
+        "responses": {
+          "200": {
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": [
+          "ApiUser"
+        ],
+        "operationId": "ApiUser_Post",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "loginViewModel",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginViewModel"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "get": {
+        "tags": [
+          "ApiUser"
+        ],
+        "operationId": "ApiUser_Logout",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/File/Upload": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "operationId": "File_Upload",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "file",
+            "name": "data",
+            "in": "formData",
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "FileName",
+            "in": "formData",
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "UploadPath",
+            "in": "formData",
+            "x-nullable": true
+          },
+          {
+            "type": "integer",
+            "name": "Index",
+            "in": "formData",
+            "format": "int32",
+            "x-nullable": false
+          },
+          {
+            "type": "integer",
+            "name": "Total",
+            "in": "formData",
+            "format": "int32",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "Group",
+            "in": "formData",
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "Type",
+            "in": "formData",
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/All": {
+      "get": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_GetAll",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfListOfMarkdownThemeSummaryDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/{id}": {
+      "get": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_GetTheme",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfMarkdownThemeDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/Save": {
+      "post": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_Save",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "theme",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MarkdownThemeDto"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/GetDefault": {
+      "get": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_GetDefault",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfMarkdownThemeInfo"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/SaveDefault": {
+      "post": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_SaveDefault",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "themeInfo",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MarkdownThemeInfo"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/Remove/{id}": {
+      "post": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_Remove",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/SetDefaultTheme/{id}": {
+      "post": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_SetDefaultTheme",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/MarkdownThemes/SetCodeBlockDefaultTheme/{id}": {
+      "post": {
+        "tags": [
+          "MdThemes"
+        ],
+        "operationId": "MdThemes_SetCodeBlockDefaultTheme",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Articles/List": {
+      "get": {
+        "tags": [
+          "Common Articles"
+        ],
+        "operationId": "ArticlesCommon_List",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "Keyword",
+            "in": "query",
+            "x-nullable": true
+          },
+          {
+            "type": "boolean",
+            "name": "OnlyPublished",
+            "in": "query",
+            "x-nullable": false
+          },
+          {
+            "type": "integer",
+            "name": "Page",
+            "in": "query",
+            "format": "int32",
+            "x-nullable": false
+          },
+          {
+            "type": "integer",
+            "name": "PageSize",
+            "in": "query",
+            "format": "int32",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfPagingOfArticleDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/Articles/{id}": {
+      "get": {
+        "tags": [
+          "Common Articles"
+        ],
+        "operationId": "ArticlesCommon_Get",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "int32",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfArticleDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Articles/Delete": {
+      "post": {
+        "tags": [
+          "Admin Articles"
+        ],
+        "summary": "删除文章",
+        "operationId": "ArticlesManage_Delete",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "query",
+            "description": "文章的Id ",
+            "format": "int32",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Articles/Save": {
+      "post": {
+        "tags": [
+          "Admin Articles"
+        ],
+        "operationId": "ArticlesManage_Save",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "dto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ArticleDto"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Articles/{id}": {
+      "get": {
+        "tags": [
+          "Admin Articles"
+        ],
+        "operationId": "ArticlesManage_Get",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "int32",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfArticleDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Articles/List": {
+      "get": {
+        "tags": [
+          "Admin Articles"
+        ],
+        "operationId": "ArticlesManage_List",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "Keyword",
+            "in": "query",
+            "x-nullable": true
+          },
+          {
+            "type": "boolean",
+            "name": "OnlyPublished",
+            "in": "query",
+            "x-nullable": false
+          },
+          {
+            "type": "integer",
+            "name": "Page",
+            "in": "query",
+            "format": "int32",
+            "x-nullable": false
+          },
+          {
+            "type": "integer",
+            "name": "PageSize",
+            "in": "query",
+            "format": "int32",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfPagingOfArticleDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Categories/List": {
+      "get": {
+        "tags": [
+          "Admin Categories"
+        ],
+        "operationId": "Category_List",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfListOfString"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Categories/ListAll": {
+      "get": {
+        "tags": [
+          "Admin Categories"
+        ],
+        "operationId": "Category_ListAll",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfListOfCategory"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Categories/ListSummaries": {
+      "post": {
+        "tags": [
+          "Admin Categories"
+        ],
+        "operationId": "Category_ListSummaries",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ListCategoriesQueryContext"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfPagingOfCategory"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Categories/Save/{categoryName}": {
+      "post": {
+        "tags": [
+          "Admin Categories"
+        ],
+        "operationId": "Category_Save",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "categoryName",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Categories/Delete/{categoryName}": {
+      "post": {
+        "tags": [
+          "Admin Categories"
+        ],
+        "operationId": "Category_Delete",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "categoryName",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Categories/Delete2/v2/{categoryName}": {
+      "post": {
+        "tags": [
+          "Admin Categories"
+        ],
+        "operationId": "Category_Delete2",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "categoryName",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Logs/List": {
+      "post": {
+        "tags": [
+          "Admin Logs"
+        ],
+        "operationId": "LogManage_List",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "queryContext",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ListLogQueryContext"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfPagingOfLogDto"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Tags/List": {
+      "get": {
+        "tags": [
+          "Admin Tags"
+        ],
+        "summary": "获取所有标签",
+        "operationId": "TagsManage_List",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfListOfString"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Tags/Delete/{tagName}": {
+      "post": {
+        "tags": [
+          "Admin Tags"
+        ],
+        "operationId": "TagsManage_Delete",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "tagName",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/Tags/Save/{tagName}": {
+      "post": {
+        "tags": [
+          "Admin Tags"
+        ],
+        "operationId": "TagsManage_Save",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "tagName",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/SysCfg/FriendshipLinks": {
+      "get": {
+        "tags": [
+          "Admin Systen Configuration"
+        ],
+        "operationId": "FriendshipLinks_List",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfListOfFriendshipLink"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Admin Systen Configuration"
+        ],
+        "operationId": "FriendshipLinks_Save",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "links",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FriendshipLink"
+              }
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/SysCfg/Base": {
+      "get": {
+        "tags": [
+          "Admin Systen Configuration"
+        ],
+        "operationId": "SysCfg_Get",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModelOfSystemConfig"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Admin Systen Configuration"
+        ],
+        "operationId": "SysCfg_Save",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "config",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SystemConfig"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ResultModel"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ResultModel": {
+      "type": "object",
+      "required": [
+        "isSuccess"
+      ],
+      "properties": {
+        "isSuccess": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "exceptionMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginViewModel": {
+      "type": "object",
+      "required": [
+        "email",
+        "password",
+        "rememberMe"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "rememberMe": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ResultModelOfListOfMarkdownThemeSummaryDto": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MarkdownThemeSummaryDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "MarkdownThemeSummaryDto": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "physicalPath": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "lastEditTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ResultModelOfMarkdownThemeDto": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/MarkdownThemeDto"
+            }
+          }
+        }
+      ]
+    },
+    "MarkdownThemeDto": {
+      "type": "object",
+      "required": [
+        "id",
+        "useOuterLink"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "physicalPath": {
+          "type": "string"
+        },
+        "remark": {
+          "type": "string"
+        },
+        "useOuterLink": {
+          "type": "boolean"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "ResultModelOfMarkdownThemeInfo": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/MarkdownThemeInfo"
+            }
+          }
+        }
+      ]
+    },
+    "MarkdownThemeInfo": {
+      "type": "object",
+      "properties": {
+        "defaultThemeId": {
+          "type": "string"
+        },
+        "defaultCodeBlockThemeId": {
+          "type": "string"
+        },
+        "markdownStyleUrl": {
+          "type": "string"
+        },
+        "codeBlockStyleUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "ResultModelOfPagingOfArticleDto": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/PagingOfArticleDto"
+            }
+          }
+        }
+      ]
+    },
+    "PagingOfArticleDto": {
+      "type": "object",
+      "required": [
+        "total",
+        "pageSize",
+        "pageCount"
+      ],
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArticleDto"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageCount": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ArticleDto": {
+      "type": "object",
+      "required": [
+        "id",
+        "isPublished",
+        "lastEditTime",
+        "useMarkdown"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "abstract": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "savePath": {
+          "type": "string"
+        },
+        "isPublished": {
+          "type": "boolean"
+        },
+        "lastEditTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "useMarkdown": {
+          "type": "boolean"
+        },
+        "markdownContent": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "categoryName": {
+          "type": "string"
+        }
+      }
+    },
+    "ResultModelOfArticleDto": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/ArticleDto"
+            }
+          }
+        }
+      ]
+    },
+    "ResultModelOfListOfString": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ResultModelOfListOfCategory": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Category"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Category": {
+      "type": "object",
+      "required": [
+        "name",
+        "createTime"
+      ],
+      "properties": {
+        "name": {
+          "title": "文章分类名称",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "createTime": {
+          "title": "创建时间",
+          "type": "string",
+          "format": "date-time",
+          "minLength": 1
+        }
+      }
+    },
+    "ResultModelOfPagingOfCategory": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/PagingOfCategory"
+            }
+          }
+        }
+      ]
+    },
+    "PagingOfCategory": {
+      "type": "object",
+      "required": [
+        "total",
+        "pageSize",
+        "pageCount"
+      ],
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Category"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageCount": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ListCategoriesQueryContext": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/PagingBaseQueryContext"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PagingBaseQueryContext": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseQueryContext"
+        },
+        {
+          "type": "object",
+          "required": [
+            "page",
+            "pageSize"
+          ],
+          "properties": {
+            "page": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "pageSize": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    },
+    "BaseQueryContext": {
+      "type": "object",
+      "required": [
+        "source"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/definitions/QuerySource"
+        }
+      }
+    },
+    "QuerySource": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Unknow",
+        "Common",
+        "Admin"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "ResultModelOfPagingOfLogDto": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/PagingOfLogDto"
+            }
+          }
+        }
+      ]
+    },
+    "PagingOfLogDto": {
+      "type": "object",
+      "required": [
+        "total",
+        "pageSize",
+        "pageCount"
+      ],
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LogDto"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageCount": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "LogDto": {
+      "type": "object",
+      "required": [
+        "id",
+        "logged"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "logLevel": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "logger": {
+          "type": "string"
+        },
+        "application": {
+          "type": "string"
+        },
+        "callsite": {
+          "type": "string"
+        },
+        "exception": {
+          "type": "string"
+        },
+        "logged": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ListLogQueryContext": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/PagingBaseQueryContext"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "startTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "endTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "logger": {
+              "type": "string"
+            },
+            "logLevel": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ResultModelOfListOfFriendshipLink": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FriendshipLink"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FriendshipLink": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        }
+      }
+    },
+    "ResultModelOfSystemConfig": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResultModel"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/SystemConfig"
+            }
+          }
+        }
+      ]
+    },
+    "SystemConfig": {
+      "type": "object",
+      "properties": {
+        "baseInfo": {
+          "$ref": "#/definitions/WebSiteBaseInfo"
+        },
+        "filing": {
+          "$ref": "#/definitions/WebSiteFiling"
+        }
+      }
+    },
+    "WebSiteBaseInfo": {
+      "type": "object",
+      "properties": {
+        "siteName": {
+          "type": "string"
+        },
+        "welcome": {
+          "type": "string"
+        }
+      }
+    },
+    "WebSiteFiling": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Common Articles"
+    },
+    {
+      "name": "Admin Articles"
+    },
+    {
+      "name": "Admin Categories"
+    },
+    {
+      "name": "Admin Logs"
+    },
+    {
+      "name": "Admin Tags"
+    },
+    {
+      "name": "Admin Systen Configuration"
+    }
+  ]
+}
