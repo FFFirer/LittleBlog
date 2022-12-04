@@ -9,7 +9,6 @@
     "build-dev": "vue-tsc --noEmit && vite build --mode dev"
   },
   "dependencies": {
-    "@shd101wyy/mume": "^0.6.9",
     "@tinymce/tinymce-vue": "^4.0.3",
     "axios": "^0.21.1",
     "codemirror": "^5.64.0",
